@@ -2,7 +2,7 @@
 * Amadeu Cavalcante
 * Module for Roles
 */
-var Waterline = require('waterline')
+var Waterline = require('waterline');
 
 module.exports =  Waterline.Collection.extend({
   identity : 'device',
@@ -26,8 +26,8 @@ module.exports =  Waterline.Collection.extend({
         type: 'boolean'
       },
       user: {
-        model: 'user'
+        model: 'user',
         index: true
       }
     }
-  })
+  });

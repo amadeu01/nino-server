@@ -80,4 +80,4 @@ module.exports = Waterline.Collection.extend({
 			return (password == this.toObject().password);
 		}
 	}
-})
+});

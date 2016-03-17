@@ -2,7 +2,7 @@
 * Amadeu Cavalcante
 * Module for Roles
 */
-var Waterline = require('waterline')
+var Waterline = require('waterline');
 
 module.exports =  Waterline.Collection.extend({
   identity : 'student',
@@ -24,13 +24,13 @@ module.exports =  Waterline.Collection.extend({
 				required: true
 			},
       birthdate: {
-        type: 'string'
+        type: 'string',
         size: 20,
         required: true
       },
       gender: {
         enum: ['male', 'female', 'none'],
-        defaultsTo: none
+        defaultsTo: 'none'
       },
       guardians: {
         collection: 'guardian',
@@ -41,4 +41,4 @@ module.exports =  Waterline.Collection.extend({
         index: true
       }
     }
-  })
+  });

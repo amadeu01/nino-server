@@ -2,7 +2,7 @@
 * Amadeu Cavalcante
 * Module for Roles
 */
-var Waterline = require('waterline')
+var Waterline = require('waterline');
 
 module.exports =  Waterline.Collection.extend({
   identity : 'school',
@@ -29,7 +29,7 @@ module.exports =  Waterline.Collection.extend({
     },
     addr: {
       type: 'string',
-      size: 100
+      size: 100,
       required: true
     },
     cnpj: {
@@ -49,4 +49,4 @@ module.exports =  Waterline.Collection.extend({
     students: {collection: 'student'},
     classrooms: {collection: 'classroom'}
   }
-})
+});

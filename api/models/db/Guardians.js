@@ -15,10 +15,10 @@ module.exports = Waterline.Collection.extend({
       autoIncrement: true
     },
     student: {
-      collection: 'student'
-      via: 'guardians'
+      collection: 'student',
+      via: 'guardian',
       index: true
     },
     role: {model: 'role'}
-
   }
+});

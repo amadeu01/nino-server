@@ -11,8 +11,7 @@ module.exports = {
   adapters: {
     'default': mysqlAdapter,
     'mysql': sailsMySQLAdapter,
-    disk: myDiskAdapter,
-    mysql: mysqlAdapter
+    disk: myDiskAdapter
   },
   // setup all type of connections you could have
   connections: {
