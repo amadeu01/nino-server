@@ -13,18 +13,6 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
-      username: {
-  			type: 'string',
-  			size: 100,
-  			unique: true,
-  			required: true
-  			},
-  		//must apply hash to it ?
-  		password: {
-  			type: 'string',
-  			size: 100,
-  			required: true
-  		},
       user: {model: 'user'},
       device: {collection: 'device'}
     }

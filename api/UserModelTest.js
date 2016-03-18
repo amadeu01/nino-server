@@ -22,6 +22,8 @@ suite('User', function () {
 
     setup(function (done) {
         waterline.loadCollection(require('./models/db/User.js'));
+        waterline.loadCollection(require('./models/db/User.js'));
+        waterline.loadCollection(require('./models/db/User.js'));
 
         waterline.initialize(config, function  (err, ontology) {
             if (err) {
@@ -52,8 +54,8 @@ suite('User', function () {
         var User = waterline.collections.user;
 
         return User.create({
-                firstName: 'Neil',
-                lastName: 'Armstrong',
+                name: 'Neil',
+                surname: 'Armstrong',
                 username: 'neil',
                 password: 'password',
                 email: 'neil@ninoapp.com.br',
@@ -61,9 +63,8 @@ suite('User', function () {
                 confirmed: true
             })
             .then(function (user) {
-                assert.equal(user.firstName, 'Neil', 'should have set the first name');
-                assert.equal(user.lastName, 'Armstrong', 'should have set the last name');
-                assert.equal(user.pets.length, 0, 'should have no pets');
+                assert.equal(user.name, 'Neil', 'should have set the first name');
+                assert.equal(user.surname, 'Armstrong', 'should have set the last name');
             });
     });
 });

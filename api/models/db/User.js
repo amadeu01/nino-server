@@ -56,9 +56,18 @@ module.exports = Waterline.Collection.extend({
 		confirmed: {
 			type: 'boolean'
 		},
-		roles: { collection: 'role' },
-		credentials: { collection: 'credential'},
-		devices: { collection: 'device'},
+		roles: {
+			collection: 'role',
+			via: 'user'
+		},
+		credentials: {
+			collection: 'credential',
+			via: 'user'
+		},
+		devices: {
+			collection: 'device',
+			via: 'user'
+		},
 		/* For applying hash to password
 		beforeCreate: function(values, next){
     var bcrypt = require('bcrypt');
