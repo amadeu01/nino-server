@@ -23,7 +23,7 @@ router.get('/:device_id', function(req, res, next) {
 });
 
 /* Create new device */
-router.post('/', function(req, res, next) {
+router.post('/users/:user_id', function(req, res, next) {
   res.send('WIP');
 });
 

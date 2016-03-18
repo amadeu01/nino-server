@@ -22,7 +22,7 @@ router.post('/publications', function(req, res, next) {
 });
 
 /* Remove subscription */
-router.delete('/:subscription_id', function(req, res, next) {
+router.delete('/:subscription_email', function(req, res, next) {
   res.send('WIP');
 });
 
