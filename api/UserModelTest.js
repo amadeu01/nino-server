@@ -21,9 +21,10 @@ suite('User', function () {
     }
 
     setup(function (done) {
-        waterline.loadCollection(require('./models/db/User.js'));
-        waterline.loadCollection(require('./models/db/User.js'));
-        waterline.loadCollection(require('./models/db/User.js'));
+        waterline.loadCollection(require('./models/User.js'));
+        waterline.loadCollection(require('./models/Roles.js'));
+        waterline.loadCollection(require('./models/Devices.js'));
+        waterline.loadCollection(require('./models/Credentials.js'));
 
         waterline.initialize(config, function  (err, ontology) {
             if (err) {
@@ -65,6 +66,7 @@ suite('User', function () {
             .then(function (user) {
                 assert.equal(user.name, 'Neil', 'should have set the first name');
                 assert.equal(user.surname, 'Armstrong', 'should have set the last name');
+                assert.equal(user.devices.length, 0, 'There is no device');
             });
     });
 });
