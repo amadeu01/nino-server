@@ -27,7 +27,8 @@ module.exports =  Waterline.Collection.extend({
       },
       user: {
         model: 'user',
-        index: true
+        index: true,
+        required: true
       }
     }
   });

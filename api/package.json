@@ -14,6 +14,8 @@
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "sails-memory": "~0.10.6",
+    "sails-mysql": "~0.12.0",
+    "sails-disk": "~0.10.9",
     "serve-favicon": "~2.3.0",
     "waterline": "~0.11.1"
   },

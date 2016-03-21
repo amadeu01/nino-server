@@ -24,21 +24,35 @@ module.exports =  Waterline.Collection.extend({
 				required: true
 			},
       birthdate: {
-        type: 'string',
-        size: 20,
+        type: 'number',
         required: true
       },
+      //reference to picture on s3
+      profile_picture: {
+        type: 'string'
+      },
       gender: {
+        type: 'string',
+        size: 10,
         enum: ['male', 'female', 'none'],
         defaultsTo: 'none'
+      },
+      posts: {
+        collection: 'post',
+        via: 'student'
       },
       guardians: {
         collection: 'guardian',
         index: true
       },
-      shool: {
+      classroom: {
+        model: 'classroom',
+        via: 'student'
+      },
+      school: {
         model: 'school',
-        index: true
+        index: true,
+        required: true
       }
     }
   });

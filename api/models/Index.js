@@ -4,8 +4,9 @@
 */
 var mysqlAdapter = require('sails-mysql');
 var myDiskAdapter = require('sails-disk');
-
-module.exports = {
+var Waterline = require('waterline');
+var orm = new Waterline();
+var config = {
   // setup adapters for each type of database
   //I do not know which db will be used, so for test's sake I used more than one.
   adapters: {
@@ -29,3 +30,15 @@ module.exports = {
     }
   },
 };
+
+var fs = require('fs');
+var path = require("path");
+
+fs.readdirSync(__dirname).filter(function(file) {
+    return (file.indexOf(".") !== 0) && (file !== "index.js");
+  }).forEach(function(file) {
+    var model = require(path.join(__dirname, file));
+    orm.loadCollection(model);
+  });
+
+module.exports = {waterline: orm, config: config};

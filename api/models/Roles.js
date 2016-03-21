@@ -13,7 +13,7 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
-			role: {
+			role_type: {
 				type: 'string',
 				size: 15,
 				enum: ['educator', 'parent', 'owner', 'nd'],
@@ -21,10 +21,6 @@ module.exports =  Waterline.Collection.extend({
 				required: true
 			},
 			privileges: {
-				type: 'integer',
-				required: true
-			},
-			usr_id: {
 				type: 'integer',
 				required: true
 			},

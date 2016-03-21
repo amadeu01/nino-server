@@ -22,7 +22,7 @@ module.exports =  Waterline.Collection.extend({
         index: true
       },
       educator: {
-        model: 'educator',
+        collection: 'educator',
         required: true
       },
       school: {

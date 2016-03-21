@@ -68,6 +68,11 @@ module.exports = Waterline.Collection.extend({
 			collection: 'device',
 			via: 'user'
 		},
+		toJSON: function() {
+      var obj = this.toObject();
+      delete obj.password;
+      return obj;
+    },
 		/* For applying hash to password
 		beforeCreate: function(values, next){
     var bcrypt = require('bcrypt');

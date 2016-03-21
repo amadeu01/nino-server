@@ -13,7 +13,13 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
-      user: {model: 'user'},
-      device: {collection: 'device'}
+      user: {
+        model: 'user',
+        required: true
+      },
+      devices: {
+        collection: 'device',
+        required: true
+    }
     }
   });

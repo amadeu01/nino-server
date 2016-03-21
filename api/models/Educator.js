@@ -13,10 +13,13 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
-      babies: {
+      students: {
         collection: 'student',
         index: true
       },
-      role: {model: 'role'}
+      role: {
+        model: 'role',
+        required: true
+      }
     }
   });

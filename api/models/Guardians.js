@@ -19,6 +19,9 @@ module.exports = Waterline.Collection.extend({
       via: 'guardian',
       index: true
     },
-    role: {model: 'role'}
+    role: {
+			model: 'role',
+			required: true
+		}
   }
 });

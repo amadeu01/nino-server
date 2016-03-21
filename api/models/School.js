@@ -18,14 +18,19 @@ module.exports =  Waterline.Collection.extend({
       size: 40,
       required: true
     },
-    ownership: {
-      type: 'integer'
+    owner: {
+      model: 'user',
+      via: 'school'
     },
     email: {
       type: 'string',
       size: 50,
       unique: true,
       required: true
+    },
+    //reference to s3
+    logotype: {
+      type: 'string'
     },
     addr: {
       type: 'string',
@@ -45,8 +50,20 @@ module.exports =  Waterline.Collection.extend({
 			size: 100,
 			required: true
     },
-    educators: {collection: 'educator'},
-    students: {collection: 'student'},
-    classrooms: {collection: 'classroom'}
+    educators: {
+      collection: 'educator',
+      via: 'school'
+    },
+    students: {
+      collection: 'student',
+      via: 'school'
+    },
+    classrooms: {
+      collection: 'classroom',
+      via: 'school'
+    },
+    active: {
+      type: 'boolean'
+    }
   }
 });

@@ -13,6 +13,7 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
+      //reference to s3
       attachment: {
         type: 'string',
         required: false
@@ -34,7 +35,7 @@ module.exports =  Waterline.Collection.extend({
         index: true
       },
       educator: {
-        model: 'educator',
+        collection: 'educator',
         index: true,
         required: true
       },
