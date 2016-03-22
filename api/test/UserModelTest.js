@@ -56,9 +56,9 @@ suite('User', function () {
 
         return Promise.all(promises);
     });
-    var User = waterline.collections.user;
+
     test('should be able to create a user', function () {
-        //var User = waterline.collections.user;
+        var User = waterline.collections.user;
         var Device = waterline.collections.device;
         var Credential = waterline.collections.credential;
         var Roles = waterline.collections.role;
@@ -101,7 +101,7 @@ suite('User', function () {
           });
 
     test('should be able to retrieve a user', function() {
-      //var User = waterline.collections.user;
+      var User = waterline.collections.user;
       return User.find().exec(function(err, users){
         console.log("User find");
         if (err) {
@@ -116,7 +116,7 @@ suite('User', function () {
     });
 
     test('Find or create user', function(){
-      //var User = waterline.collections.user;
+      var User = waterline.collections.user;
       var Device = waterline.collections.device;
       var Credential = waterline.collections.credential;
       var Roles = waterline.collections.role;
@@ -144,9 +144,9 @@ suite('User', function () {
 
 
     test('should delete user', function() {
-      //var User = waterline.loadCollection.user;
+      var User = waterline.collections.user;
 
-      User.destroy({name: 'Neil'}).then( function(err){
+      return User.destroy({name: 'Neil'}).then( function(err){
           return console.log(err.stack);
       });
     });
