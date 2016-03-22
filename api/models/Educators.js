@@ -22,7 +22,8 @@ module.exports =  Waterline.Collection.extend({
         required: true
       },
 			school: {
-				model: 'school'
+				model: 'school',
+				required: true
 			}
     }
   });

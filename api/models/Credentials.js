@@ -20,6 +20,6 @@ module.exports =  Waterline.Collection.extend({
       devices: {
         collection: 'device',
         required: true
-    }
+    	}
     }
   });

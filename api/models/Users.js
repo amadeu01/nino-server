@@ -30,12 +30,6 @@ module.exports = Waterline.Collection.extend({
 			size: 40,
 			required: true
 		},
-		username: {
-			type: 'string',
-			size: 100,
-			unique: true,
-			required: true
-			},
 		//must apply hash to it
 		password: {
 			type: 'string',

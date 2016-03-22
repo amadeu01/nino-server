@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var app = require('../app');
 
 var validator = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -11,14 +12,82 @@ var validator = function(req, res, next, id) {
 
 router.param('school_id', validator);
 router.param('educator_id', validator);
+router.param('classroom_id', validator);
 
 /* Get users listing. */
 router.get('/schools/:school_id', function(req, res, next) {
+	if (!req.token) {
+		res.status(401);
+		res.end();
+		return;
+	} 
+	// console.log(req.token);
   res.send('WIP');
 });
 
 /* Create new Caretaker for that school */
 router.post('/schools/:school_id', function(req, res, next) {
+	//TODO: check if exists before creating, can just be adding a role. Maybe another route?
+	//Checking user credentials
+	if (!req.token) {
+		res.status(401);
+		res.end();
+		return;
+	} 
+	// console.log(req.token);
+	
+	//Creating Educator
+	app.models.user.create({
+		name: req.body.user.name, 
+		surname: req.body.user.surname, 
+		password: req.body.user.password, 
+		email: req.body.user.email,
+		cel: req.body.user.cel
+	}).exec(function(err, user) {
+		if (err) {
+			res.json(err);
+			return;
+		}
+		console.log(user);
+		app.models.role.create({
+				type: 'educator',
+				privileges: req.body.privileges
+		}).exec(function(err, role) {
+			if (err) {
+				res.json(err);
+				return;
+			}
+			console.log(role);
+			user.roles.add(role.id);
+			user.save(function(err){
+				if (err) {
+					res.json(err);
+					return;
+				}
+				app.models.educator.create({
+					role: role.id,
+					school: req.params.school_id
+				}).exec(function(err, educator) {
+					if (err) {
+						res.json(err);
+						return;
+					}
+					res.json(educator);
+					// console.log(educator);
+					// app.models.user.find().populate('roles').exec(function(err,user) {
+					// 	console.log(user);
+					// })
+					// app.models.educator.find().populate('role').populate('school').exec(function(err,educator) {
+					// 	console.log(educator);
+					// })
+				});
+			});
+		});
+	});
+});
+
+
+router.get('/classrooms/:classroom_id', function(req, res, next) {
   res.send('WIP');
 });
 
