@@ -30,8 +30,9 @@ module.exports =  Waterline.Collection.extend({
       type: {
         type: 'string'
       },
-      student: {
+      students: {
         collection: 'student',
+				via: 'posts',
         index: true
       },
       educator: {

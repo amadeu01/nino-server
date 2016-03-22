@@ -24,6 +24,9 @@ module.exports =  Waterline.Collection.extend({
       role: {
         model: 'role',
         required: true
-      }
+      },
+			school: {
+				model: 'school'
+			}
     }
   });

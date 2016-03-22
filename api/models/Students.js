@@ -39,10 +39,11 @@ module.exports =  Waterline.Collection.extend({
       },
       posts: {
         collection: 'post',
-        via: 'student'
+        via: 'students'
       },
       guardians: {
         collection: 'guardian',
+				via: 'students',
         index: true
       },
       classroom: {
