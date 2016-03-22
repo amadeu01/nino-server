@@ -14,9 +14,9 @@ module.exports = Waterline.Collection.extend({
       primaryKey: true,
       autoIncrement: true
     },
-    student: {
+    students: {
       collection: 'student',
-      via: 'guardian',
+      via: 'guardians',
       index: true
     },
     role: {

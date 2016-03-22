@@ -11,21 +11,20 @@ var config = {
   //I do not know which db will be used, so for test's sake I used more than one.
   adapters: {
     'default': mysqlAdapter,
-    'mysql': sailsMySQLAdapter,
-    disk: myDiskAdapter
+    'disk': myDiskAdapter
   },
   // setup all type of connections you could have
   connections: {
     // NinoDB
-    default: {
-  				adapter: 'mysql',
-  				host: 'ninodbinstance.cwtfdu1insah.sa-east-1.rds.amazonaws.com',
-  				user: 'ninodbuser',
-  				password: 'CfJ-Cur-69S-pNz',
-  				database: 'NinoDB'
-  			},
+    // default: {
+    //   				adapter: 'default',
+    //   				host: 'ninodbinstance.cwtfdu1insah.sa-east-1.rds.amazonaws.com',
+    //   				user: 'ninodbuser',
+    //   				// password: 'CfJ-Cur-69S-pNz',
+    //   				database: 'NinoDB'
+    //   			},
     //using sails-disk method
-    diskLocal: {
+    default: {
         adapter: 'disk'
     }
   },
