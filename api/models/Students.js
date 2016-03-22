@@ -53,7 +53,7 @@ module.exports =  Waterline.Collection.extend({
       guardian: {
         collection: 'guardian',
         via: 'student'
-      }
+      },
       school: {
         model: 'school',
         index: true,

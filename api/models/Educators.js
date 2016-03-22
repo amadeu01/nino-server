@@ -14,9 +14,9 @@ module.exports =  Waterline.Collection.extend({
 				autoIncrement: true
 			},
       school: {
-        model: 'school'
+        model: 'school',
         index: true
-      }
+      },
       students: {
         collection: 'student',
         index: true
@@ -24,9 +24,6 @@ module.exports =  Waterline.Collection.extend({
       role: {
         model: 'role',
         required: true
-      },
-			school: {
-				model: 'school'
-			}
+      }
     }
   });
