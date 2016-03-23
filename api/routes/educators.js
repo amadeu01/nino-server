@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var app = require('../app');
+var permissions = require('../permissions');
 
 var validator = function(req, res, next, id) {
 	if (!isNaN(id)) {
