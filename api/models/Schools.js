@@ -19,7 +19,7 @@ module.exports =  Waterline.Collection.extend({
       required: true
     },
     owner: {
-      model: 'user',
+      model: 'educator',
       via: 'school'
     },
     email: {
@@ -34,8 +34,7 @@ module.exports =  Waterline.Collection.extend({
     },
     addr: {
       type: 'string',
-      size: 100,
-      required: true
+      size: 100
     },
     cnpj: {
       type: 'string',
@@ -47,8 +46,7 @@ module.exports =  Waterline.Collection.extend({
     },
     bucket: {
       type: 'string',
-			size: 100,
-			required: true
+			size: 100
     },
     educators: {
       collection: 'educator',

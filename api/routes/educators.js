@@ -14,15 +14,41 @@ router.param('school_id', validator);
 router.param('educator_id', validator);
 router.param('classroom_id', validator);
 
-/* Get users listing. */
+/* Get users listing for a school. */
 router.get('/schools/:school_id', function(req, res, next) {
 	if (!req.token) {
 		res.status(401);
 		res.end();
 		return;
 	} 
-	// console.log(req.token);
-  res.send('WIP');
+	app.models.educator.findOne({id: req.token.role.id}).exec(function(err, educator) {
+		if (educator.school != req.params.school_id)
+		{
+			res.status(401);
+			res.end();
+			return;
+		}
+		app.models.educator.find({school:req.params.school_id}).exec(function(err, educators) {
+			if (err) {
+				res.status(500);
+				res.json(err);
+				return;
+			}
+			var idquery = [];
+			for (var each in educators)
+			{
+				idquery.push(educators[each].role);
+			}
+			app.models.role.find({id: idquery}).populate('user').exec(function(err, users) {
+				if (err) {
+					res.status(500);
+					res.json(err);
+					return;
+				}
+				res.json(users);
+			})
+		});
+	});
 });
 
 /* Create new Caretaker for that school */

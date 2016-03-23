@@ -16,7 +16,7 @@ router.param('credential_id', validator);
 
 /* Create a Caretaker credential : LogIn. */
 router.post('/educators', function(req, res, next) {
-	// console.log(req.useragent);
+	// console.log(req.useragent);//TODO: Register new device or check existing
   if (req.body.password && req.body.email) { //Check if all parameters were received
 		app.models.user.findOne({email: req.body.email, password: req.body.password}).populate('roles').exec(function(err, user) {
 			if (err) { //Database error
@@ -30,7 +30,7 @@ router.post('/educators', function(req, res, next) {
 				return;
 			}
 			for (var role in user.roles) { //Check is role exists
-				if (user.roles[role].type == 'educator') {
+				if (user.roles[role].type == 'educator' || user.roles[role].type == 'owner') {
 					var token = jwt.sign({user: user, role: user.roles[role]}, app.get('jwtSecret'), {
 	          expiresIn: 1440 // expires in 24 hours
 	        });
@@ -42,6 +42,7 @@ router.post('/educators', function(req, res, next) {
 					return;
 				}
 			}
+			res.sendStatus(401);
 		});
   } else {
 		res.sendStatus(401);
