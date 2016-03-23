@@ -117,9 +117,44 @@ suite('User', function () {
         } else {
           console.log('length: %d', users.length);
           var userTest = users.pop();
-          console.log("Nome %j", userTest.toJSON());
-          return;
+          return console.log("Nome %j", userTest.toJSON());
         }
+      });
+    });
+    //TODO: if create a new User, also generate all data needed to it
+    test('Find or create user', function(){
+      var User = waterline.collections.user;
+      var Device = waterline.collections.device;
+      var Credential = waterline.collections.credential;
+      var Roles = waterline.collections.role;
+
+      return User.findOrCreate({
+        name: 'João',
+        surname: 'Cavalcante',
+        email: 'jao@ninoapp.com.br',
+        password: 'password',
+        username: 'joa',
+        cel: '55 9 9919 9919',
+        confirmed: true
+      }).then(function (users) {
+        if (users.constructor === Array) {
+          console.log("users length: %d", users.length);
+          console.log("users: %j", users.toJSON());
+          var user = users.pop();
+          console.log("user: %j", user.toJSON());
+        } else{
+          var user2 = users;
+          console.log("user: %j", user2.toJSON());
+       }
+      });
+    });
+
+    // TODO: delete all data related to User
+    test('should delete user', function() {
+      var User = waterline.collections.user;
+
+      return User.destroy({name: 'Neil'}).then( function(err){
+          return console.log(err.stack);
       });
     });
 
