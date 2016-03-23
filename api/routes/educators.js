@@ -47,7 +47,7 @@ router.get('/schools/:school_id', function(req, res, next) {
 					return;
 				}
 				res.json(users);
-			})
+			});
 		});
 	});
 });

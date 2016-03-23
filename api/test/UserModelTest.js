@@ -27,7 +27,7 @@ suite('User', function () {
 
     setup(function (done) {
       // waterline.loadCollection(require('./models/Index.js'));
-        waterline.loadCollection(require('../models/User.js'));
+        waterline.loadCollection(require('../models/Users.js'));
         waterline.loadCollection(require('../models/Roles.js'));
         waterline.loadCollection(require('../models/Devices.js'));
         waterline.loadCollection(require('../models/Credentials.js'));
@@ -95,16 +95,15 @@ suite('User', function () {
                       role.save();
                       device.save();
                       credential.save();
+						          assert.equal(user.name, 'Neil', 'should have set the first name');
+						          assert.equal(user.surname, 'Armstrong', 'should have set the last name');
+						          assert.equal(user.devices.length, 0, 'There is no device');
+						          var datTemp = user.toJSON();
+						          console.log(datTemp);
                       return user.save();
-                    });
-                  });
-                });
-
-          assert.equal(user.name, 'Neil', 'should have set the first name');
-          assert.equal(user.surname, 'Armstrong', 'should have set the last name');
-          assert.equal(user.devices.length, 0, 'There is no device');
-          var datTemp = user.toJSON();
-          console.log(datTemp);
+										});
+								});
+						});
         });
     });
 

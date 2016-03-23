@@ -54,5 +54,5 @@ suite('Permissions', function () {
 				maxPermission |= permissions.types[item];
 			}
 			assert.equal(permissions.validate(maxPermission), true, 'Permission error!');
-		})
+		});
 });

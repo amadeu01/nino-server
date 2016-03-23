@@ -71,8 +71,8 @@ router.post('/', function(req, res, next) {
 							return;
 						}
 						res.json({school:school.id, educator: educator.id});
-					})
-				})
+					});
+				});
 			});
 		});
 	});
