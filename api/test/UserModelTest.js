@@ -75,7 +75,7 @@ suite('User', function () {
           return Roles.create({
             privileges: '1',
             user: user.id,
-            role_type: 'parent'
+            role_type: 'guardian'
           }).then(function(role){
             user.role = [role];
             return Device.create({
@@ -114,7 +114,7 @@ suite('User', function () {
         }
       });
     });
-
+    //TODO: if create a new User, also generate all data needed to it
     test('Find or create user', function(){
       var User = waterline.collections.user;
       var Device = waterline.collections.device;
@@ -142,7 +142,7 @@ suite('User', function () {
       });
     });
 
-
+    // TODO: delete all data related to User
     test('should delete user', function() {
       var User = waterline.collections.user;
 

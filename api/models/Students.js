@@ -37,21 +37,17 @@ module.exports =  Waterline.Collection.extend({
         enum: ['male', 'female', 'none'],
         defaultsTo: 'none'
       },
-      posts: {
+      post: {
         collection: 'post',
-        via: 'students'
-      },
-      guardians: {
-        collection: 'guardian',
-				via: 'students',
-        index: true
-      },
-      classroom: {
-        model: 'classroom',
         via: 'student'
       },
       guardian: {
         collection: 'guardian',
+				via: 'student',
+        index: true
+      },
+      classroom: {
+        model: 'classroom',
         via: 'student'
       },
       school: {
