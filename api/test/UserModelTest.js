@@ -66,7 +66,6 @@ suite('User', function () {
         return User.create({
           name: 'Neil',
           surname: 'Armstrong',
-          username: 'neil',
           password: 'password',
           email: 'neil@ninoapp.com.br',
           cel: '5519 9 9999 9999',
@@ -74,33 +73,34 @@ suite('User', function () {
         }).then(function (user) {
             return Roles.create({
               privileges: 1,
-              user: user.id,
+              owner: user.id,
               type: "guardian"
             }).then(function(role){
-              user.role = [role];
+              user.roles = [role];
               return Device.create({
                   arn: 'asfnancabprwuei1924830149324',
                   description: 'Here some description',
                   enable: true,
-                  user: user.id,
+                  owner: user.id,
                 }).then(function(device) {
-                  user.device = [device];
+                  user.devices = [device];
                   return Credential.create({
-                      user: user.id,
+                      owner: user.id,
                       devices: device.id
                     }).then(function(credential){
-                      user.credential = [credential];
+                      user.credentials = [credential];
                       credential.devices = [device];
-                      role.save();
-                      device.save();
-                      credential.save();
+                      // role.save();
+                      // device.save();
+                      // credential.save();
 						          assert.equal(user.name, 'Neil', 'should have set the first name');
 						          assert.equal(user.surname, 'Armstrong', 'should have set the last name');
-						          assert.equal(user.devices.length, 0, 'There is no device');
+						          assert.equal(user.devices.length, 1, 'There is no device');
+                      assert.equal(user.credentials.length, 1, 'There is no credential');
 						          var datTemp = user.toJSON();
-						          console.log(datTemp);
+						          //console.log(datTemp);
                       return user.save();
-										});
+										}).then(console.log).catch(console.error);
 								});
 						});
         });
@@ -108,7 +108,7 @@ suite('User', function () {
 
     test('should be able to retrieve a user', function() {
       var User = waterline.collections.user;
-      return User.find().exec(function(err, users){
+      return User.find().populate(['roles', 'credentials', 'devices']).exec(function(err, users){
         console.log("User find");
         if (err) {
           console.log("error!");
@@ -116,6 +116,9 @@ suite('User', function () {
         } else {
           console.log('length: %d', users.length);
           var userTest = users.pop();
+          console.log(userTest.credentials);
+          console.log(userTest.roles);
+          console.log(userTest.devices);
           return console.log("Nome %j", userTest.toJSON());
         }
       });
@@ -132,7 +135,6 @@ suite('User', function () {
         surname: 'Cavalcante',
         email: 'jao@ninoapp.com.br',
         password: 'password',
-        username: 'joa',
         cel: '55 9 9919 9919',
         confirmed: true
       }).then(function (users) {
@@ -157,21 +159,15 @@ suite('User', function () {
       var Credential = waterline.collections.credential;
       var Roles = waterline.collections.role;
 
-      return User.destroy({name: 'Neil'}).then(function(users){
-        for ( var i = 0; i < users.length; i++) {
-          var user = users[i];
-          console.log(user.id);
-          Roles.destroy({user: user.id}).then(function(roles){
-            console.log(roles);
-          });
-          Credential.destroy({ user: user.id } ).then(function(credentials){
-            console.log(credentials);
-          });
-          Device.destroy({ user: user.id } ).then(function(devices){
-            console.log(devices);
-          });
+      return User.destroy({name: 'Neil'}).exec(function(err, users){
+        if (err) {
+          return console.log(err);
         }
-          return;
+        console.log(users);
+        var userIds = users.map(function(user){return user.id;});
+        Device.destroy({owner: userIds});
+        Credential.destroy({owner: userIds});
+        Roles.destroy({owner: userIds});
       });
     });
 

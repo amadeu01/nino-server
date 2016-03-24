@@ -24,7 +24,7 @@ module.exports =  Waterline.Collection.extend({
 				type: 'integer',
 				required: true
 			},
-      user: {
+      owner: {
         model: 'user'
       }
 		}

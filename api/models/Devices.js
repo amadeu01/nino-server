@@ -25,7 +25,7 @@ module.exports =  Waterline.Collection.extend({
       enable: {
         type: 'boolean'
       },
-      user: {
+      owner: {
         model: 'user',
         index: true,
         required: true
