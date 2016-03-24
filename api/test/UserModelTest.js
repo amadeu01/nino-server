@@ -73,10 +73,9 @@ suite('User', function () {
           confirmed: true
         }).then(function (user) {
             return Roles.create({
-              role: 'parent',
-              privileges: '1',
+              privileges: 1,
               user: user.id,
-              role_type: 'parent'
+              type: "guardian"
             }).then(function(role){
               user.role = [role];
               return Device.create({
@@ -141,20 +140,38 @@ suite('User', function () {
           console.log("users length: %d", users.length);
           console.log("users: %j", users.toJSON());
           var user = users.pop();
-          console.log("user: %j", user.toJSON());
+          console.log("Array!");
+          console.log("User findOrCreate: %j", user.toJSON());
         } else{
           var user2 = users;
-          console.log("user: %j", user2.toJSON());
+          console.log("User findOrCreate: %j", user2.toJSON());
        }
-      });
+     }).catch(function(err) {
+       console.log(err);
+     });
     });
 
-    // TODO: delete all data related to User
     test('should delete user', function() {
       var User = waterline.collections.user;
+      var Device = waterline.collections.device;
+      var Credential = waterline.collections.credential;
+      var Roles = waterline.collections.role;
 
-      return User.destroy({name: 'Neil'}).then( function(err){
-          return console.log(err.stack);
+      return User.destroy({name: 'Neil'}).then(function(users){
+        for ( var i = 0; i < users.length; i++) {
+          var user = users[i];
+          console.log(user.id);
+          Roles.destroy({user: user.id}).then(function(roles){
+            console.log(roles);
+          });
+          Credential.destroy({ user: user.id } ).then(function(credentials){
+            console.log(credentials);
+          });
+          Device.destroy({ user: user.id } ).then(function(devices){
+            console.log(devices);
+          });
+        }
+          return;
       });
     });
 

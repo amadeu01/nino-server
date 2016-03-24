@@ -37,11 +37,8 @@ suite('Guardians Services', function () {
         return Promise.all(promises);
     });
 
-    test('should create a guardian', function() {
-      var service = require('../services/guardian.js');
-      service.create({ privileges: 1}, function(err, results) {
-        console.log(results);
-        console.log(err);
-      });
-    });
+    // test('should create a guardian', function() {
+    //   var Service = require('../services/guardian.js');
+      //return Service.create();
+    // });
   });
