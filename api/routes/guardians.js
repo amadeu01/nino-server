@@ -31,14 +31,14 @@ router.post('/:guardian_id/babies/:baby_id', function(req, res, next) {
 		res.status(401);
 		res.end();
 		return;
-	} 
+	}
 	// console.log(req.token);
-	
+
 	//Creating Educator
 	app.models.user.create({
-		name: req.body.user.name, 
+		name: req.body.user.name,
 		surname: req.body.user.surname, 
-		password: req.body.user.password, 
+		password: req.body.user.password,
 		email: req.body.user.email,
 		cel: req.body.user.cel
 	}).exec(function(err, user) {

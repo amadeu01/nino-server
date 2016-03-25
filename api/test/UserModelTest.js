@@ -90,9 +90,6 @@ suite('User', function () {
                     }).then(function(credential){
                       user.credentials = [credential];
                       credential.devices = [device];
-                      // role.save();
-                      // device.save();
-                      // credential.save();
 						          assert.equal(user.name, 'Neil', 'should have set the first name');
 						          assert.equal(user.surname, 'Armstrong', 'should have set the last name');
 						          assert.equal(user.devices.length, 1, 'There is no device');
@@ -100,7 +97,9 @@ suite('User', function () {
 						          var datTemp = user.toJSON();
 						          //console.log(datTemp);
                       return user.save();
-										}).then(console.log).catch(console.error);
+										}).catch(function(err) {
+                      return console.log(err, err.stack);
+                    });
 								});
 						});
         });
@@ -123,6 +122,8 @@ suite('User', function () {
         }
       });
     });
+
+
     //TODO: if create a new User, also generate all data needed to it
     test('Find or create user', function(){
       var User = waterline.collections.user;
@@ -165,17 +166,23 @@ suite('User', function () {
         var userIds = users.map(function(user){return user.id;});
         console.log(userIds);
         return Device.destroy({owner: userIds}).then(function(devices){
-            console.log(devices);
-            return Credential.destroy({owner: userIds}).then(function(credentials) {
-              console.log(credentials);
-              return Roles.destroy({owner: userIds}).then(function(err) {
-                if (err) {
-                  console.log(err);
-                }
-              });
+          console.log(devices);
+          return Credential.destroy({owner: userIds}).then(function(credentials) {
+            console.log(credentials);
+            return Roles.destroy({owner: userIds}).then(function(roles) {
+              console.log(roles);
+            }).catch(function(err) {
+              if (err) {
+                return console.log(err);
+              }
             });
+          });
         });
-      }).then(console.log).catch(console.error);
-    });
+      }).catch(function(err) {
+        if (err) {
+          return console.log(err);
+        }
+      });
 
+    });
 });
