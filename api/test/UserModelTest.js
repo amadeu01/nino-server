@@ -116,10 +116,10 @@ suite('User', function () {
         } else {
           console.log('length: %d', users.length);
           var userTest = users.pop();
-          console.log(userTest.credentials);
-          console.log(userTest.roles);
-          console.log(userTest.devices);
-          return console.log("Nome %j", userTest.toJSON());
+          console.log("Found credentials: %j", userTest.credentials);
+          console.log("Found roles: %j", userTest.roles);
+          console.log("Found devices: %j", userTest.devices);
+          return console.log("Found user: %j", userTest.toJSON());
         }
       });
     });
@@ -159,16 +159,23 @@ suite('User', function () {
       var Credential = waterline.collections.credential;
       var Roles = waterline.collections.role;
 
-      return User.destroy({name: 'Neil'}).exec(function(err, users){
-        if (err) {
-          return console.log(err);
-        }
+      return User.destroy({name: 'Neil', surname: 'Armstrong'}).then(function(users){
+        console.log("Entrou destroy");
         console.log(users);
         var userIds = users.map(function(user){return user.id;});
-        Device.destroy({owner: userIds});
-        Credential.destroy({owner: userIds});
-        Roles.destroy({owner: userIds});
-      });
+        console.log(userIds);
+        return Device.destroy({owner: userIds}).then(function(devices){
+            console.log(devices);
+            return Credential.destroy({owner: userIds}).then(function(credentials) {
+              console.log(credentials);
+              return Roles.destroy({owner: userIds}).then(function(err) {
+                if (err) {
+                  console.log(err);
+                }
+              });
+            });
+        });
+      }).then(console.log).catch(console.error);
     });
 
 });
