@@ -80,17 +80,20 @@ var guardiansServices = {
 		});
 	},
 	update: function(parameters, newParameters) {
-		return User.update(parameters, newParameters).then(function(users){
+		return User.find(parameters).then(function(users){
 			if (users.length === 0 ) {
 				throw Error('NO user was found');
 			}
 			if (users.length >= 2) {
+				console.log(users.pop());
 				throw Error('More than 1 user was found, it should be unique for changing.');
 			}
-			return users.pop();
-		}).catch(function(err) {
-			console.log(err);
-		})
+			return User.update(parameters, newParameters).then(function(user){
+				console.log(user);
+			}).catch(function(err) {
+				return console.log(err);
+			});
+		});
 	}
 };
 

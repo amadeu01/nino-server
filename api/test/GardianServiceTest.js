@@ -64,8 +64,7 @@ suite('Guardians Services', function () {
         privileges: 1
       };
       var parameters = {
-  			name: 'Julia',
-        password: 'password'
+  			name: 'Julia'
       };
       var newParameters = {
         password: 'new_password'
