@@ -66,42 +66,40 @@ suite('User', function () {
         return User.create({
           name: 'Neil',
           surname: 'Armstrong',
-          username: 'neil',
           password: 'password',
           email: 'neil@ninoapp.com.br',
           cel: '5519 9 9999 9999',
           confirmed: true
         }).then(function (user) {
             return Roles.create({
-              role: 'parent',
-              privileges: '1',
-              user: user.id,
-              role_type: 'parent'
+              privileges: 1,
+              owner: user.id,
+              type: "guardian"
             }).then(function(role){
-              user.role = [role];
+              user.roles = [role];
               return Device.create({
                   arn: 'asfnancabprwuei1924830149324',
                   description: 'Here some description',
                   enable: true,
-                  user: user.id,
+                  owner: user.id,
                 }).then(function(device) {
-                  user.device = [device];
+                  user.devices = [device];
                   return Credential.create({
-                      user: user.id,
+                      owner: user.id,
                       devices: device.id
                     }).then(function(credential){
-                      user.credential = [credential];
+                      user.credentials = [credential];
                       credential.devices = [device];
-                      role.save();
-                      device.save();
-                      credential.save();
 						          assert.equal(user.name, 'Neil', 'should have set the first name');
 						          assert.equal(user.surname, 'Armstrong', 'should have set the last name');
-						          assert.equal(user.devices.length, 0, 'There is no device');
+						          assert.equal(user.devices.length, 1, 'There is no device');
+                      assert.equal(user.credentials.length, 1, 'There is no credential');
 						          var datTemp = user.toJSON();
-						          console.log(datTemp);
+						          //console.log(datTemp);
                       return user.save();
-										});
+										}).catch(function(err) {
+                      return console.log(err, err.stack);
+                    });
 								});
 						});
         });
@@ -109,7 +107,7 @@ suite('User', function () {
 
     test('should be able to retrieve a user', function() {
       var User = waterline.collections.user;
-      return User.find().exec(function(err, users){
+      return User.find().populate(['roles', 'credentials', 'devices']).exec(function(err, users){
         console.log("User find");
         if (err) {
           console.log("error!");
@@ -117,10 +115,15 @@ suite('User', function () {
         } else {
           console.log('length: %d', users.length);
           var userTest = users.pop();
-          return console.log("Nome %j", userTest.toJSON());
+          console.log("Found credentials: %j", userTest.credentials);
+          console.log("Found roles: %j", userTest.roles);
+          console.log("Found devices: %j", userTest.devices);
+          return console.log("Found user: %j", userTest.toJSON());
         }
       });
     });
+
+
     //TODO: if create a new User, also generate all data needed to it
     test('Find or create user', function(){
       var User = waterline.collections.user;
@@ -133,7 +136,6 @@ suite('User', function () {
         surname: 'Cavalcante',
         email: 'jao@ninoapp.com.br',
         password: 'password',
-        username: 'joa',
         cel: '55 9 9919 9919',
         confirmed: true
       }).then(function (users) {
@@ -141,21 +143,46 @@ suite('User', function () {
           console.log("users length: %d", users.length);
           console.log("users: %j", users.toJSON());
           var user = users.pop();
-          console.log("user: %j", user.toJSON());
+          console.log("Array!");
+          console.log("User findOrCreate: %j", user.toJSON());
         } else{
           var user2 = users;
-          console.log("user: %j", user2.toJSON());
+          console.log("User findOrCreate: %j", user2.toJSON());
        }
-      });
+     }).catch(function(err) {
+       console.log(err);
+     });
     });
 
-    // TODO: delete all data related to User
     test('should delete user', function() {
       var User = waterline.collections.user;
+      var Device = waterline.collections.device;
+      var Credential = waterline.collections.credential;
+      var Roles = waterline.collections.role;
 
-      return User.destroy({name: 'Neil'}).then( function(err){
-          return console.log(err.stack);
+      return User.destroy({name: 'Neil', surname: 'Armstrong'}).then(function(users){
+        console.log("Entrou destroy");
+        console.log(users);
+        var userIds = users.map(function(user){return user.id;});
+        console.log(userIds);
+        return Device.destroy({owner: userIds}).then(function(devices){
+          console.log(devices);
+          return Credential.destroy({owner: userIds}).then(function(credentials) {
+            console.log(credentials);
+            return Roles.destroy({owner: userIds}).then(function(roles) {
+              console.log(roles);
+            }).catch(function(err) {
+              if (err) {
+                return console.log(err);
+              }
+            });
+          });
+        });
+      }).catch(function(err) {
+        if (err) {
+          return console.log(err);
+        }
       });
-    });
 
+    });
 });

@@ -52,15 +52,15 @@ module.exports = Waterline.Collection.extend({
 		},
 		roles: {
 			collection: 'role',
-			via: 'user'
+			via: 'owner'
 		},
 		credentials: {
 			collection: 'credential',
-			via: 'user'
+			via: 'owner'
 		},
 		devices: {
 			collection: 'device',
-			via: 'user'
+			via: 'owner'
 		},
 		toJSON: function() {
       var obj = this.toObject();
