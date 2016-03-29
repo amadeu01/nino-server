@@ -16,8 +16,7 @@ module.exports =  Waterline.Collection.extend({
 			type: {
 				type: 'string',
 				size: 15,
-				enum: ['educator', 'guardian', 'owner', 'nd'],
-				defaultsTo: 'nd',
+				enum: ['educator', 'guardian'],
 				required: true
 			},
 			privileges: {

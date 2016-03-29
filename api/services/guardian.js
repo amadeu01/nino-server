@@ -1,3 +1,8 @@
+/**
+* Amadeu Cavalcante
+* Module services
+*/
+
 var models = require('../models');
 var User = models.waterline.collections.user;
 var Guardians = models.waterline.collections.guardian;

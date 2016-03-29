@@ -1,3 +1,8 @@
+/**
+* Amadeu Cavalcante
+* Module services
+*/
+
 var models = require('../models');
 var services = require ('../services');
 
@@ -12,7 +17,7 @@ var studentsServices = {
 	},
 	update: function(params, done) {
 		models.student.update({id: params.id}, function(err, student) {
-			done(err, baby);
+			done(err, student);
 		});
 	},
   read: function() {

@@ -110,7 +110,7 @@ suite('Guardians Services', function () {
       }).catch(function(err) {
         console.log(err);
         return;
-      })
+      });
     });
 
     test('should delete a guardian', function(){

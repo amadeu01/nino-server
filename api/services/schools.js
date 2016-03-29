@@ -1,67 +1,67 @@
 /**
-* Amadeu Cavalcante
+* Carlos Millani
 * Module services
 */
-var models = require('../models');
 
+var models = require('../models');
+var Users = models.waterline.collections.user;
+var Educators = models.waterline.collections.educator;
+var Roles = models.waterline.collections.role;
+var Devices = models.waterline.collections.device;
+var Credentials = models.waterline.collections.credential;
+var Schools = models.waterline.collections.school;
+
+
+var validator = require('validator');
+ 
 var schoolServices = {
-	create: function() {
-		app.models.school.create({
-			name: req.body.school.name,
-			email: req.body.school.email,
-			cnpj: req.body.school.cnpj,
-			telephone: req.body.school.telephone,
-			addr: req.body.school.addr,
+	create: function(parameters) {
+		if (!validator.isEmail(parameters.school.email)) throw 'Invalid School Mail'; //TODO Replace with real error
+		if (!validator.isEmail(parameters.owner.email)) throw 'Invalid Owner Mail'; 
+		
+		return Schools.create({
+			name: parameters.school.name,
+			email: parameters.school.email,
+			cnpj: parameters.school.cnpj,
+			telephone: parameters.school.telephone,
+			addr: parameters.school.addr,
 			active: true
-		}).exec(function(err, school) {
-			if (err) {
-				res.status(500);
-				res.end();
-				return;
-			}
-			app.models.user.create({
-					name: req.body.owner.name, 
-					surname: req.body.owner.surname, 
-					password: req.body.owner.password, 
-					email: req.body.owner.email,
-					cel: req.body.owner.cel
-			}).exec(function(err, user) {
-				if (err) {
-					res.status(500);
-					res.end();
-					return;
-				}
-				app.models.role.create({
-					type: 'owner',
+		})
+		.then (function(school) {
+			// gSchool = school;
+			return Users.create({
+					name: parameters.owner.name, 
+					surname: parameters.owner.surname, 
+					password: parameters.owner.password, 
+					email: parameters.owner.email,
+					cel: parameters.owner.cel
+			})
+			.then(function(user) {
+				// gUser = user;
+				return Roles.create({
+					type: 'educator',
 					privileges: 100, //TODO: set to all
 					user: user.id
-				}).exec(function(err, role) {
-					if (err) {
-						res.status(500);
-						res.end();
-						return;
-					}
-					app.models.educator.create({
-						role: role.id,
-						school: school.id
-					}).exec(function(err, educator) {
-						if (err) {
-							res.status(500);
-							res.end();
-							return;
-						}
-						school.owner = educator.id;
-						school.save(function(err) {
-							if (err) {
-								res.status(500);
-								res.end();
-								return;
-							}
-							res.json({school:school.id, educator: educator.id});
-						});
-					});
 				});
-			});
+			})
+			.then(function(role) {
+				// gRole = role;
+				return Educators.create({
+					role: role.id,
+					school: school.id
+				});
+			})
+			.then(function(educator) {
+				// gEducator = educator;
+				school.owner = educator.id;
+				return school.save()
+				.then(function(){
+					return ({school:school.id, educator: educator.id});
+				})
+			})
+		})
+		.catch(function(error) {
+			throw error;
 		});
 	},
 	delete: function() {
@@ -70,8 +70,8 @@ var schoolServices = {
 	update: function() {
 
 	},
-	read: function() {
-
+	read: function(parameters) {
+		return Schools.findOne(parameters)
 	}
 };
 
