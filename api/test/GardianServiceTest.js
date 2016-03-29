@@ -64,14 +64,15 @@ suite('Guardians Services', function () {
         privileges: 1
       };
       var parameters = {
-  			name: 'Julia'
+  			name: 'Julia',
+				email: 'mariaroberts@emailcom'
       };
       var newParameters = {
         password: 'new_password'
       };
       return Service.create(parametersCreate).then(function(){
         return Service.update(parameters, newParameters).then(function(user){
-          console.log(user);
+          // console.log(user);
         }).catch(function(err){
           console.log(err);
         });
@@ -89,7 +90,7 @@ suite('Guardians Services', function () {
       };
 
       return Service.update(parameters, newParameters).then(function(user){
-        console.log(user);
+        // console.log(user);
       }).catch(function(err){
         console.log("Error for update guardian!");
         console.log(err);
@@ -104,7 +105,8 @@ suite('Guardians Services', function () {
   			email: 'juroberts@emailcom'
       };
       return Service.read(parameters).then(function(users){
-        return console.log(users);
+        // return console.log(users);
+				return;
       }).catch(function(err) {
         console.log(err);
         return;

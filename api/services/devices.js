@@ -4,7 +4,7 @@
 */
 var models = require('../models');
 
-var parentSNSServices = {
+var deviceServices = {
 	create: function() {
 
 	},
@@ -19,4 +19,4 @@ var parentSNSServices = {
 	}
 };
 
-module.exports = parentSNSServices;
+module.exports = deviceServices;
