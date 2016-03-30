@@ -11,10 +11,19 @@ var validator = function(req, res, next, id) {
 };
 
 router.param('guardian_id', validator);
-router.param('baby_id', validator);
+router.param('student_id', validator);
 
-/* Get list of Baby Guardians. */
-router.get('/babies/:baby_id', function(req, res, next) {
+/* Get list of Student's Guardians. */
+router.get('/guardians/:student_id', function(req, res, next) {
+	app.models.guardian.find({student: req.body.student_id}).populateAll.then(function(guardians){
+		if (guardians.length === 0) {
+			throw Error('No guardian found.')
+		}
+		res.json(guardians);
+	}).catch(function(err){
+		res.send(err);
+		res.sendStatus(500);
+	});
   res.send('WIP');
 });
 
@@ -24,7 +33,7 @@ router.get('/:guardian_id', function(req, res, next) {
 });
 
 /*Add a Guardian to a Baby */
-router.post('/:guardian_id/babies/:baby_id', function(req, res, next) {
+router.post('/:guardian_id/student/:student_id', function(req, res, next) {
 	//TODO: check if exists before creating, can just be adding a role. Maybe another route?
 	//Checking user credentials
 	if (!req.token) {
@@ -37,7 +46,7 @@ router.post('/:guardian_id/babies/:baby_id', function(req, res, next) {
 	//Creating Educator
 	app.models.user.create({
 		name: req.body.user.name,
-		surname: req.body.user.surname, 
+		surname: req.body.user.surname,
 		password: req.body.user.password,
 		email: req.body.user.email,
 		cel: req.body.user.cel
