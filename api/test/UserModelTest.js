@@ -10,6 +10,7 @@ var sailsMemoryAdapter = require('sails-memory');
 
 suite('User', function () {
     var waterline = new Waterline();
+		
     var config = {
         adapters: {
             'sails-memory': sailsMemoryAdapter,
@@ -108,17 +109,18 @@ suite('User', function () {
     test('should be able to retrieve a user', function() {
       var User = waterline.collections.user;
       return User.find().populate(['roles', 'credentials', 'devices']).exec(function(err, users){
-        console.log("User find");
+        // console.log("User find");
         if (err) {
           console.log("error!");
           return console.log(err.stack);
         } else {
-          console.log('length: %d', users.length);
+          // console.log('length: %d', users.length);
           var userTest = users.pop();
-          console.log("Found credentials: %j", userTest.credentials);
-          console.log("Found roles: %j", userTest.roles);
-          console.log("Found devices: %j", userTest.devices);
-          return console.log("Found user: %j", userTest.toJSON());
+          // console.log("Found credentials: %j", userTest.credentials);
+          // console.log("Found roles: %j", userTest.roles);
+          // console.log("Found devices: %j", userTest.devices);
+          // return console.log("Found user: %j", userTest.toJSON());
+					return;
         }
       });
     });
@@ -140,14 +142,14 @@ suite('User', function () {
         confirmed: true
       }).then(function (users) {
         if (users.constructor === Array) {
-          console.log("users length: %d", users.length);
-          console.log("users: %j", users.toJSON());
+          // console.log("users length: %d", users.length);
+          // console.log("users: %j", users.toJSON());
           var user = users.pop();
-          console.log("Array!");
-          console.log("User findOrCreate: %j", user.toJSON());
+          // console.log("Array!");
+          // console.log("User findOrCreate: %j", user.toJSON());
         } else{
           var user2 = users;
-          console.log("User findOrCreate: %j", user2.toJSON());
+          // console.log("User findOrCreate: %j", user2.toJSON());
        }
      }).catch(function(err) {
        console.log(err);
@@ -161,16 +163,15 @@ suite('User', function () {
       var Roles = waterline.collections.role;
 
       return User.destroy({name: 'Neil', surname: 'Armstrong'}).then(function(users){
-        console.log("Entrou destroy");
-        console.log(users);
+        // console.log(users);
         var userIds = users.map(function(user){return user.id;});
-        console.log(userIds);
+        // console.log(userIds);
         return Device.destroy({owner: userIds}).then(function(devices){
-          console.log(devices);
+          // console.log(devices);
           return Credential.destroy({owner: userIds}).then(function(credentials) {
-            console.log(credentials);
+            // console.log(credentials);
             return Roles.destroy({owner: userIds}).then(function(roles) {
-              console.log(roles);
+              // console.log(roles);
             }).catch(function(err) {
               if (err) {
                 return console.log(err);

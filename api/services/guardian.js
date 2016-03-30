@@ -1,3 +1,8 @@
+/**
+* Amadeu Cavalcante
+* Module services
+*/
+
 var models = require('../models');
 var User = models.waterline.collections.user;
 var Guardians = models.waterline.collections.guardian;
@@ -49,15 +54,15 @@ var guardiansServices = {
 	},
 	delete: function(parameters) {
 		return User.destroy(parameters).then(function(users){
-			console.log(users);
+			// console.log(users);
 			var userIds = users.map(function(user){return user.id;});
-			console.log(userIds);
+			// console.log(userIds);
 			return Devices.destroy({owner: userIds}).then(function(devices){
-				console.log(devices);
+				// console.log(devices);
 				return Credentials.destroy({owner: userIds}).then(function(credentials) {
-					console.log(credentials);
+					// console.log(credentials);
 					return Roles.destroy({owner: userIds}).then(function(roles) {
-						console.log(roles);
+						// console.log(roles);
 					}).catch(function(err) {
 						if (err) {
 							return console.log(err);
@@ -81,15 +86,16 @@ var guardiansServices = {
 	},
 	update: function(parameters, newParameters) {
 		return User.find(parameters).then(function(users){
+			// console.log(parameters);
 			if (users.length === 0 ) {
 				throw Error('NO user was found');
 			}
 			if (users.length >= 2) {
-				console.log(users.pop());
+				// console.log(users.pop());
 				throw Error('More than 1 user was found, it should be unique for changing.');
 			}
 			return User.update(parameters, newParameters).then(function(user){
-				console.log(user);
+				// console.log(user);
 			}).catch(function(err) {
 				return console.log(err);
 			});
