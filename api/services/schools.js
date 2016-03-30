@@ -13,12 +13,12 @@ var Schools = models.waterline.collections.school;
 
 
 var validator = require('validator');
- 
+
 var schoolServices = {
 	create: function(parameters) {
 		if (!validator.isEmail(parameters.school.email)) throw 'Invalid School Mail'; //TODO Replace with real error
-		if (!validator.isEmail(parameters.owner.email)) throw 'Invalid Owner Mail'; 
-		
+		if (!validator.isEmail(parameters.owner.email)) throw 'Invalid Owner Mail';
+
 		return Schools.create({
 			name: parameters.school.name,
 			email: parameters.school.email,
@@ -30,9 +30,9 @@ var schoolServices = {
 		.then (function(school) {
 			// gSchool = school;
 			return Users.create({
-					name: parameters.owner.name, 
-					surname: parameters.owner.surname, 
-					password: parameters.owner.password, 
+					name: parameters.owner.name,
+					surname: parameters.owner.surname,
+					password: parameters.owner.password,
 					email: parameters.owner.email,
 					cel: parameters.owner.cel
 			})
@@ -57,8 +57,8 @@ var schoolServices = {
 				return school.save()
 				.then(function(){
 					return ({school:school.id, educator: educator.id});
-				})
-			})
+				});
+			});
 		})
 		.catch(function(error) {
 			throw error;
@@ -71,7 +71,7 @@ var schoolServices = {
 
 	},
 	read: function(parameters) {
-		return Schools.findOne(parameters)
+		return Schools.findOne(parameters);
 	}
 };
 

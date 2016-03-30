@@ -19,7 +19,7 @@ suite('School Services', function () {
 	        done();
 	    });
 	});
-	
+
   teardown(function () {
       var adapters = models.config.adapters || {};
       var promises = [];
@@ -36,7 +36,7 @@ suite('School Services', function () {
 
       return Promise.all(promises);
   });
-	
+
   test('Create School + Owner AND check read values', function () {
 		var school = require('../services/schools.js');
 		var parameters = {
@@ -66,11 +66,11 @@ suite('School Services', function () {
 			assert.strictEqual(record.cnpj, '123145', 'Data not coherent - cnpj');
 			assert.strictEqual(record.telephone, '32124127', 'Data not coherent - telephone');
 			assert.strictEqual(record.addr, 'Rua Condessa do Pinhal, 542', 'Data not coherent - addr');
-		}) 
-		.catch(function(error) {
-			throw error;
-			console.log(error);
 		})
+		.catch(function(error) {
+			console.log(error);
+			throw error;
+		});
   });
-	
+
 });

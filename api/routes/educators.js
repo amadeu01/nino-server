@@ -40,7 +40,7 @@ router.get('/schools/:school_id', function(req, res, next) {
 			{
 				idquery.push(educators[each].role);
 			}
-			app.models.role.find({id: idquery}).populate('user').exec(function(err, users) {
+			app.models.role.find({id: idquery}).populate('owner').exec(function(err, users) {
 				if (err) {
 					res.status(500);
 					res.json(err);

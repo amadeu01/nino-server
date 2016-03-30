@@ -15,24 +15,57 @@ router.param('student_id', validator);
 
 /* Get list of Student's Guardians. */
 router.get('/guardians/:student_id', function(req, res, next) {
-	app.models.guardian.find({student: req.body.student_id}).populateAll.then(function(guardians){
-		if (guardians.length === 0) {
-			throw Error('No guardian found.')
+	if (!req.token) {
+		res.status(401);
+		res.end();
+		return;
+	}
+	app.models.guardian.find({id: req.token.role.id}).populate('students').then(function(guardians) {
+		var results = [];
+		//guardian may have more than 1 student
+		var thereIsStudent = true;
+		for (var i = 0; i < guardians.length; i++) {
+			thereIsStudent = true;
+			var guardian = guardians[i];
+			for (var k = 0; i < guardian.students.length; k++){
+				var student = guardian.students[k];
+				if (student === student_id) {
+					results.push(guardian);
+				}
+			}
 		}
-		res.json(guardians);
+		if (results.length === 0)
+		{
+			res.status(500);
+			res.end();
+			throw Error('No guardian found');
+		} else {
+			res.status(200)
+			res.json(results);
+		}
 	}).catch(function(err){
-		res.send(err);
-		res.sendStatus(500);
+		//Miss handle Error
+		//res.status(500);
+		//res.end();
 	});
-  res.send('WIP');
 });
 
 /*Get Guardian info*/
 router.get('/:guardian_id', function(req, res, next) {
-  res.send('WIP');
+
+	app.models.guardian.findOne({ id: req.params.guardian_id }).populate('role').then(function(guardian) {
+		return app.models.role.findOne({id: guardian.role.id}).populate('owner').then(function(user) {
+			res.json(user);
+			return;
+		});
+
+	}).catch(function(err) {
+		res.status(500);
+		res.end();
+	});
 });
 
-/*Add a Guardian to a Baby */
+/*Add a Guardian to a Student */
 router.post('/:guardian_id/student/:student_id', function(req, res, next) {
 	//TODO: check if exists before creating, can just be adding a role. Maybe another route?
 	//Checking user credentials
