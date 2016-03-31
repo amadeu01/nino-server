@@ -27,4 +27,4 @@ module.exports =  Waterline.Collection.extend({
         model: 'user'
       }
 		}
-	});
+});

@@ -49,13 +49,20 @@ var educatorServices = {
 	update: function() {
 
 	},
+	read: function(parameters) {
+		return Educators.findOne(parameters)
+		.then(function (educator) {
+			return Roles.findOne({id: educator.role})
+			.populate('owner');
+		});
+	},
 	readAllFromSchool: function(parameters) {
-		return app.models.educator.find({school:parameters.schoolID})
+		return Educators.find({school:parameters.schoolID})
 		.then(function(educators) {
 			educators.map(function(educator) {
 				return educator.role;
 			});
-			return app.models.role.find({id: educators}).populate('owner');
+			return Roles.find({id: educators}).populate('owner');
 		});
 	}
 };
