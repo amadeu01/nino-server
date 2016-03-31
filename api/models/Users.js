@@ -10,6 +10,8 @@
 var Waterline = require('waterline');
 // For applying hash to password
 var bcrypt = require('bcrypt');
+//To create an unique id to refer to that user
+var uid = require('uid-safe')
 //User model
 module.exports = Waterline.Collection.extend({
 	identity : 'user',
@@ -50,6 +52,11 @@ module.exports = Waterline.Collection.extend({
 		confirmed: {
 			type: 'boolean'
 		},
+		confirmationUID: {
+			type: 'string',
+			unique: true,
+			index: true
+		},
 		roles: {
 			collection: 'role',
 			via: 'owner'
@@ -87,5 +94,9 @@ module.exports = Waterline.Collection.extend({
 		validPassword: function(password) {
 			return (password == this.toObject().password);
 		}
-	}
+	},
+	beforeCreate: function (values, cb) {
+    values.confirmationUID = uid.sync(100);
+    cb();
+  }
 });

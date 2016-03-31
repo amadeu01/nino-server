@@ -60,7 +60,7 @@ suite('Guardians Services', function () {
   			password: 'passwordMaria',
   			email: 'mariaroberts@emailcom',
   			cel: '1 9999990000',
-  			confirmed: true,
+  			confirmed: false,
         privileges: 1
       };
       var parameters = {
