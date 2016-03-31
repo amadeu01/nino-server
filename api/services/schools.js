@@ -11,8 +11,9 @@ var Devices = models.waterline.collections.device;
 var Credentials = models.waterline.collections.credential;
 var Schools = models.waterline.collections.school;
 
-
 var validator = require('validator');
+
+var permissions = require('../permissions');
 
 var schoolServices = {
 	create: function(parameters) {
@@ -40,7 +41,7 @@ var schoolServices = {
 				// gUser = user;
 				return Roles.create({
 					type: 'educator',
-					privileges: 100, //TODO: set to all
+					privileges: permissions.all(), //TODO: set to all
 					user: user.id
 				});
 			})

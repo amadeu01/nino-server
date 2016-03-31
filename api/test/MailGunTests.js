@@ -21,7 +21,6 @@ suite('Mail Services', function () {
 		.catch(function(error) {
 			console.log(error);
 			assert.equal(false, true, 'Deu ruim parça');
-		})
+		});
 	});
-
 });

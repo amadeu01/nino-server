@@ -5,6 +5,13 @@ module.exports = {
 		if (permission < 1<<18) return true;
 		else return false;
 	},
+	all : function() {
+		var maxPermission = 0;
+		for (var item in this.types) {
+			maxPermission |= this.types[item];
+		}
+		return maxPermission;
+	},
 	types: {
 		readAllSchoolStudents: 1 << 0,
 		createUpdateSchoolStudents: 1 << 1,

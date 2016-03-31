@@ -40,7 +40,7 @@ router.get('/guardians/:student_id', function(req, res, next) {
 			res.end();
 			throw Error('No guardian found');
 		} else {
-			res.status(200)
+			res.status(200);
 			res.json(results);
 		}
 	}).catch(function(err){

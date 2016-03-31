@@ -18,37 +18,33 @@ router.param('classroom_id', validator);
 /* Get users listing for a school. */
 router.get('/schools/:school_id', function(req, res, next) {
 	if (!req.token) {
-		res.status(401);
+		res.status(401); //User not logged in
 		res.end();
 		return;
 	}
-	app.models.educator.findOne({id: req.token.role.id}).exec(function(err, educator) {
+	app.models.educator.findOne({id: req.token.role.id})
+	.then(function(educator) {
 		if (educator.school != req.params.school_id)
 		{
-			res.status(401);
+			res.status(401); //User is not member of that school, thus can't modify
 			res.end();
 			return;
 		}
-		app.models.educator.find({school:req.params.school_id}).exec(function(err, educators) {
-			if (err) {
-				res.status(500);
-				res.json(err);
-				return;
-			}
-			var idquery = [];
-			for (var each in educators)
-			{
-				idquery.push(educators[each].role);
-			}
-			app.models.role.find({id: idquery}).populate('owner').exec(function(err, users) {
-				if (err) {
-					res.status(500);
-					res.json(err);
-					return;
-				}
-				res.json(users);
-			});
-		});
+		return app.models.roles.findOne({id: educator.role});
+	})
+	.then(function(role) {
+		if (!permissions.check(role.privileges, permissions.types.readAllSchoolEducators)) {
+			res.status(401); //User doesn't have permissions
+			res.end();
+			return;
+		}
+		//All checked, should proceed
+		res.end();
+	})
+	.catch(function(err) {
+		res.status(500); //User not logged in
+		res.end();
+		return;
 	});
 });
 
@@ -62,55 +58,9 @@ router.post('/schools/:school_id', function(req, res, next) {
 		return;
 	}
 	// console.log(req.token);
-
+	res.end();
 	//Creating Educator
-	app.models.user.create({
-		name: req.body.user.name,
-		surname: req.body.user.surname,
-		password: req.body.user.password,
-		email: req.body.user.email,
-		cel: req.body.user.cel
-	}).exec(function(err, user) {
-		if (err) {
-			res.json(err);
-			return;
-		}
-		console.log(user);
-		app.models.role.create({
-				type: 'educator',
-				privileges: req.body.privileges
-		}).exec(function(err, role) {
-			if (err) {
-				res.json(err);
-				return;
-			}
-			console.log(role);
-			user.roles.add(role.id);
-			user.save(function(err){
-				if (err) {
-					res.json(err);
-					return;
-				}
-				app.models.educator.create({
-					role: role.id,
-					school: req.params.school_id
-				}).exec(function(err, educator) {
-					if (err) {
-						res.json(err);
-						return;
-					}
-					res.json(educator);
-					// console.log(educator);
-					// app.models.user.find().populate('roles').exec(function(err,user) {
-					// 	console.log(user);
-					// })
-					// app.models.educator.find().populate('role').populate('school').exec(function(err,educator) {
-					// 	console.log(educator);
-					// })
-				});
-			});
-		});
-	});
+	
 });
 
 

@@ -11,7 +11,7 @@ var Waterline = require('waterline');
 // For applying hash to password
 var bcrypt = require('bcrypt');
 //To create an unique id to refer to that user
-var uid = require('uid-safe')
+var uid = require('uid-safe');
 //User model
 module.exports = Waterline.Collection.extend({
 	identity : 'user',
