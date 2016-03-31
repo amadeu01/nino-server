@@ -27,7 +27,7 @@ var educatorServices = {
 			return Roles.create({
 				type: 'educator',
 				privileges: parameters.privileges, //TODO: set to all
-				user: user.id
+				owner: user.id
 			});
 		})
 		.then(function(role) {
@@ -52,8 +52,7 @@ var educatorServices = {
 	read: function(parameters) {
 		return Educators.findOne(parameters)
 		.then(function (educator) {
-			return Roles.findOne({id: educator.role})
-			.populate('owner');
+			return Roles.findOne({id: educator.role}).populate('owner');
 		});
 	},
 	readAllFromSchool: function(parameters) {
