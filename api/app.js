@@ -10,7 +10,7 @@ var jwt = require('jsonwebtoken');
 var app = express();
 module.exports = app;
 
-var babies = require('./routes/babies');
+var students = require('./routes/students');
 var educators = require('./routes/educators');
 var credentials = require('./routes/credentials');
 var devices = require('./routes/devices');
@@ -65,7 +65,7 @@ app.use(function(req, res, next) {
 	}
 });
 
-app.use('/babies', babies);
+app.use('/students', students);
 app.use('/educators', educators); 
 app.use('/credentials', credentials);
 app.use('/devices', devices);
