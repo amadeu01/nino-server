@@ -61,10 +61,6 @@ module.exports = Waterline.Collection.extend({
 			collection: 'role',
 			via: 'owner'
 		},
-		credentials: {
-			collection: 'credential',
-			via: 'owner'
-		},
 		devices: {
 			collection: 'device',
 			via: 'owner'

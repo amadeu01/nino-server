@@ -30,6 +30,10 @@ module.exports =  Waterline.Collection.extend({
         model: 'user',
         index: true,
         required: true
-      }
+      },
+			credentials: {
+				collection: 'credential',
+				via: 'device'
+			}
     }
   });

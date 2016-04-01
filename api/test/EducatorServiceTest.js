@@ -8,7 +8,7 @@ var models = require('../models');
 var myDiskAdapter = require('sails-disk');
 var sailsMemoryAdapter = require('sails-memory');
 
-suite('School Services', function () {
+suite('Educator Services', function () {
 
 	setup(function (done) {
 

@@ -19,10 +19,11 @@ var schools = require('./routes/schools');
 var subscriptions = require('./routes/subscriptions');
 var timeline = require('./routes/timeline');
 
+// var services = require ('./services');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.set('jwtSecret', 'neveperocoftwvamoninow');
 app.set('sha256Secret', 'beckedanilowhoftw');
 
 // uncomment after placing your favicon in /public
@@ -50,16 +51,7 @@ app.use(function(req, res, next) {
   // decode token
   if (token) {
     // verifies secret and checks exp
-    jwt.verify(token, app.get('jwtSecret'), function(err, decoded) {
-      if (err) {
-				//TODO: security problem: do something!
-        next();
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.token = decoded;
-        next();
-      }
-    });
+    
   } else {
 		next();
 	}
