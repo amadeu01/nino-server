@@ -22,6 +22,10 @@ module.exports = Waterline.Collection.extend({
     role: {
 			model: 'role',
 			required: true
-		}
+		},
+			active: {
+				type: 'boolean',
+				defaultsTo: true
+			}
   }
 });

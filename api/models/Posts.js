@@ -44,6 +44,10 @@ module.exports =  Waterline.Collection.extend({
         model: 'school',
         index: true,
         required: true
-      }
+      },
+			active: {
+				type: 'boolean',
+				defaultsTo: true
+			}
     }
   });

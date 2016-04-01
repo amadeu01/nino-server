@@ -69,6 +69,10 @@ module.exports = Waterline.Collection.extend({
 			collection: 'device',
 			via: 'owner'
 		},
+		active: {
+			type: 'boolean',
+			defaultsTo: true
+		},
 		toJSON: function() {
       var obj = this.toObject();
       delete obj.password;

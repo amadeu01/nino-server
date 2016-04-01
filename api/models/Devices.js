@@ -22,9 +22,10 @@ module.exports =  Waterline.Collection.extend({
         type: 'string',
         size: 120
       },
-      enable: {
-        type: 'boolean'
-      },
+			active: {
+				type: 'boolean',
+				defaultsTo: true
+			},
       owner: {
         model: 'user',
         index: true,

@@ -26,7 +26,8 @@ module.exports =  Waterline.Collection.extend({
       type: 'string',
       size: 50,
       unique: true,
-      required: true
+      required: true,
+			index: true
     },
     //reference to s3
     logotype: {
@@ -60,8 +61,9 @@ module.exports =  Waterline.Collection.extend({
       collection: 'classroom',
       via: 'school'
     },
-    active: {
-      type: 'boolean'
-    }
+		active: {
+			type: 'boolean',
+			defaultsTo: true
+		}
   }
 });

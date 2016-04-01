@@ -11,6 +11,10 @@ module.exports =  Waterline.Collection.extend({
       },
       language: {
         type: 'string'
-      }
+      },
+			active: {
+				type: 'boolean',
+				defaultsTo: true
+			}
     }
   });

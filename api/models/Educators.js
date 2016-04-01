@@ -24,6 +24,10 @@ module.exports =  Waterline.Collection.extend({
 			school: {
 				model: 'school',
 				required: true
+			},
+			active: {
+				type: 'boolean',
+				defaultsTo: true
 			}
     }
   });

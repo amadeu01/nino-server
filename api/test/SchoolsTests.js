@@ -72,5 +72,32 @@ suite('School Services', function () {
 			throw error;
 		});
   });
+	
+  test('Update School', function () {
+		var school = require('../services/schools.js');
+		return school.update({email: 'email@mail.com'}, {name: 'Escola Danilo'})
+		.then(function(updated) {
+			return school.read({id: updated[0].id})
+		})
+		.then(function(read) {
+			assert.strictEqual(read.name, 'Escola Danilo', 'Data not coherent - name');
+		})
+	});
+	
+  test('Delete School', function () {
+		var school = require('../services/schools.js');
+		var educator = require('../services/educators');
+		return school.delete({email: 'email@mail.com'})
+		.then(function(deleted) {
+			return school.read({email: 'email@mail.com'});
+		})
+		.then(function(read) {
+			assert.strictEqual(read, undefined, 'Should be inactive');
+			return educator.readAllFromSchool({emai: 'email@email.com'});
+		})
+		.then(function(read) {
+			assert.strictEqual(read.length, 0, 'Should be inactive');
+		})
+	});
 
 });

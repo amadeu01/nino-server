@@ -25,6 +25,10 @@ module.exports =  Waterline.Collection.extend({
 			},
       owner: {
         model: 'user'
-      }
+      },
+			active: {
+				type: 'boolean',
+				defaultsTo: true
+			}
 		}
 });

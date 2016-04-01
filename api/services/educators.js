@@ -38,30 +38,46 @@ var educatorServices = {
 		})
 		.then(function(educator) {
 			return ({educator: educator.id});
-		})
-		.catch(function(error) {
-			throw error;
 		});
 	},
-	delete: function() {
-
+	delete: function(parameters) {
+		return Educators.findOne(parameters)
+		.then(function(educator) {
+			educator.active = false;
+			educator.save()
+			return Roles.findOne({id: educator.role});
+		})
+		.then(function (role) {
+			role.active = false;
+			return role.save();
+		})
 	},
-	update: function() {
-
+	update: function(parameters, newParatemers, roleParameters) {
+		parameters.active = true;
+		return Educators.update(parameters, newParatemers)
+		.then(function(educator) {
+			return Roles.findOne({id: educator[0].role});
+		})
+		.then(function(role) {
+			return Roles.update({id: role.id}, roleParameters);
+		})
 	},
 	read: function(parameters) {
+		parameters.active = true;
 		return Educators.findOne(parameters)
 		.then(function (educator) {
-			return Roles.findOne({id: educator.role}).populate('owner');
+			if (educator) return Roles.findOne({id: educator.role}).populate('owner');
+			else return undefined;
 		});
 	},
 	readAllFromSchool: function(parameters) {
-		return Educators.find({school:parameters.schoolID})
+		parameters.active = true;
+		return Educators.find(parameters)
 		.then(function(educators) {
-			educators.map(function(educator) {
+			var newList = educators.map(function(educator) {
 				return educator.role;
 			});
-			return Roles.find({id: educators}).populate('owner');
+			return Roles.find({id: newList}).populate('owner');
 		});
 	}
 };

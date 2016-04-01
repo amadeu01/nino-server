@@ -29,7 +29,6 @@ var schoolServices = {
 			active: true
 		})
 		.then (function(school) {
-			// gSchool = school;
 			return Users.create({
 					name: parameters.owner.name,
 					surname: parameters.owner.surname,
@@ -38,7 +37,6 @@ var schoolServices = {
 					cel: parameters.owner.cel
 			})
 			.then(function(user) {
-				// gUser = user;
 				return Roles.create({
 					type: 'educator',
 					privileges: permissions.all(), //TODO: set to all
@@ -46,14 +44,12 @@ var schoolServices = {
 				});
 			})
 			.then(function(role) {
-				// gRole = role;
 				return Educators.create({
 					role: role.id,
 					school: school.id
 				});
 			})
 			.then(function(educator) {
-				// gEducator = educator;
 				school.owner = educator.id;
 				return school.save()
 				.then(function(){
@@ -65,13 +61,32 @@ var schoolServices = {
 			throw error;
 		});
 	},
-	delete: function() {
-
+	delete: function(parameters) {
+		return Schools.findOne(parameters)
+		.then(function(school) {
+			school.active = false;
+			school.save();
+			return Educators.find({school:school.id, active: true})
+		})
+		.then(function(educators) {
+			var eduList = educators.map(function(educator){return educator.id});
+			return Educators.update({id: eduList}, {active: false});
+		})
+		.then(function(deleted) {
+			var eduList = deleted.map(function(educator){return educator.id});
+			return Roles.find({id: eduList});
+		})
+		.then(function(roles) {
+			var roleList = roles.map(function(role){return role.id});
+			return Roles.update({id: roleList}, {active: false});
+		});
 	},
-	update: function() {
-
+	update: function(parameters, newParatemers) {
+		parameters.active = true;
+		return Schools.update(parameters, newParatemers);
 	},
 	read: function(parameters) {
+		parameters.active = true;
 		return Schools.findOne(parameters);
 	}
 };
