@@ -92,7 +92,7 @@ var schoolServices = {
 		return Schools.update(parameters, newParatemers);
 	},
 	read: function(parameters) {
-		if (!parameters) return undefined
+		if (!parameters) throw 'Error'
 		parameters.active = true;
 		return Schools.findOne(parameters);
 	}
