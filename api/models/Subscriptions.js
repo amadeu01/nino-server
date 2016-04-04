@@ -12,6 +12,10 @@ module.exports =  Waterline.Collection.extend({
       language: {
         type: 'string'
       },
+			unsubshash: {
+				type: 'string',
+				required: true
+			},
 			active: {
 				type: 'boolean',
 				defaultsTo: true
