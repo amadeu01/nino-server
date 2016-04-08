@@ -50,7 +50,7 @@ app.use(function(req, res, next) {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   // decode token
   if (token) {
-    // verifies secret and checks exp
+    // verifies secret and checks exp - Gets params and proceed! <-TODO
     
   } else {
 		next();
