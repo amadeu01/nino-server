@@ -15,7 +15,7 @@ var validator = require('validator');
 
 var educatorServices = {
 	create: function(parameters) {
-		if (!validator.isEmail(parameters.user.email)) throw 'Invalid School Mail'; //TODO Replace with real error
+		if (!validator.isEmail(parameters.user.email)) throw errors.invalidParameters('Invalid User email');
 
 		return Users.create({
 				name: parameters.user.name,
@@ -25,30 +25,30 @@ var educatorServices = {
 				cel: parameters.user.cel
 		})
 		.then(function(user) {
-			if (!user) throw 'Error';
+			if (!user) throw errors.internalError('User - Creation Error');
 			return Roles.create({
 				type: 'educator',
-				privileges: parameters.privileges, //TODO: set to all
+				privileges: parameters.privileges,
 				owner: user.id
 			});
 		})
 		.then(function(role) {
-			if (!role) throw 'Error';
+			if (!role) throw errors.internalError('Role - Creation Error');
 			return Educators.create({
 				role: role.id,
 				school: parameters.schoolID
 			});
 		})
 		.then(function(educator) {
-			if (!educator) throw 'Error';
+			if (!educator) throw errors.internalError('Educator - Creation Error');
 			return ({educator: educator.id});
 		});
 	},
 	delete: function(parameters) {
-		if (!parameters) throw 'Error';
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		return Educators.findOne(parameters)
 		.then(function(educator) {
-			if (!educator) throw 'Error';
+			if (!educator) throw errors.inexistentRegister('Educator - Finding Error');
 			educator.active = false;
 			educator.save();
 			return Roles.findOne({id: educator.role});
@@ -59,20 +59,20 @@ var educatorServices = {
 		});
 	},
 	update: function(parameters, newParatemers, roleParameters) {
-		if (!parameters || !newParatemers || !roleParameters) throw 'Error';
+		if (!parameters || !newParatemers || !roleParameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
 		return Educators.update(parameters, newParatemers)
 		.then(function(educator) {
-			if (!educator) throw 'Error';
+			if (!educator) throw errors.inexistentRegister('Educator - Finding Error');
 			return Roles.findOne({id: educator[0].role});
 		})
 		.then(function(role) {
-			if (!role) throw 'Error';
+			if (!role) throw errors.inexistentRegister('Role - Finding Error');
 			return Roles.update({id: role.id}, roleParameters);
 		});
 	},
 	read: function(parameters) {
-		if (!parameters) throw 'Error';
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
 		return Educators.findOne(parameters)
 		.then(function (educator) {
@@ -81,7 +81,7 @@ var educatorServices = {
 		});
 	},
 	readAllFromSchool: function(parameters) {
-		if (!parameters) throw 'Error';
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
 		return Educators.find(parameters)
 		.then(function(educators) {

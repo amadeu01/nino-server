@@ -28,7 +28,7 @@ var credentialServices = {
 	delete: function(token) {
 		return Credentials.findOne({token: token})
 		.then(function(cred) {
-			if (!cred) throw 'Error';
+			if (!cred) throw errors.inexistentRegister('Credential - Finding Error');
 			cred.active = false;
 			return cred.save();
 		});
@@ -36,8 +36,8 @@ var credentialServices = {
 	update: function(token) {
 		return Credentials.findOne({token: token})
 		.then(function(cred) {
-			if (!cred) throw 'Error';
-			if (!cred.active) throw 'Error';
+			if (!cred) errors.inexistentRegister('Educator - Finding Error');
+			if (!cred.active) throw invalidCredential('Credential is inactive');
 			return new Promise(function (resolve, reject) {
 		    jwt.verify(token, jwtSecret, function(err, decoded) {
 		      if (err) {
@@ -64,8 +64,7 @@ var credentialServices = {
 	read: function(token) {
 		return Credentials.findOne({token: token})
 		.then(function(cred) {
-			if (!cred) return undefined;
-			if (!cred.active) throw 'Error';
+			if (!cred || !cred.active) return undefined;
       return new Promise(function (resolve, reject) {
 		    jwt.verify(token, jwtSecret, function(err, decoded) {
 		      if (err) {
