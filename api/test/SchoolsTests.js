@@ -77,11 +77,11 @@ suite('School Services', function () {
 		var school = require('../services/schools.js');
 		return school.update({email: 'email@mail.com'}, {name: 'Escola Danilo'})
 		.then(function(updated) {
-			return school.read({id: updated[0].id})
+			return school.read({id: updated[0].id});
 		})
 		.then(function(read) {
 			assert.strictEqual(read.name, 'Escola Danilo', 'Data not coherent - name');
-		})
+		});
 	});
 	
   test('Delete School', function () {
@@ -97,7 +97,7 @@ suite('School Services', function () {
 		})
 		.then(function(read) {
 			assert.strictEqual(read.length, 0, 'Should be inactive');
-		})
+		});
 	});
 
 });

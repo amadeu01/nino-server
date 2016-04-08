@@ -77,10 +77,10 @@ suite('Educator Services', function () {
 			return;
 		})
 		.then(function() {
-			return educator.create(parameters2)
+			return educator.create(parameters2);
 		})
 		.then(function(newResult) {
-			return educator.read({id: newResult.educator})
+			return educator.read({id: newResult.educator});
 		})
 		.then(function(newRecord) {
 			assert.strictEqual(newRecord.owner.name, 'Amadeu', 'Data not coherent - name');

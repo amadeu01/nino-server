@@ -52,7 +52,7 @@ suite('Credential Services', function () {
 			delete verified.iat;
 			delete verified.exp;
 			assert.strictEqual(verified.info, info.info, 'Values not equal');
-		})
+		});
   });
 	
   test('Update and verify', function () {
@@ -75,7 +75,7 @@ suite('Credential Services', function () {
 		})
 		.catch(function(err) {
 			assert.strictEqual(err, 'Error', 'Should have failed security');
-		})
+		});
   });
 	
 });

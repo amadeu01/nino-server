@@ -45,7 +45,7 @@ var MailgunServices = {
 			  vars: vars
 			};
 			feedlist.members().create(newUser, function (err, data) {
-			  console.log(data);
+			  // console.log(data);
 				if (err) reject(err);
 				else resolve(data);
 			});
@@ -74,7 +74,7 @@ var MailgunServices = {
 			  vars: vars
 			};
 			userslist.members().create(newUser, function (err, data) {
-			  console.log(data);
+			  // console.log(data);
 				if (err) reject(err);
 				else resolve(data);
 			});
