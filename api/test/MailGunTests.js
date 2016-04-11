@@ -4,7 +4,7 @@
 */
 
 var assert = require('assert');
-var mgs = require('../MailgunServices.js');
+var mgs = require('../business/MailgunServices.js');
 
 suite('Mail Services', function () {
 

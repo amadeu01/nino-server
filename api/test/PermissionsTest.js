@@ -4,7 +4,7 @@ Testing Permissions Module
 */
 
 var assert = require('assert');
-var permissions = require('../permissions');
+var permissions = require('../business/permissions');
 
 suite('Permissions', function () {
 	

@@ -2,7 +2,7 @@ var api_key = 'key-febe2f50d1b01f0e641d58f04e91a2f3';
 var domain = 'ninoapp.com.br';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 var uid = require('uid-safe');
-var app = require('./app')
+var app = require('../app')
 var feedlist = mailgun.lists('noticias@ninoapp.com.br');
 var userslist = mailgun.lists('usuarios@ninoapp.com.br');
  

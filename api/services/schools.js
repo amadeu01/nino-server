@@ -10,11 +10,11 @@ var Roles = models.waterline.collections.role;
 var Devices = models.waterline.collections.device;
 var Credentials = models.waterline.collections.credential;
 var Schools = models.waterline.collections.school;
-var errors = require('../errors');
+var errors = require('../business/errors');
 
 var validator = require('validator');
 
-var permissions = require('../permissions');
+var permissions = require('../business/permissions');
 
 var schoolServices = {
 	create: function(parameters) {

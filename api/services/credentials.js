@@ -14,7 +14,7 @@ var Schools = models.waterline.collections.school;
 
 var validator = require('validator');
 var jwt = require('jsonwebtoken');
-var permissions = require('../permissions');
+var permissions = require('../business/permissions');
 
 var jwtSecret = 'neveperocoftwvamoninow';
 
