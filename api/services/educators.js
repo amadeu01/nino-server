@@ -10,7 +10,7 @@ var Roles = models.waterline.collections.role;
 var Devices = models.waterline.collections.device;
 var Credentials = models.waterline.collections.credential;
 
-var errors = require('../errors');
+var errors = require('../business/errors');
 var validator = require('validator');
 
 var educatorServices = {

@@ -10,7 +10,7 @@ module.exports = {
 	deletedRegister: function(data) {
 		return {
 			code: 101,
-			deletedRegister: 'The requested register is inactive',
+			description: 'The requested register is inactive',
 			data: data
 		}
 	},

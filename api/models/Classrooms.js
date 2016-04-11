@@ -21,8 +21,9 @@ module.exports =  Waterline.Collection.extend({
         collection: 'student',
         index: true
       },
-      educator: {
+      educators: {
         collection: 'educator',
+				via: 'classrooms',
         required: true
       },
       school: {

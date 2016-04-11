@@ -38,6 +38,10 @@ module.exports = Waterline.Collection.extend({
 			size: 100,
 			required: true
 		},
+    //reference to picture on s3
+    profile_picture: {
+      type: 'string'
+    },
 		email: {
 			type: 'string',
 			size: 50,
