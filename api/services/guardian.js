@@ -11,7 +11,7 @@ var Devices = models.waterline.collections.device;
 var Credentials = models.waterline.collections.credential;
 
 //errors and validator's module
-var errors = require('../errors');
+var errors = require('../business/errors');
 var validator = require('validator');
 
 var guardiansServices = {
@@ -36,8 +36,7 @@ var guardiansServices = {
 		.then(function(role) {
 			if (!role) throw errors.internalError('Role - Creation Error');
 			return Guardians.create({
-				role: role.id,
-				school: parameters.schoolID
+				role: role.id
 			});
 		})
 		.then(function(guardian) {
@@ -68,10 +67,10 @@ var guardiansServices = {
 			return Roles.findOne({id: guardian.role}).populate('owner');
 		});
 	},
-	update: function(parameters, newParatemers, roleParameters) {
-		if (!parameters || !newParatemers || !roleParameters) throw errors.invalidParameters('Missing Parameter');
+	update: function(parameters, newParameters, roleParameters) {
+		if (!parameters || !newParameters || !roleParameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Guardians.update(parameters, newParatemers)
+		return Guardians.update(parameters, newParameters)
 		.then(function(guardian) {
 			if (!guardian) throw errors.inexistentRegister('Educator - Finding Error');
 			return Roles.findOne({id: guardian[0].role});

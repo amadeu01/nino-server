@@ -57,12 +57,12 @@ suite('Guardians Services', function () {
     //Update
     test('should update a guardian', function () {
   		var Service = require('../services/guardian.js');
-  		return Service.update({id: 1}, {}, {permissions: 444})
+  		return Service.update({id: 1}, {}, {privileges: 444})
   		.then(function(updated) {
   			return Service.read({id: 1});
   		})
   		.then(function(read) {
-  			assert.strictEqual(read.permissions, 444, 'Updated permissions incorrect');
+  			assert.strictEqual(read.privileges, 444, 'Updated permissions incorrect');
   		})
   		.catch(function(error) {
   			console.log(error);

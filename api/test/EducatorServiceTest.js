@@ -96,7 +96,7 @@ suite('Educator Services', function () {
 			throw error;
 		});
   });
-	
+
 	test('Retrieve all School Educators', function () {
 		var educator = require('../services/educators');
 		return educator.readAllFromSchool({school: 1})
@@ -107,23 +107,23 @@ suite('Educator Services', function () {
 			console.log(error);
 			throw error;
 		});
-		
+
 	});
-	
+
 	test('Update Educator', function () {
 		var educator = require('../services/educators');
-		return educator.update({id: 1}, {}, {permissions: 444})
+		return educator.update({id: 1}, {}, {privileges: 444})
 		.then(function(updated) {
 			return educator.read({id: 1});
 		})
 		.then(function(read) {
-			assert.strictEqual(read.permissions, 444, 'Updated permissions incorrect');
+			assert.strictEqual(read.privileges, 444, 'Updated permissions incorrect');
 		})
 		.catch(function(error) {
 			console.log(error);
 			throw error;
 		});
-		
+
 	});
 
 	test('Delete Educator', function () {
@@ -138,7 +138,7 @@ suite('Educator Services', function () {
 		.catch(function(error) {
 			console.log(error);
 			throw error;
-		});	
+		});
 	});
 
 });

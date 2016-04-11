@@ -4,7 +4,6 @@
 */
 
 var models = require('../models');
-var services = require ('../services');
 
 var studentsServices = {
 	create: function(params, done) {
