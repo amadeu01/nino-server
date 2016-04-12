@@ -16,6 +16,11 @@ router.put('/:user_id/profilePic', function(req, res, next) {
   res.send('WIP');
 });
 
+/* Reads user's profile picture */
+router.get('/:user_id/profilePic', function(req, res, next) {
+  res.send('WIP');
+});
+
 /* Confirms user's register information */
 router.post('/confirmation/:confirmation_hash', function(req, res, next) {
   res.send('WIP');

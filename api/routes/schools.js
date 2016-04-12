@@ -47,4 +47,9 @@ router.put('/:school_id/logotype', function(req, res, next) {
 	res.send('WIP');
 });
 
+/* Reads school logotype */
+router.get('/:school_id/logotype', function(req, res, next) {
+	res.send('WIP');
+});
+
 module.exports = router;

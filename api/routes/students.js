@@ -38,6 +38,11 @@ router.put('/:student_id/profilePic', function(req, res, next) {
   res.send('WIP');
 });
 
+/* Reads Student's profile picture */
+router.get('/:student_id/profilePic', function(req, res, next) {
+  res.send('WIP');
+});
+
 /* Create a new Student for that school */
 router.post('/schools/:school_id', function(req, res, next) {
   res.send('WIP');

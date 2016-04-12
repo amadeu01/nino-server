@@ -314,6 +314,35 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/error'
+    get:
+      summary: User type
+      description: Returns the user profile pic
+      parameters: 
+        - name: user_id
+          in: path
+          description: URI of the target user
+          required: true
+          type: number
+          format: integer
+      tags: 
+        - Users
+      responses:
+        200:
+          description: Success
+          schema:
+            type: file
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: User ID not found
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/error'
   /users/confirmation/{confirmation_hash}:
     post:
       summary: User type
@@ -391,7 +420,7 @@ paths:
           schema:
             type: string
       tags:
-        - Student
+        - Students
       responses:
         200:
           description: Success
@@ -422,7 +451,6 @@ paths:
           format: integer
       tags:
         - Students
-        - Read
       responses:
         200:
           description: The required Student
@@ -453,7 +481,6 @@ paths:
           format: integer
       tags:
         - Students
-        - Delete
       responses:
         200:
           description: Student deleted
@@ -487,7 +514,6 @@ paths:
             $ref: '#/definitions/student'
       tags: 
         - Students
-        - Update
       responses:
         200:
           description: Student updated
@@ -521,7 +547,6 @@ paths:
           type: file
       tags: 
         - Students
-        - Update
       responses:
         200:
           description: Success
@@ -531,6 +556,35 @@ paths:
             $ref: '#/definitions/error'
         404:
           description: Student ID not found
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/error'
+    get:
+      summary: Student type
+      description: Returns the student's profile pic
+      parameters: 
+        - name: student_id
+          in: path
+          description: URI of the target student
+          required: true
+          type: number
+          format: integer
+      tags: 
+        - Students
+      responses:
+        200:
+          description: Success
+          schema:
+            type: file
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: User ID not found
           schema:
             $ref: '#/definitions/error'
         500:
@@ -554,7 +608,6 @@ paths:
             $ref: '#/definitions/newStudent'
       tags:
         - Students
-        - Create
       responses:
         200:
           description: Baby created
@@ -640,8 +693,6 @@ paths:
             $ref: '#/definitions/keys'
       tags:
         - Credentials
-        - Educators
-        - Create
       responses:
         200:
           description: User logged in
@@ -666,8 +717,6 @@ paths:
             $ref: '#/definitions/keys'
       tags:
         - Credentials
-        - Guardians
-        - Create
       responses:
         200:
           description: User logged in
@@ -691,7 +740,6 @@ paths:
           type: integer
       tags:
         - Credentials
-        - Delete
       responses:
         200:
           description: User logged out
@@ -722,8 +770,6 @@ paths:
             type: string
       tags: 
         - Devices
-        - Users
-        - Create
       responses:
         200:
           description: new Device created
@@ -750,8 +796,6 @@ paths:
           type: integer
       tags: 
         - Devices
-        - Users
-        - Read
       responses:
         200:
           description: Success
@@ -780,7 +824,6 @@ paths:
           type: integer
       tags:
         - Devices
-        - Read
       responses:
         200:
           description: Success
@@ -808,7 +851,6 @@ paths:
           type: integer
       tags:
         - Devices
-        - Delete
       responses:
         200:
           description: Success
@@ -836,7 +878,6 @@ paths:
           type: integer
       tags: 
         - Educators
-        - Read
       responses:
         200:
           description: Success
@@ -869,7 +910,6 @@ paths:
             $ref: '#/definitions/educator'
       tags: 
         - Educators
-        - Update
       responses:
         200:
           description: Success
@@ -900,8 +940,6 @@ paths:
           type: integer
       tags:
         - Educators
-        - Schools
-        - Read
       responses:
         200:
           description: Success
@@ -936,8 +974,6 @@ paths:
               $ref: '#/definitions/newEducator'
       tags:
         - Educators
-        - Schools
-        - Create
       responses:
         200:
           description: Success
@@ -997,8 +1033,6 @@ paths:
           type: number
       tags:
         - Guardians
-        - Students
-        - Read
       responses:
         200:
           description: Success
@@ -1029,7 +1063,6 @@ paths:
           type: integer
       tags:
         - Guardians
-        - Read
       responses:
         200:
           description: Success
@@ -1057,7 +1090,6 @@ paths:
           type: number
       tags:
         - Guardians
-        - Read
       responses:
         200:
           description: Success
@@ -1090,7 +1122,6 @@ paths:
             $ref: '#/definitions/guardian'
       tags:
         - Guardians
-        - Read
       responses:
         200:
           description: Success
@@ -1122,8 +1153,7 @@ paths:
           required: true
           type: number
       tags:
-        - Guardian
-        - Create
+        - Guardians
       responses:
         200:
           description: Success
@@ -1152,8 +1182,7 @@ paths:
           required: true
           type: number
       tags:
-        - Guardian
-        - Delete
+        - Guardians
       responses:
         200:
           description: Success
@@ -1181,7 +1210,6 @@ paths:
             $ref: '#/definitions/newGuardian'
       tags:
         - Guardians
-        - Create
       responses:
         200:
           description: Success
@@ -1208,8 +1236,7 @@ paths:
           required: true
           type: integer
       tags:
-        - School
-        - Read
+        - Schools
       responses:
         200:
           description: Success
@@ -1236,8 +1263,7 @@ paths:
           required: true
           type: integer
       tags:
-        - School
-        - Delete
+        - Schools
       responses:
         200:
           description: Success
@@ -1267,8 +1293,7 @@ paths:
           schema:
             $ref: '#/definitions/school'
       tags:
-        - School
-        - Update
+        - Schools
       responses:
         200:
           description: Success
@@ -1300,7 +1325,7 @@ paths:
           schema:
             type: string
       tags:
-        - School
+        - Schools
       responses:
         200:
           description: Success
@@ -1332,7 +1357,7 @@ paths:
           schema:
             type: string
       tags:
-        - School
+        - Schools
       responses:
         200:
           description: Success
@@ -1359,8 +1384,7 @@ paths:
           schema: 
             $ref: '#/definitions/newSchool'
       tags:
-        - School
-        - Create
+        - Schools
       responses:
         200:
           description: Success
@@ -1386,8 +1410,7 @@ paths:
           required: true
           type: file
       tags:
-        - School
-        - Create
+        - Schools
       responses:
         200:
           description: Success
@@ -1403,7 +1426,34 @@ paths:
           description: Unexpected Error
           schema:
             $ref: '#/definitions/error'
-            
+    get:
+      summary: School type
+      description: Returns the school's logotype
+      parameters: 
+        - name: school_id
+          in: path
+          required: true
+          type: number
+      tags: 
+        - Schools
+      responses:
+        200:
+          description: Success
+          schema:
+            type: file
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: User ID not found
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/error'
+      
   /subscriptions:
     post:
       summary: Newsletter
@@ -1416,7 +1466,6 @@ paths:
             $ref: '#/definitions/subscription'
       tags:
         - Subscriptions
-        - Create
       responses:
         200:
           description: Success
@@ -1435,8 +1484,6 @@ paths:
           type: file
       tags:
         - Subscriptions
-        - Publication
-        - Create
       responses:
         200:
           description: Success
@@ -1454,8 +1501,7 @@ paths:
           required: true
           type: string
       tags:
-        - Subscription
-        - Delete
+        - Subscriptions
       responses:
         200:
           description: Success
@@ -1475,7 +1521,6 @@ paths:
           type: number
       tags:
         - Timeline
-        - Read
       responses:
         200:
           description: Success
@@ -1521,7 +1566,6 @@ paths:
           type: number
       tags:
         - Timeline
-        - Create
       responses:
         200:
           description: Success
@@ -1566,7 +1610,6 @@ paths:
           type: number
       tags:
         - Timeline
-        - Create
       responses:
         200:
           description: Success
@@ -1593,7 +1636,6 @@ paths:
           type: number
       tags:
         - Timeline
-        - Read
       responses:
         200:
           description: Success
@@ -1624,7 +1666,6 @@ paths:
           type: number
       tags:
         - Timeline
-        - Delete
       responses:
         200:
           description: Success
@@ -1663,7 +1704,6 @@ paths:
         
       tags:
         - Timeline
-        - Delete
       responses:
         200:
           description: Success
