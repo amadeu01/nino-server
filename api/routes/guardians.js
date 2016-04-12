@@ -14,7 +14,7 @@ router.param('guardian_id', validator);
 router.param('student_id', validator);
 
 /* Get list of Student's Guardians. */
-router.get('/guardians/:student_id', function(req, res, next) {
+router.get('/students/:student_id', function(req, res, next) {
 	if (!req.token) {
 		res.status(401);
 		res.end();
@@ -66,7 +66,7 @@ router.get('/:guardian_id', function(req, res, next) {
 });
 
 /*Add a Guardian to a Student */
-router.post('/:guardian_id/student/:student_id', function(req, res, next) {
+router.post('/:guardian_id/students/:student_id', function(req, res, next) {
 	//TODO: check if exists before creating, can just be adding a role. Maybe another route?
 	//Checking user credentials
 	if (!req.token) {
@@ -138,7 +138,7 @@ router.delete('/:guardian_id', function(req, res, next) {
 });
 
 /*Delete the 'Guardianship' between a Guardian and a Baby*/
-router.delete('/:guardian_id/babies/:baby_id', function(req, res, next) {
+router.delete('/:guardian_id/students/:student_id', function(req, res, next) {
 	res.send('WIP');
 });
 

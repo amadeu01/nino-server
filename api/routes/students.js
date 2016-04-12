@@ -10,30 +10,46 @@ var validator = function(req, res, next, id) {
 };
 
 router.param('guardian_id', validator);
-router.param('baby_id', validator);
+router.param('student_id', validator);
+router.param('classroom_id', validator);
 
-/* Get Babies listing for a Guardian. */
+/* Send push notification to all student's guardians */
+router.put('/:student_id/notifications', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Get Student info */
+router.get('/:student_id', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Deletes Student */
+router.delete('/:student_id', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Updates Student */
+router.put('/:student_id', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Updates Student's profile picture */
+router.put('/:student_id/profilePic', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Create a new Student for that school */
+router.post('/schools/:school_id', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Get students listing for a Guardian. */
 router.get('/guardians/:guardian_id', function(req, res, next) {
   res.send('WIP');
 });
 
-/* Get Baby info */
-router.get('/:baby_id', function(req, res, next) {
-  res.send('WIP');
-});
-
-/* Create a new baby */
-router.post('/:baby_id', function(req, res, next) {
-  res.send('WIP');
-});
-
-/* Deletes Baby */
-router.delete('/:baby_id', function(req, res, next) {
-  res.send('WIP');
-});
-
-/* Updates Baby */
-router.put('/:baby_id', function(req, res, next) {
+/* Get list of students for a classroom */
+router.get('/classrooms/:classroom_id', function(req, res, next) {
   res.send('WIP');
 });
 

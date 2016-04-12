@@ -9,22 +9,27 @@ var validator = function(req, res, next, id) {
 	}
 };
 
-router.param('baby_id', validator);
+router.param('student_id', validator);
 router.param('guardian_id', validator);
 router.param('post_id', validator);
 
 /* Get Timeline cells for that Baby. */
-router.get('/babies/:baby_id', function(req, res, next) {
+router.get('/students/:student_id', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Create new Post for a Baby */
+router.post('/students/:student_id', function(req, res, next) {
+  res.send('WIP');
+});
+
+/* Create new Post for a list of Baby */
+router.post('/students', function(req, res, next) {
   res.send('WIP');
 });
 
 /* Get Timeline cells for that Guardian */
 router.get('/guardians/:guardian_id', function(req, res, next) {
-  res.send('WIP');
-});
-
-/* Create new Post for a Baby */
-router.post('/babies/:baby_id', function(req, res, next) {
   res.send('WIP');
 });
 

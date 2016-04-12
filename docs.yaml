@@ -9,7 +9,7 @@ info:
 host: localhost:3000
 # array of all schemes that your API supports
 schemes:
-  - https
+  # - https
   - http
 # will be prefixed to all paths
 basePath: /
@@ -540,8 +540,7 @@ paths:
   /students/schools/{school_id}:
     post:
       summary: Student type
-      description: |
-        Create a new Student.
+      description: Create a new Student.
       parameters:
         - name: school_id
           in: path
@@ -855,35 +854,9 @@ paths:
           description: Unexpected Error
           schema:
             $ref: '#/definitions/error'
-    delete:
-      summary: Educator Type
-      description: Delete an Educator register
-      parameters:
-        - name: educator_id
-          in: path
-          required: true
-          type: integer
-      tags: 
-        - Educators
-        - Delete
-      responses:
-        200:
-          description: Success
-        401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/error'
-        404:
-          description: ID not found
-          schema:
-            $ref: '#/definitions/error'
-        500:
-          description: Unexpected Error
-          schema:
-            $ref: '#/definitions/error'
     put:
       summary: Educator Type
-      description: Update an Educator register
+      description: Updates an Educator register
       parameters:
         - name: educator_id
           in: path
@@ -1756,7 +1729,10 @@ definitions:
         items:
           type: number
       gender:
-        type: number
+        type: string
+      active:
+        type: boolean
+        description: If not active will be deleted soon
   newStudent: 
     type: object
     required:
@@ -1811,7 +1787,7 @@ definitions:
         type: string
       owner:
         type: number
-        description: Owner User URI
+        description: Owner Educator URI
       educators:
         type: array
         items:
@@ -1829,6 +1805,7 @@ definitions:
           description: Classrooms URI
       active:
         type: boolean
+        description: If not active will be deleted soon
         
   newSchool:
     type: object
@@ -1872,29 +1849,31 @@ definitions:
       password:
         type: string
         description: Hashed password
+      profile_picture:
+        type: string
+        description: Reference for the profile pic on S3
       email:
         type: string
-      cellphone:
+      cel:
         type: number
         format: int
       confirmed:
         type: boolean
-      profile_picture:
+      confirmationUID:
         type: string
-        description: Key to pic saved on S3
+        description: String used to confirm this user
       roles:
         type: array
         items:
           $ref: '#/definitions/role'
-      credentials:
-        type: array
-        items:
-          $ref: '#/definitions/credential'
       devices:
         type: array
         items:
           type: number
           description: Devices URI
+      active:
+        type: boolean
+        description: If not active will be deleted soon
         
   credential:
     description: Allows to know who is logged in and the device
@@ -1902,15 +1881,18 @@ definitions:
     required:
       - id
       - device
-      - user
     properties:
       id:
         type: number
       device:
         type: number
         description: Device URI
-      user:
-        $ref: '#/definitions/user'
+      token:
+        type: string
+        description: The token of this credential, can be used to invalidade and distance logoff 
+      active:
+        type: boolean
+        description: If not active will be deleted soon
   role:
     type: object
     required:
@@ -1927,6 +1909,12 @@ definitions:
       privileges: 
         type: number
         description: Bit mask for the role permissions
+      owner: 
+        type: number
+        description: URI of the owner user
+      active:
+        type: boolean
+        description: If not active will be deleted soon
   guardian:
     type: object
     required:
@@ -1944,6 +1932,9 @@ definitions:
       role: 
         type: number
         description: Role URI
+      active:
+        type: boolean
+        description: If not active will be deleted soon
   educator:
     type: object
     required:
@@ -1965,6 +1956,9 @@ definitions:
       role:
         type: number
         description: Role URI
+      active:
+        type: boolean
+        description: If not active will be deleted soon
   newUser:
     type: object
     required:
@@ -2009,7 +2003,7 @@ definitions:
     type: object
     required:
       - id
-      - user
+      - owner
     properties:
       id:
         type: number
@@ -2018,11 +2012,17 @@ definitions:
         type: string
       description:
         type: string
-      user:
+      owner:
         type: number
         description: User URI
+      credentials:
+        type: array
+        items:
+          type: number
+        description: Credentials related to this device
       active:
         type: boolean
+        description: If not active will be deleted soon
   post:
     type: object
     required:
@@ -2055,6 +2055,13 @@ definitions:
         items:
           type: number
           description: Educators URI
+      school:
+        type: number
+        description: URI of the school
+      active:
+        type: boolean
+        description: If not active will be deleted soon
+      
   classroom:
     type: object
     required:
@@ -2082,20 +2089,9 @@ definitions:
       school:
         type: number
         description: School URI
-        
-  keys:
-    type: object
-    required:
-      - hash
-      - user
-      - date
-    properties:
-      hash:
-        type: string
-      user:
-        $ref: '#/definitions/user'
-      date:
-        type: number
+      active:
+        type: boolean
+        description: If not active will be deleted soon
         
   keys:
     type: object
@@ -2115,7 +2111,7 @@ definitions:
       code:
         type: integer
         format: int32
-      message:
+      description:
         type: string
-      fields:
+      data:
         type: string
