@@ -58,10 +58,10 @@ var educatorServices = {
 			return role.save();
 		});
 	},
-	update: function(parameters, newParatemers, roleParameters) {
-		if (!parameters || !newParatemers || !roleParameters) throw errors.invalidParameters('Missing Parameter');
+	update: function(parameters, newParameters, roleParameters) {
+		if (!parameters || !newParameters || !roleParameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Educators.update(parameters, newParatemers)
+		return Educators.update(parameters, newParameters)
 		.then(function(educator) {
 			if (!educator) throw errors.inexistentRegister('Educator - Finding Error');
 			return Roles.findOne({id: educator[0].role});

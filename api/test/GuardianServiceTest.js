@@ -37,90 +37,54 @@ suite('Guardians Services', function () {
         return Promise.all(promises);
     });
 
-
+    //Create
     test('should create a guardian', function() {
       var Service = require('../services/guardian.js');
       var parameters = {
-        name: 'Julia',
-  			surname: 'Roberts',
-  			password: 'password',
-  			email: 'juroberts@emailcom',
-  			cel: '1 9999990000',
-  			confirmed: true,
+        user: {
+          name: 'Julia',
+  			  surname: 'Roberts',
+  			  password: 'password',
+  			  email: 'juroberts@nino.com',
+  			  cel: '1 9999990000',
+  			  confirmed: true
+        },
         privileges: 1
       };
       return Service.create(parameters);
     });
 
-    test('simulate a error for reaching 2 users while trying update a guardian', function() {
-      var Service = require('../services/guardian.js');
-      var parametersCreate = {
-        name: 'Julia',
-  			surname: 'Roberts da Silva',
-  			password: 'passwordMaria',
-  			email: 'mariaroberts@emailcom',
-  			cel: '1 9999990000',
-  			confirmed: false,
-        privileges: 1
-      };
-      var parameters = {
-  			name: 'Julia',
-				email: 'mariaroberts@emailcom'
-      };
-      var newParameters = {
-        password: 'new_password'
-      };
-      return Service.create(parametersCreate).then(function(){
-        return Service.update(parameters, newParameters).then(function(user){
-          // console.log(user);
-        }).catch(function(err){
-          console.log(err);
-        });
-      });
-    });
+    //Update
+    test('should update a guardian', function () {
+  		var Service = require('../services/guardian.js');
+  		return Service.update({id: 1}, {}, {privileges: 444})
+  		.then(function(updated) {
+  			return Service.read({id: 1});
+  		})
+  		.then(function(read) {
+  			assert.strictEqual(read.privileges, 444, 'Updated permissions incorrect');
+  		})
+  		.catch(function(error) {
+  			console.log(error);
+  			throw error;
+  		});
 
-    test('should be able to update data from a guardian', function() {
-      var Service = require('../services/guardian.js');
-      var parameters = {
-  			email: 'juroberts@emailcom',
-        password: 'password'
-      };
-      var newParameters = {
-        password: 'new_password'
-      };
+  	});
 
-      return Service.update(parameters, newParameters).then(function(user){
-        // console.log(user);
-      }).catch(function(err){
-        console.log("Error for update guardian!");
-        console.log(err);
-      });
-    });
-
-    test('should be able to read a guardian', function() {
-      var Service = require('../services/guardian.js');
-      var parameters = {
-        name: 'Julia',
-  			surname: 'Roberts',
-  			email: 'juroberts@emailcom'
-      };
-      return Service.read(parameters).then(function(users){
-        // return console.log(users);
-				return;
-      }).catch(function(err) {
-        console.log(err);
-        return;
-      });
-    });
-
+    //Delete
     test('should delete a guardian', function(){
       var Service = require('../services/guardian.js');
-      var parameters = {
-        name: 'Julia'
-      };
-      return Service.delete(parameters);
+  		return Service.delete({id: 1})
+  		.then(function(guardian) {
+  			return Service.read({id: 1});
+  		})
+  		.then(function(deleted) {
+  			assert.strictEqual(deleted, undefined, 'Should be inactive');
+  		})
+  		.catch(function(error) {
+  			console.log(error);
+  			throw error;
+  		});
     });
-
-
 
 });
