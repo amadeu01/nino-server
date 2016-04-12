@@ -2,80 +2,92 @@ var express = require('express');
 var router = express.Router();
 var app = require('../app');
 var permissions = require('../business/permissions');
+var errors = require('../business/errors');
 
 var validator = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.sendStatus(404);
+		res.status(400).end(errors.invalidParameters("path_isNaN"));
 	}
 };
 
+//Always check all path parameters for NaN error
 router.param('school_id', validator);
 router.param('educator_id', validator);
 router.param('classroom_id', validator);
 
 /* Get users listing for a school. */
 router.get('/schools/:school_id', function(req, res, next) {
-	if (!req.token) {
-		res.status(401); //User not logged in
-		res.end();
-		return;
+	//Check parameters
+	if (req.body.user.name == null) req.status(400).end(errors.invalidParameters("user.name"));
+	else {
+		//Business
+	
+		//Send res
+	  res.send('WIP');
 	}
-	app.models.educator.findOne({id: req.token.role.id})
-	.then(function(educator) {
-		if (educator.school != req.params.school_id)
-		{
-			res.status(401); //User is not member of that school, thus can't modify
-			res.end();
-			return;
-		}
-		return app.models.roles.findOne({id: educator.role});
-	})
-	.then(function(role) {
-		if (!permissions.check(role.privileges, permissions.types.readAllSchoolEducators)) {
-			res.status(401); //User doesn't have permissions
-			res.end();
-			return;
-		}
-		//All checked, should proceed
-		res.end();
-	})
-	.catch(function(err) {
-		res.status(500); //User not logged in
-		res.end();
-		return;
-	});
 });
 
 /* Create new Caretaker for that school */
 router.post('/schools/:school_id', function(req, res, next) {
-	//TODO: check if exists before creating, can just be adding a role. Maybe another route?
-	//Checking user credentials
-	if (!req.token) {
-		res.status(401);
-		res.end();
-		return;
-	}
-	// console.log(req.token);
-	res.end();
-	//Creating Educator
+	//Check parameters
+	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.user.name == null) req.status(400).end(errors.invalidParameters("user.name"));
+	else if (req.body.user.surname == null) req.status(400).end(errors.invalidParameters("user.surname"));
+	else if (req.body.user.password == null) req.status(400).end(errors.invalidParameters("user.password"));
+	else if (req.body.user.email == null) req.status(400).end(errors.invalidParameters("user.email"));
+	else if (req.body.user.cel == null) req.status(400).end(errors.invalidParameters("user.cel"));
+	else if (req.body.privileges == null) req.status(400).end(errors.invalidParameters("privileges"));
+	else {
+		//Business
 	
+		//Send res
+	  res.send('WIP');
+	}
 });
 
 
 router.get('/classrooms/:classroom_id', function(req, res, next) {
-  res.send('WIP');
+	//Check parameters
+	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	else {
+		//Should now call business
+	
+		//End response
+		res.send('WIP');
+	}
 });
 
 /* Delete a caretaker */
 router.delete('/:educator_id', function(req, res, next) {
-  res.send('WIP');
+	//Check parameters
+	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	else {
+		//Should now call business
+	
+		//End response
+		res.send('WIP');
+	}
 });
 
 /* Update a caretaker */
 router.put('/:educator_id', function(req, res, next) {
-  res.send('WIP');
+	//Check parameters
+	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.school == null) 
+	{
+		if (req.body.permissions == null) {
+			//Update req is empty
+			req.status(400).end(errors.invalidParameters("Empty"));
+		}
+	}
+	else {
+		//Business
+	
+		//Send res
+	  res.send('WIP');
+	}
 });
 
 module.exports = router;

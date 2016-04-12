@@ -21,6 +21,10 @@ paths:
       summary: Classroom Type
       description: Read all classrooms for a school
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -50,6 +54,10 @@ paths:
       summary: Classroom Type
       description: Create a new classroom for a school
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -81,15 +89,19 @@ paths:
       summary: Classroom Type
       description: Update classroom information (name)
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
           type: number
-        - name: classroom
+        - name: classroom_name
           in: body
           required: true
           schema:
-            $ref: '#/definitions/classroom'
+            type: string
       tags:
         - Classrooms
       responses:
@@ -111,6 +123,10 @@ paths:
       summary: Classroom Type
       description: Delete a classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -137,6 +153,10 @@ paths:
       summary: Classroom Type
       description: Add an educator to a classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -166,6 +186,10 @@ paths:
       summary: Classroom Type
       description: Remove an educator from a classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -194,8 +218,12 @@ paths:
   /classrooms/{classroom_id}/students/{student_id}:
     post:
       summary: Classroom Type
-      description: Add a student from a classroom
+      description: Add a student to a classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -225,6 +253,10 @@ paths:
       summary: Classroom Type
       description: Remove a student from a classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -255,6 +287,10 @@ paths:
       summary: Classroom Type
       description: Read classrooms for an educator
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: educator_id
           in: path
           required: true
@@ -286,6 +322,10 @@ paths:
       summary: User type
       description: Update User's profile picture
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: user_id
           in: path
           description: URI of the target user
@@ -318,6 +358,10 @@ paths:
       summary: User type
       description: Returns the user profile pic
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: user_id
           in: path
           description: URI of the target user
@@ -375,6 +419,10 @@ paths:
       summary: User type
       description: Post a notification to all of that user's device
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: user_id
           in: path
           description: User URI
@@ -409,6 +457,10 @@ paths:
       summary: Student Type
       description: Publicate push notification to all student's guardians
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           required: true
@@ -441,8 +493,12 @@ paths:
       summary: Student type
       description: |
         The Student resource has information about the Student's profile and references to the School and the Guardians. 
-        This request will return a JSON containing information about the Baby referenced by 'student_id'
+        This request will return a JSON containing information about the Student referenced by 'student_id'
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           description: URI of the target baby
@@ -473,6 +529,10 @@ paths:
       description: |
         Delete a Student.
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           description: URI of the target student
@@ -500,6 +560,10 @@ paths:
       summary: Student type
       description: Update Student
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           description: URI of the target student
@@ -511,7 +575,18 @@ paths:
           description: Student's information
           required: true
           schema:
-            $ref: '#/definitions/student'
+            type: object
+            properties:
+              name:
+                type: string
+              surname:
+                type: string
+              birthdate:
+                type: number
+              school:
+                type: number
+              gender:
+                type: string
       tags: 
         - Students
       responses:
@@ -534,6 +609,10 @@ paths:
       summary: Student type
       description: Update Student's Profile Pic
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           description: URI of the target student
@@ -566,6 +645,10 @@ paths:
       summary: Student type
       description: Returns the student's profile pic
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           description: URI of the target student
@@ -596,6 +679,10 @@ paths:
       summary: Student type
       description: Create a new Student.
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -624,6 +711,10 @@ paths:
       summary: Classroom Type
       description: Get students for a guardian
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian_id
           in: path
           required: true
@@ -654,6 +745,10 @@ paths:
       summary: Classroom Type
       description: Get list of students for a Classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -733,6 +828,10 @@ paths:
       summary: Login
       description: Logs out an User
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: credential_id
           in: path
           description: Credential id of the user logging out
@@ -753,42 +852,14 @@ paths:
             $ref: '#/definitions/error'
             
   /devices/users/{user_id}:
-    post:
-      summary: Device Type
-      description: New device for that user. Needs the description for that device, will automatically create an ARN and mark as enabled
-      parameters:
-        - name: user_id
-          in: path
-          description: ID of the User with new Device
-          required: true
-          type: integer
-        - name: device
-          in: body
-          description: Description of new device
-          required: true
-          schema: 
-            type: string
-      tags: 
-        - Devices
-      responses:
-        200:
-          description: new Device created
-        404:
-          description: User with ID not found
-          schema:
-            $ref: '#/definitions/error'
-        401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/error'
-        500:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/error'
     get:
       summary: Device Type
       description: Gets device information for that User
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: user_id
           in: path
           description: ID of the User with new Device
@@ -818,6 +889,10 @@ paths:
       summary: Device Type
       description: Get information for a device 
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: device_id
           in: path
           required: true
@@ -841,37 +916,16 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/error'
-    delete:
-      summary: Device Type
-      description: Mark a device as disabled 
-      parameters:
-        - name: device_id
-          in: path
-          required: true
-          type: integer
-      tags:
-        - Devices
-      responses:
-        200:
-          description: Success
-        404:
-          description: Device ID not found
-          schema:
-            $ref: '#/definitions/error'
-        401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/error'
-        500:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/error'
             
   /educators/{educator_id}:
     delete:
       summary: Educator Type
       description: Get Educator register
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: educator_id
           in: path
           required: true
@@ -899,6 +953,10 @@ paths:
       summary: Educator Type
       description: Updates an Educator register
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: educator_id
           in: path
           required: true
@@ -907,7 +965,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/educator'
+            type: object
+            properties:
+              school:
+                type: number
+              permissions: 
+                type: number
       tags: 
         - Educators
       responses:
@@ -963,6 +1026,10 @@ paths:
       summary: Educator Type
       description: Create new educator for that School. May send email for confirmation purposes
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -996,6 +1063,10 @@ paths:
       summary: Classroom Type
       description: Get list of educators for a Classroom
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: classroom_id
           in: path
           required: true
@@ -1027,6 +1098,10 @@ paths:
       summary: Baby Type
       description: List of Guardians for a Student
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           required: true
@@ -1057,6 +1132,10 @@ paths:
       summary: Baby Type
       description: Get Guardian information
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian_id
           in: path
           required: true
@@ -1082,44 +1161,16 @@ paths:
             $ref: '#/definitions/error'
     delete:
       summary: Baby Type
-      description: Get Guardian information
+      description: Delete Guardian 
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian_id
           in: path
           required: true
           type: number
-      tags:
-        - Guardians
-      responses:
-        200:
-          description: Success
-          schema:
-            $ref: '#/definitions/guardian'
-        401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/error'
-        404:
-          description: ID not found
-          schema:
-            $ref: '#/definitions/error'
-        500:
-          description: Unexpected Error
-          schema:
-            $ref: '#/definitions/error'
-    put:
-      summary: Baby Type
-      description: Get Guardian information
-      parameters: 
-        - name: guardian_id
-          in: path
-          required: true
-          type: number
-        - name: guardian
-          in: body
-          required: true
-          schema: 
-            $ref: '#/definitions/guardian'
       tags:
         - Guardians
       responses:
@@ -1144,6 +1195,10 @@ paths:
       summary: Guardian Type
       description: Create new Guardian for a student
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian_id
           in: path
           required: true
@@ -1173,6 +1228,10 @@ paths:
       summary: Guardian Type
       description: Delete the relationship between a Guardian and a Student
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian_id
           in: path
           required: true
@@ -1203,6 +1262,10 @@ paths:
       summary: Guardian Type
       description: Create a new Guardian Account. May send email for confirmation purposes
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian
           in: body
           required: true
@@ -1231,6 +1294,10 @@ paths:
       summary: School Type
       description: Get a school information
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -1258,6 +1325,10 @@ paths:
       summary: School Type
       description: Mark a school as inactive
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -1283,15 +1354,38 @@ paths:
       summary: School Type
       description: Update a School information
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
-          type: integer
+          type: number
         - name: school
           in: body
           required: true
           schema:
-            $ref: '#/definitions/school'
+            type: object
+            properties:
+              name:
+                type: string
+                description: Name of the school
+              addr: 
+                type: string
+                description: Address of the school
+              cnpj:
+                type: string
+                description: CNPJ of the school
+              telephone: 
+                type: number
+                format: int
+                description: Contact telephone of the school
+              email:
+                type: string
+              owner:
+                type: number
+                description: Owner Educator URI
       tags:
         - Schools
       responses:
@@ -1314,6 +1408,10 @@ paths:
       summary: School Type
       description: Publicate push notification to school topic for all guardians
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -1346,6 +1444,10 @@ paths:
       summary: School Type
       description: Publicate push notification to school topic for all educators
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -1401,6 +1503,10 @@ paths:
       summary: School Type
       description: Update the logotype of a school
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -1430,6 +1536,10 @@ paths:
       summary: School type
       description: Returns the school's logotype
       parameters: 
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: school_id
           in: path
           required: true
@@ -1463,7 +1573,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/subscription'
+            type: string
       tags:
         - Subscriptions
       responses:
@@ -1473,30 +1583,12 @@ paths:
           description: Unexpected Error
           schema:
             $ref: '#/definitions/error'
-  /subscription/publications:
-    post:
-      summary: Newsletter
-      description: Post to all subscribers
-      parameters: 
-        - name: mail
-          in: formData
-          required: true
-          type: file
-      tags:
-        - Subscriptions
-      responses:
-        200:
-          description: Success
-        500:
-          description: Unexpected Error
-          schema:
-            $ref: '#/definitions/error'
-  /subscriptions/{subscription_email}:
-    get:
+  /subscriptions/{email}:
+    delete:
       summary: Newsletter
       description: Remove a subscriber
       parameters:
-        - name: subscription_email
+        - name: email
           in: path
           required: true
           type: string
@@ -1515,6 +1607,10 @@ paths:
       summary: Timeline Options
       description: Return posts for that baby
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           required: true
@@ -1544,6 +1640,10 @@ paths:
       summary: Timeline Options
       description: Create a post for that baby
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: student_id
           in: path
           required: true
@@ -1586,6 +1686,10 @@ paths:
       summary: Timeline Options
       description: Create a post for a list of babies
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: students
           in: formData
           required: true
@@ -1630,6 +1734,10 @@ paths:
       summary: Timeline Options
       description: List of posts for a Guardian's account
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: guardian_id
           in: path
           required: true
@@ -1660,6 +1768,10 @@ paths:
       summary: Timeline Options
       description: Delete a post
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: post_id
           in: path
           required: true
@@ -1685,6 +1797,10 @@ paths:
       summary: Timeline Options
       description: Update a post
       parameters:
+        - name: x-access-token
+          in: header
+          required: true
+          type: string
         - name: post_id
           in: path
           required: true
@@ -1721,17 +1837,6 @@ paths:
             $ref: '#/definitions/error'
 
 definitions:
-
-  subscription:
-    type: object
-    required:
-      - email
-      - language
-    properties:
-      email:
-        type: string
-      language:
-        type: string
 
   student:
     type: object
