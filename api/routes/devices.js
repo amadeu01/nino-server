@@ -17,7 +17,7 @@ router.param('device_id', validator);
 /* Get guardians' list of devices. */
 router.get('/users/:user_id', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -29,7 +29,7 @@ router.get('/users/:user_id', function(req, res, next) {
 /* Get device's information */
 router.get('/:device_id', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	

@@ -38,7 +38,7 @@ app.use(useragent.express());
 // Allow CORS
 app.use(function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
-	// res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-access-token');
 	// res.header('Access-Control-Allow-Credentials', 'true');
 	next();
@@ -51,7 +51,8 @@ app.use(function(req, res, next) {
   // decode token
   if (token) {
     // verifies secret and checks exp - Gets params and proceed! <-TODO
-    
+		req.token = token;
+    next();
   } else {
 		next();
 	}
