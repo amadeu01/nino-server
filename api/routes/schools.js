@@ -17,7 +17,7 @@ router.param('school_id', validator);
 /* Get School's info. */
 router.get('/:school_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -29,13 +29,13 @@ router.get('/:school_id', function(req, res, next) {
 /* Update a School */
 router.put('/:school_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.name == null) {
-		if (req.body.addr == null) {
-			if (req.body.cnpj == null) {
-				if (req.body.telephone == null) {
-					if (req.body.email == null) {
-						if (req.body.owner == null){
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.name === undefined) {
+		if (req.body.addr === undefined) {
+			if (req.body.cnpj === undefined) {
+				if (req.body.telephone === undefined) {
+					if (req.body.email === undefined) {
+						if (req.body.owner === undefined){
 							//Every parameter for the update is null, req is empty
 							req.status(400).end(errors.invalidParameters("empty"));
 						}
@@ -55,7 +55,7 @@ router.put('/:school_id', function(req, res, next) {
 /* Delete a School */
 router.delete('/:school_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -67,8 +67,8 @@ router.delete('/:school_id', function(req, res, next) {
 /* Send push notification to all school guardians */
 router.post('/:school_id/notifications/guardians', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.date == null) req.status(400).end(errors.invalidParameters("data"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.date === undefined) req.status(400).end(errors.invalidParameters("data"));
 	else {
 		//Should now call business
 	
@@ -80,8 +80,8 @@ router.post('/:school_id/notifications/guardians', function(req, res, next) {
 /* Send push notification to all school educators */
 router.post('/:school_id/notifications/educators', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.date == null) req.status(400).end(errors.invalidParameters("data"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.date === undefined) req.status(400).end(errors.invalidParameters("data"));
 	else {
 		//Should now call business
 	
@@ -93,14 +93,14 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 /* Create new school */
 router.post('/', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.school.name == null) req.status(400).end(errors.invalidParameters("school.name"));
-	else if (req.body.school.email == null) req.status(400).end(errors.invalidParameters("school.email"));
-	else if (req.body.owner.name == null) req.status(400).end(errors.invalidParameters("owner.name"));
-	else if (req.body.owner.surname == null) req.status(400).end(errors.invalidParameters("owner.surname"));
-	else if (req.body.owner.password == null) req.status(400).end(errors.invalidParameters("owner.password"));
-	else if (req.body.owner.email == null) req.status(400).end(errors.invalidParameters("owner.email"));
-	else if (req.body.owner.cel == null) req.status(400).end(errors.invalidParameters("owner.cel"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.school.name === undefined) req.status(400).end(errors.invalidParameters("school.name"));
+	else if (req.body.school.email === undefined) req.status(400).end(errors.invalidParameters("school.email"));
+	else if (req.body.owner.name === undefined) req.status(400).end(errors.invalidParameters=== undefined("owner.name"));
+	else if (req.body.owner.surname === undefined) req.status(400).end(errors.invalidParameters("owner.surname"));
+	else if (req.body.owner.password === undefined) req.status(400).end(errors.invalidParameters("owner.password"));
+	else if (req.body.owner.email === undefined) req.status(400).end(errors.invalidParameters("owner.email"));
+	else if (req.body.owner.cel === undefined) req.status(400).end(errors.invalidParameters("owner.cel"));
 	else {
 		//Should now call business
 	
@@ -112,7 +112,7 @@ router.post('/', function(req, res, next) {
 /* Updates school logotype */
 router.put('/:school_id/logotype', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -124,7 +124,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 /* Reads school logotype */
 router.get('/:school_id/logotype', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	

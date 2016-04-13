@@ -18,7 +18,7 @@ router.param('post_id', validator);
 /* Get Timeline cells for that Baby. */
 router.get('/students/:student_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -30,7 +30,7 @@ router.get('/students/:student_id', function(req, res, next) {
 /* Create new Post for a Baby */
 router.post('/students/:student_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -42,7 +42,7 @@ router.post('/students/:student_id', function(req, res, next) {
 /* Create new Post for a list of Baby */
 router.post('/students', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -54,7 +54,7 @@ router.post('/students', function(req, res, next) {
 /* Get Timeline cells for that Guardian */
 router.get('/guardians/:guardian_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -66,7 +66,7 @@ router.get('/guardians/:guardian_id', function(req, res, next) {
 /* Delete Post */
 router.delete('/:post_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -78,7 +78,7 @@ router.delete('/:post_id', function(req, res, next) {
 /* Update Post */
 router.put('/:post_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
