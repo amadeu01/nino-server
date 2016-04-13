@@ -20,8 +20,8 @@ router.param('credential_id', validator);
 router.post('/educators', function(req, res, next) {
 	//TODO: console.log(req.useragent);//Register new device or check existing
 	//Check parameters
-	if (req.body.password == null) req.status(400).end(errors.invalidParameters("password"));
-	else if (req.body.email == null) req.status(400).end(errors.invalidParameters("email"));
+	if (req.body.password === undefined) req.status(400).end(errors.invalidParameters("password"));
+	else if (req.body.email === undefined) req.status(400).end(errors.invalidParameters("email"));
 	else {
 	//Done checking, should call business
 		
@@ -33,8 +33,8 @@ router.post('/educators', function(req, res, next) {
 /* Create a Guardian credential : LogIn. */
 router.post('/guardians', function(req, res, next) {
 	//Check parameters
-	if (req.body.password == null) req.status(400).end(errors.invalidParameters("password"));
-	else if (req.body.email == null) req.status(400).end(errors.invalidParameters("email"));
+	if (req.body.password === undefined) req.status(400).end(errors.invalidParameters("password"));
+	else if (req.body.email === undefined) req.status(400).end(errors.invalidParameters("email"));
 	else {
 	//Done checking, should call business
 		
@@ -46,7 +46,7 @@ router.post('/guardians', function(req, res, next) {
 /*LogOut*/
 router.delete('/:credential_id', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	

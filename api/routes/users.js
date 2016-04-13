@@ -16,7 +16,7 @@ router.param('user_id', validator);
 /* Update user's profile picture */
 router.put('/:user_id/profilePic', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -28,7 +28,7 @@ router.put('/:user_id/profilePic', function(req, res, next) {
 /* Reads user's profile picture */
 router.get('/:user_id/profilePic', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -40,7 +40,7 @@ router.get('/:user_id/profilePic', function(req, res, next) {
 /* Confirms user's register information */
 router.post('/confirmation/:confirmation_hash', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -52,8 +52,8 @@ router.post('/confirmation/:confirmation_hash', function(req, res, next) {
 /* Post a notification to all devices of the user */
 router.post('/:user_id/notifications', function(req, res, next) {
 	//Check parameters
-	if (req.token == null) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.date == null) req.status(400).end(errors.invalidParameters("data"));
+	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	else if (req.body.date === undefined) req.status(400).end(errors.invalidParameters("data"));
 	else {
 		//Should now call business
 	
