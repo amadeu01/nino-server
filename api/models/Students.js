@@ -24,7 +24,7 @@ module.exports =  Waterline.Collection.extend({
 				required: true
 			},
       birthdate: {
-        type: 'number',
+        type: 'integer',
         required: true
       },
       //reference to picture on s3

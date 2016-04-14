@@ -85,6 +85,6 @@ suite('Guardians Services', function () {
   			console.log(error);
   			throw error;
   		});
-    });
 
+    });
 });

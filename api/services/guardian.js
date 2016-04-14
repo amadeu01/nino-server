@@ -79,6 +79,14 @@ var guardiansServices = {
 			if (!role) throw errors.inexistentRegister('Role - Finding Error');
 			return Roles.update({id: role.id}, roleParameters);
 		});
+	},
+	addStudent: function(parameters, studentID) {
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		return Guardians.findOne(parameters).populate('students')
+		.then(function(guardian) {
+			if (!guardian) throw errors.inexistentRegister('Guardian - Finding Error');
+			return guardian.students.add(studentID);
+		});
 	}
 };
 
