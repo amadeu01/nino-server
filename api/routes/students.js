@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -11,9 +12,9 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('guardian_id', validator);
-router.param('student_id', validator);
-router.param('classroom_id', validator);
+router.param('guardian_id', numberValidate);
+router.param('student_id', numberValidate);
+router.param('classroom_id', numberValidate);
 
 /* Send push notification to all student's guardians */
 router.put('/:student_id/notifications', function(req, res, next) {
@@ -60,7 +61,7 @@ router.put('/:student_id', function(req, res, next) {
 		if (req.body.surname === undefined) {
 			if (req.body.birthdate === undefined) {
 				if (req.body.school === undefined) {
-					if (req.body.gender === undefined) {
+					if (req.body.gender === undefined || !validator.isNumeric(req.body.gender)) {
 						//Empty update req
 						res.status(400).json(errors.invalidParameters("empty"));
 					}
@@ -107,7 +108,7 @@ router.post('/schools/:school_id', function(req, res, next) {
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else if (req.body.name === undefined) res.status(400).json(errors.invalidParameters("name"));
 	else if (req.body.surname === undefined) res.status(400).json(errors.invalidParameters("surname"));
-	else if (req.body.birthdate === undefined) res.status(400).json(errors.invalidParameters("birthdate"));
+	else if (req.body.birthdate === undefined || !validator.isNumeric(req.body.birthdate)) res.status(400).json(errors.invalidParameters("birthdate"));
 	else if (req.body.gender === undefined) res.status(400).json(errors.invalidParameters("gender"));
 	else {
 		//Should now call business

@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -11,7 +12,7 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('user_id', validator);
+router.param('user_id', numberValidate);
 
 /* Update user's profile picture */
 router.put('/:user_id/profilePic', function(req, res, next) {
@@ -54,7 +55,7 @@ router.post('/confirmation/:confirmation_hash', function(req, res, next) {
 router.post('/:user_id/notifications', function(req, res, next) {
 	//Check parameters
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else if (req.body.date === undefined) res.status(400).json(errors.invalidParameters("data"));
+	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data"));
 	else {
 		//Should now call business
 	

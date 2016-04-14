@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -11,9 +12,9 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('student_id', validator);
-router.param('guardian_id', validator);
-router.param('post_id', validator);
+router.param('student_id', numberValidate);
+router.param('guardian_id', numberValidate);
+router.param('post_id', numberValidate);
 
 /* Get Timeline cells for that Baby. */
 router.get('/students/:student_id', function(req, res, next) {
@@ -99,7 +100,7 @@ router.put('/:post_id', function(req, res, next) {
 			res.status(400).json(errors.invalidParameters("empty"));
 		}
 	}
-	else if (req.body.poster === undefined) res.status(400).json(errors.invalidParameters("poster"));
+	else if (req.body.poster === undefined || !validator.isNumeric(req.body.poster)) res.status(400).json(errors.invalidParameters("poster"));
 	else {
 		//Should now call business
 	

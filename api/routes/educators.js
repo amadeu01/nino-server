@@ -3,8 +3,9 @@ var router = express.Router();
 var app = require('../app');
 var permissions = require('../business/permissions');
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -13,9 +14,9 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('school_id', validator);
-router.param('educator_id', validator);
-router.param('classroom_id', validator);
+router.param('school_id', numberValidate);
+router.param('educator_id', numberValidate);
+router.param('classroom_id', numberValidate);
 
 /* Get users listing for a school. */
 router.get('/schools/:school_id', function(req, res, next) {
@@ -36,9 +37,9 @@ router.post('/schools/:school_id', function(req, res, next) {
 	else if (req.body.user.name === undefined) res.status(400).json(errors.invalidParameters("user.name"));
 	else if (req.body.user.surname === undefined) res.status(400).json(errors.invalidParameters("user.surname"));
 	else if (req.body.user.password === undefined) res.status(400).json(errors.invalidParameters("user.password"));
-	else if (req.body.user.email === undefined) res.status(400).json(errors.invalidParameters("user.email"));
-	else if (req.body.user.cel === undefined) res.status(400).json(errors.invalidParameters("user.cel"));
-	else if (req.body.privileges === undefined) res.status(400).json(errors.invalidParameters("privileges"));
+	else if (req.body.user.email === undefined || !validator.isEmail(req.body.user.email)) res.status(400).json(errors.invalidParameters("user.email"));
+	else if (req.body.user.cel === undefined || !validator.isNumeric(req.body.user.cel)) res.status(400).json(errors.invalidParameters("user.cel"));
+	else if (req.body.privileges === undefined || !validator.isNumeric(req.body.privileges)) res.status(400).json(errors.invalidParameters("privileges"));
 	else {
 		//Business
 	
@@ -75,9 +76,9 @@ router.delete('/:educator_id', function(req, res, next) {
 router.put('/:educator_id', function(req, res, next) {
 	//Check parameters
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else if (req.body.school === undefined) 
+	else if (req.body.school === undefined || !validator.isNumeric(req.body.school)) 
 	{
-		if (req.body.permissions === undefined) {
+		if (req.body.permissions === undefined || !validator.isNumeric(req.body.privileges)) {
 			//Update req is empty
 			res.status(400).json(errors.invalidParameters("Empty"));
 		}

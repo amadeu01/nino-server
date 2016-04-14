@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -11,8 +12,8 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('user_id', validator);
-router.param('device_id', validator);
+router.param('user_id', numberValidate);
+router.param('device_id', numberValidate);
 
 /* Get guardians' list of devices. */
 router.get('/users/:user_id', function(req, res, next) {

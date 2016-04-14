@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -11,10 +12,10 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('school_id', validator);
-router.param('classroom_id', validator);
-router.param('educator_id', validator);
-router.param('student_id', validator);
+router.param('school_id', numberValidate);
+router.param('classroom_id', numberValidate);
+router.param('educator_id', numberValidate);
+router.param('student_id', numberValidate);
 
 /* Get all classrooms for a school */
 router.get('/schools/:school_id', function(req, res, next) {
