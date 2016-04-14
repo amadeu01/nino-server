@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var errors = require('../business/errors');
+var validator = require('validator');
 
-var validator = function(req, res, next, id) {
+var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
@@ -11,15 +12,15 @@ var validator = function(req, res, next, id) {
 };
 
 //Always check all path parameters for NaN error
-router.param('school_id', validator);
-router.param('classroom_id', validator);
-router.param('educator_id', validator);
-router.param('student_id', validator);
+router.param('school_id', numberValidate);
+router.param('classroom_id', numberValidate);
+router.param('educator_id', numberValidate);
+router.param('student_id', numberValidate);
 
 /* Get all classrooms for a school */
 router.get('/schools/:school_id', function(req, res, next) {
 	//Only parameter is school_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -31,8 +32,8 @@ router.get('/schools/:school_id', function(req, res, next) {
 /* Create a new classroom for a school */
 router.post('/schools/:school_id', function(req, res, next) {
 	//Check required parameters
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.classroom_name === undefined) req.status(400).end(errors.invalidParameters("classroom_name"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	else if (req.body.classroom_name === undefined) res.status(400).json(errors.invalidParameters("classroom_name"));
 	else {
 		//Call business
 		
@@ -44,8 +45,8 @@ router.post('/schools/:school_id', function(req, res, next) {
 /* Update classroom information */
 router.put('/:classroom_id', function(req, res, next) {
 	//Check required parameters
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
-	else if (req.body.classroom_name === undefined) req.status(400).end(errors.invalidParameters("classroom_name"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	else if (req.body.classroom_name === undefined) res.status(400).json(errors.invalidParameters("classroom_name"));
 	else {
 		//Call business
 		
@@ -57,7 +58,7 @@ router.put('/:classroom_id', function(req, res, next) {
 /* Marks a classroom for deletion */
 router.delete('/:classroom_id', function(req, res, next) {
 	//Only parameter is school_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -69,7 +70,7 @@ router.delete('/:classroom_id', function(req, res, next) {
 /* Add an educator to a classroom */
 router.post('/:classroom_id/educators/:educator_id', function(req, res, next) {
 	//Only parameter are school_id and educator_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -81,7 +82,7 @@ router.post('/:classroom_id/educators/:educator_id', function(req, res, next) {
 /* Remove an educator from a classroom */
 router.delete('/:classroom_id/educators/:educator_id', function(req, res, next) {
 	//Only parameter are school_id and educator_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -93,7 +94,7 @@ router.delete('/:classroom_id/educators/:educator_id', function(req, res, next) 
 /* Add a student to a classroom */
 router.post('/:classroom_id/students/:student_id', function(req, res, next) {
 	//Only parameter are school_id and student_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -105,7 +106,7 @@ router.post('/:classroom_id/students/:student_id', function(req, res, next) {
 /* Remove a student from a classroom */
 router.delete('/:classroom_id/students/:student_id', function(req, res, next) {
 	//Only parameter are school_id and student_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
@@ -117,7 +118,7 @@ router.delete('/:classroom_id/students/:student_id', function(req, res, next) {
 /* Get all classrooms for an educator */
 router.get('/educators/:educator_id', function(req, res, next) {
 	//Only parameter is educator_id, already checked
-	if (req.token === undefined) req.status(400).end(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
 		//Should now call business
 	
