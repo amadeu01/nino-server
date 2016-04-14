@@ -46,6 +46,7 @@ app.use(function(req, res, next) {
 
 // Gets user
 app.use(function(req, res, next) {
+	console.log(req.useragent);
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   // decode token

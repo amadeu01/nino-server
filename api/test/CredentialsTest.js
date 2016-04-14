@@ -36,42 +36,34 @@ suite('Credential Services', function () {
 
       return Promise.all(promises);
   });
-
-	var createdToken;
-	var originalExp;
+	var info = 'MySafeCredential';
   test('Create Credential', function () {
 		var credential= require('../services/credentials.js');
-		var info = {Info: 'MySafeCredential'};
 		return credential.create({id:1}, info)
 		.then(function(cred) {
-			createdToken = cred.token;
 			return credential.read(cred.token);
 		})
 		.then(function(verified) {
-			originalExp = verified.exp;
-			delete verified.iat;
-			delete verified.exp;
-			assert.strictEqual(verified.info, info.info, 'Values not equal');
+			assert.strictEqual(verified.token, info, 'Values not equal');
 		});
   });
 	
   test('Update and verify', function () {
 		var credential= require('../services/credentials.js');
-		return credential.update(createdToken)
+		return credential.update(info, info + '2')
 		.then(function(cred) {
-			createdToken = cred.token;
-			return credential.read(cred.token);
+			return credential.read(info + '2');
 		})
 		.then(function(verified) {
-			assert.notStrictEqual(verified.exp, originalExp, 'Values not equal');
+			assert.notStrictEqual(verified, info + '2', 'Values not equal');
 		});
   });
 	
   test('Delete and verify', function () {
 		var credential= require('../services/credentials.js');
-		return credential.delete(createdToken)
+		return credential.delete(info + '2')
 		.then(function() {
-			return credential.read(createdToken);
+			return credential.read(info + '2');
 		})
 		.catch(function(err) {
 			assert.strictEqual(err, 'Error', 'Should have failed security');

@@ -1,5 +1,3 @@
-
-
 module.exports = {
 	validate : function(permission) {
 		if (permission < 1<<18) return true;
