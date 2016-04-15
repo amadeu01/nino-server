@@ -15,12 +15,14 @@ module.exports =  Waterline.Collection.extend({
 			},
       arn: {
         type: 'string',
-        size: 60,
-        required: true
+        size: 60
       },
       description: {
         type: 'string',
-        size: 120
+				unique: true,
+        size: 120,
+				index: true,
+				required: true
       },
 			active: {
 				type: 'boolean',

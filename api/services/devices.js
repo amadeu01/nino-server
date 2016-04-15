@@ -23,8 +23,8 @@ var deviceServices = {
 	update: function() {
 
 	},
-	read: function() {
-
+	read: function(parameters) {
+		return Devices.find(parameters).populate('credentials');
 	}
 };
 

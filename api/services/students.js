@@ -46,7 +46,7 @@ var studentsServices = {
 		parameters.active = true;
 		return Students.findOne(parameters)
 		.then(function(student) {
-			if(!student) throw undefined;
+			if(!student) return undefined;
 			return student;
 		});
   }

@@ -43,7 +43,7 @@ var schoolServices = {
 				return Roles.create({
 					type: 'educator',
 					privileges: permissions.all(),
-					user: user.id
+					owner: user.id
 				});
 			})
 			.then(function(role) {

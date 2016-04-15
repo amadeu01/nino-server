@@ -1,12 +1,18 @@
 var permissions = require('./permissions');
 var errors = require('./errors');
+var services = require('../services');
+
+var credentials = require('./credentials');
 
 module.exports = {
 	validateIdentity: function(user_id, roles_ids) {
 		
 	},
-	create: function(token, params) {
-		
+	create: function(parameters) {
+		return services.schools.create(parameters)
+		.then(function(created) {
+			return credentials.loginEducator(parameters.owner.email, parameters.owner.password, parameters.device);
+		});
 	},
 	read: function(token, params) {
 		

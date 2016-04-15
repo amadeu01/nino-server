@@ -145,7 +145,7 @@ suite('Student Services', function () {
       return;
     })
     .catch(function(error) {
-      console.log(error);
+      console.log('Error: '+error);
       throw error;
     });
 	});

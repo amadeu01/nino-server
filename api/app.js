@@ -19,6 +19,8 @@ var schools = require('./routes/schools');
 var subscriptions = require('./routes/subscriptions');
 var timeline = require('./routes/timeline');
 
+var business = require('./business');
+
 // var services = require ('./services');
 
 // view engine setup
@@ -52,8 +54,16 @@ app.use(function(req, res, next) {
   // decode token
   if (token) {
     // verifies secret and checks exp - Gets params and proceed! <-TODO
-		req.token = token;
-    next();
+		business.jwt.validate(token)
+		.then(function(decoded) {
+			console.log(decoded);
+			req.token = decoded;
+	    next();
+		})
+		.catch(function(error) {
+			console.log(error);
+			next();
+		});
   } else {
 		next();
 	}

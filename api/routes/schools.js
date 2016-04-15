@@ -94,8 +94,7 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 /* Create new school */
 router.post('/', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name"));
+	if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name"));
 	else if (req.body.school.email === undefined || !validator.isEmail(req.body.school.email)) res.status(400).json(errors.invalidParameters("school.email"));
 	else if (req.body.owner.name === undefined) res.status(400).json(errors.invalidParameters=== undefined("owner.name"));
 	else if (req.body.owner.surname === undefined) res.status(400).json(errors.invalidParameters("owner.surname"));

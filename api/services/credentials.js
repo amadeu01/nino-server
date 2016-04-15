@@ -13,8 +13,12 @@ var Credentials = models.waterline.collections.credential;
 var Schools = models.waterline.collections.school;
 
 var credentialServices = {
-	create: function(device, token) {
-		return Credentials.create({device: device.id, token: token, active: true});
+	create: function(device, token, owner) {
+		return Devices.findOrCreate({description:device}, {description:device, owner: owner})
+		.then(function(device) {
+			device.credentials.add({token: token, active: true});
+			return device.save();
+		});
 	},
 	delete: function(token) {
 		return Credentials.destroy({token: token});
