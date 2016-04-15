@@ -49,11 +49,33 @@ var classroomServices = {
     });
   },
   readAllStudents: function(parameters) {
-
-  },
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		parameters.active = true;
+		return Classrooms.findOne(parameters).populate('students')
+		.then (function (classroom) {
+			if (!classroom) return undefined;
+			if (!classroom.students) return undefined;
+			return classroom.students;
+		});
+	},
   readAllEducators: function(parameters) {
-
-  }
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		parameters.active = true;
+		return Classrooms.findOne(parameters).populate('educators')
+		.then (function (classroom) {
+			if (!classroom) return undefined;
+			if (!classroom.educators) return undefined;
+			return classroom.educators;
+		});
+  },
+	readComplete: function(parameters) {
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		return Classrooms.findOne(parameters).populate(['educators', 'students', 'school'])
+		.then(function(classroom){
+			if (!classroom) return undefined;
+			return classroom;
+		});
+	}
 
 };
 

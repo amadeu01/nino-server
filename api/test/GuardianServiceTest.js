@@ -70,7 +70,10 @@ suite('Guardians Services', function () {
   		});
 
   	});
-
+    //Add Student to a guardian
+    test('should add a Student', function(){
+      var Service = require('../services/guardian.js');
+    });
     //Delete
     test('should delete a guardian', function(){
       var Service = require('../services/guardian.js');

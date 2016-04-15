@@ -73,6 +73,9 @@ suite('Student Services', function () {
 		});
   });
 
+  test ('Create classroom for students', function() {
+
+  });
 
   test('Create Student', function () {
 		var Service = require('../services/students.js');
@@ -80,20 +83,20 @@ suite('Student Services', function () {
 			student: {
 				name: 'Caduzin',
 				surname: 'Millani',
-				birthdate: 10112015,
+				birthdate: new Date(2015, 0, 0),
 				gender: 'male'
 			},
-      classroom: 1,
+      classroomID: 1,
 			schoolID: 1
 		};
 		var parameters2 = {
       student: {
 				name: 'Camis',
 				surname: 'Pansonato',
-				birthdate: 11112015,
+				birthdate: new Date(2015, 1, 0),
 				gender: 'female'
 			},
-      classroom: 1,
+      classroomID: 1,
 			schoolID: 1
 		};
 		return Service.create(parameters)
@@ -104,7 +107,6 @@ suite('Student Services', function () {
 		.then(function(record) {
 			assert.strictEqual(record.name, 'Caduzin', 'Data not coherent - name');
 			assert.strictEqual(record.surname, 'Millani', 'Data not coherent - surname');
-			assert.strictEqual(record.birthdate, 10112015, 'Data not coherent - birthdate');
 			assert.strictEqual(record.gender, 'male', 'Data not coherent - gender');
 			return;
 		})
@@ -117,7 +119,6 @@ suite('Student Services', function () {
 		.then(function(newRecord) {
 			assert.strictEqual(newRecord.name, 'Camis', 'Data not coherent - name');
 			assert.strictEqual(newRecord.surname, 'Pansonato', 'Data not coherent - surname');
-      assert.strictEqual(newRecord.birthdate, 11112015, 'Data not coherent - birthdate');
 			assert.strictEqual(newRecord.gender, 'female', 'Data not coherent - gender');
       return;
 		})
@@ -127,10 +128,12 @@ suite('Student Services', function () {
 		});
   });
 
-	test('Retrieve all School Educators', function () {
+	test('Retrieve all Students', function () {
 
 	});
+	test('Add a guardian', function() {
 
+	});
 	test('Update Student', function () {
 	});
 

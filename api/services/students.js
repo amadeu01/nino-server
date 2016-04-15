@@ -17,7 +17,8 @@ var studentsServices = {
 			surname: parameters.student.surname,
 			birthdate: parameters.student.birthdate,
 			gender: parameters.student.gender,
-			school: parameters.schoolID
+			school: parameters.schoolID,
+			classroom: parameters.classroomID
 		})
 		.then(function(student) {
 			if (!student) throw errors.internalError('Student - Creation Error');
@@ -49,8 +50,10 @@ var studentsServices = {
 			if(!student) return undefined;
 			return student;
 		});
-  }
-
+  },
+	addGuardian: function(parameters) {
+		
+	}
 };
 
 module.exports = studentsServices;

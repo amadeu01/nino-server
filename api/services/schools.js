@@ -10,10 +10,10 @@ var Roles = models.waterline.collections.role;
 var Devices = models.waterline.collections.device;
 var Credentials = models.waterline.collections.credential;
 var Schools = models.waterline.collections.school;
+var Classrooms = models.waterline.collections.classroom;
 var errors = require('../business/errors');
 
 var validator = require('validator');
-
 var permissions = require('../business/permissions');
 
 var schoolServices = {
@@ -63,6 +63,61 @@ var schoolServices = {
 			});
 		});
 	},
+	createWithClassrom: function(parameters) {
+		if (!validator.isEmail(parameters.school.email)) throw errors.invalidParameters('Invalid School email');
+		if (!validator.isEmail(parameters.owner.email)) throw errors.invalidParameters('Invalid User email');
+
+		return Schools.create({
+			name: parameters.school.name,
+			email: parameters.school.email,
+			cnpj: parameters.school.cnpj,
+			telephone: parameters.school.telephone,
+			addr: parameters.school.addr,
+			active: true
+		})
+		.then (function(school) {
+			if (!school) throw errors.internalError('School - Creation Error');
+			return Users.create({
+					name: parameters.owner.name,
+					surname: parameters.owner.surname,
+					password: parameters.owner.password,
+					email: parameters.owner.email,
+					cel: parameters.owner.cel
+			})
+			.then(function(user) {
+				if (!user) throw errors.internalError('User - Creation Error');
+				return Roles.create({
+					type: 'educator',
+					privileges: permissions.all(),
+					owner: user.id
+				})
+				.then(function(role) {
+					if (!role) throw errors.internalError('Role - Creation Error');
+					return Educators.create({
+						role: role.id,
+						school: school.id
+					})
+					.then(function(educator) {
+						if (!educator) throw errors.internalError('Educator - Creation Error');
+				 		school.owner = educator.id;
+				 		school.save();
+				 		return Classrooms.create({
+				  		name: parameters.classroom.name,
+					  	school: school.id
+				  	})
+						.then(function(classroom){
+							educator.classroom = classroom.id;
+							classroom.educator = [educator];
+							classroom.save();
+							return educator.save().then(function(){
+								return ({school: school.id, classroom: classroom.id, educator: educator.id});
+							});
+						});
+					});
+				});
+			});
+		});
+	},
 	delete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		return Schools.findOne(parameters)
@@ -97,6 +152,11 @@ var schoolServices = {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
 		return Schools.findOne(parameters);
+	},
+	readComplete: function(parameters) {
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		parameters.active = true;
+		return Schools.findOne(parameters).populate(['educators', 'students', 'classrooms']);
 	}
 };
 

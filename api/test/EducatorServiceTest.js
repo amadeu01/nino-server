@@ -101,7 +101,7 @@ suite('Educator Services', function () {
 		var educator = require('../services/educators');
 		return educator.readAllFromSchool({school: 1})
 		.then(function(educators) {
-			assert.strictEqual(educators.length, 2, 'Educators Array length incorrect');
+			assert.strictEqual(educators.length, 3, 'Educators Array length incorrect');
 		})
 		.catch(function(error) {
 			console.log(error);
