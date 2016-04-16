@@ -48,13 +48,14 @@ var classroomServices = {
       return;
     });
   },
-  readAllStudents: function(parameters) {
+  readAllStudents: function(parameters) {//id classroom
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
 		return Classrooms.findOne(parameters).populate('students')
 		.then (function (classroom) {
 			if (!classroom) return undefined;
 			if (!classroom.students) return undefined;
+			//console.log(classroom);
 			return classroom.students;
 		});
 	},
@@ -75,6 +76,8 @@ var classroomServices = {
 			if (!classroom) return undefined;
 			return classroom;
 		});
+	},
+	addStudent: function(parameters, student_id) {
 	}
 
 };

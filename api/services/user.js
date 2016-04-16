@@ -22,7 +22,8 @@ var userServices = {
 				surname: parameters.user.surname,
 				password: parameters.user.password,
 				email: parameters.user.email,
-				cel: parameters.user.cel
+				cel: parameters.user.cel,
+				profile_picture: parameters.user.profile_picture
 		})
 		.then(function(user) {
 			if (!user) throw errors.internalError('User - Creation Error');
@@ -58,8 +59,10 @@ var userServices = {
   },
   listUsers: function() {//TODO
 
-  }
+  },
+	addDevice: function(parameters, device_id) {//TODO
 
+	}
 };
 
 module.exports = userServices;

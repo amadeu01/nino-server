@@ -106,9 +106,7 @@ var schoolServices = {
 					  	school: school.id
 				  	})
 						.then(function(classroom){
-							educator.classroom = classroom.id;
-							classroom.educator = [educator];
-							classroom.save();
+							educator.classrooms.add(classroom.id);
 							return educator.save().then(function(){
 								return ({school: school.id, classroom: classroom.id, educator: educator.id});
 							});

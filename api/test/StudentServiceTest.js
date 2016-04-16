@@ -74,7 +74,21 @@ suite('Student Services', function () {
   });
 
   test ('Create classroom for students', function() {
-
+		var classroomServices = require('../services/classroom.js');
+		var parameters = {
+			classroom: {
+				name: "Sala Para Novos estudantes"
+			},
+			school: 1
+		};
+		return classroomServices.create(parameters)
+		.then(function(result){
+			return classroomServices.readComplete({id: result.classroom})
+			.then(function(classroom){
+				//console.log(classroom);
+				return;
+			});
+		});
   });
 
   test('Create Student', function () {
@@ -128,13 +142,54 @@ suite('Student Services', function () {
 		});
   });
 
-	test('Retrieve all Students', function () {
-
+	test('Retrieve all Students of classroom', function () {
+		var classroomServices = require('../services/classroom.js');
+		return classroomServices.readAllStudents({id: 1})
+		.then(function(students){
+			//console.log(students);
+			return;
+		});
 	});
 	test('Add a guardian', function() {
-
+		var guardianService = require('../services/guardian.js');
+		var studentsServices = require('../services/students.js');
+		var parameters = {
+			user: {
+				name: 'Marcia',
+				surname: 'Cavalcante',
+				password: 'password',
+				email: 'marciacavalcante@nino.com.br',
+				cel: '1 9999990000',
+				confirmed: true
+			},
+			privileges: 1
+		};
+		return guardianService.create(parameters).
+		then(function(result){
+			return studentsServices.addGuardian({id: 1}, {id: 2})
+			.then(function() {
+				return studentsServices.readComplete({id: 1})
+				.then(function(student){
+					// console.log("Student id: 1");
+					// console.log(student);
+					// console.log("##############################");
+					return;
+				});
+			});
+		});
 	});
 	test('Update Student', function () {
+	});
+
+	test('Read Student', function() {
+		var studentService = require('../services/students.js');
+		return studentService.readComplete({id: 2})
+		.then(function(student){
+			// console.log("Student id: 2");
+			// console.log(student);
+			// console.log("#####################");
+			return;
+		});
 	});
 
 	test('Delete Student', function () {

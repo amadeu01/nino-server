@@ -128,9 +128,9 @@ suite('Educator Services', function () {
 
 	test('Delete Educator', function () {
 		var educator = require('../services/educators');
-		return educator.delete({id: 1})
+		return educator.delete({id: 2})
 		.then(function(educators) {
-			return educator.read({id: 1});
+			return educator.read({id: 2});
 		})
 		.then(function(deleted) {
 			assert.strictEqual(deleted, undefined, 'Should be inactive');

@@ -65,12 +65,12 @@ suite('School + Classroom Services', function () {
 			assert.equal(!isNaN(result.school) & !isNaN(result.educator) & !isNaN(result.classroom), true, 'ID returned is Number');
 			return schoolServices.readComplete({id: result.school})
       .then(function(school) {
-				console.log("********School********");
-				console.log(school);
+				//console.log("********School********");
+				//console.log(school);
 				return classroomServices.readComplete({id: result.classroom})
 				.then(function(classroom){
-					console.log("**********Classroom***********");
-					console.log(classroom);
+					// console.log("**********Classroom***********");
+					// console.log(classroom);
 				});
       });
     }).catch(function(error) {
@@ -81,11 +81,22 @@ suite('School + Classroom Services', function () {
 
 	test('Create student to classroom', function() {
 		var classroomServices = require('../services/schools.js');
-		var studentsServices = require('../services/schools.js');
+		var studentsServices = require('../services/students.js');
+		//Student
+		var parameters = {
+			student: {
+				name: 'Alfredinho',
+				surname: 'Cavalcante',
+				birthdate: new Date(2015, 2, 0),
+				gender: 'male'
+			},
+      classroomID: 1,
+			schoolID: 1
+		};
 		//Retrieve a Classroom
-		return classroomServices.read({id: 1})
-		.then(function(classroom) {
-
+		return studentsServices.create(parameters)
+		.then(function(student) {
+			return;
 		});
 
 	});

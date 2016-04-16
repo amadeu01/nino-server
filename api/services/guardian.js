@@ -85,7 +85,8 @@ var guardiansServices = {
 		return Guardians.findOne(parameters).populate('students')
 		.then(function(guardian) {
 			if (!guardian) throw errors.inexistentRegister('Guardian - Finding Error');
-			return guardian.students.add(studentID);
+			guardian.students.add(studentID);
+			return guardian.save();
 		});
 	}
 };
