@@ -1,3 +1,8 @@
+/**
+* Author: Carlos Eduardo Millani
+* JWT
+*/
+
 var jwt = require('jsonwebtoken');
 var permissions = require('./permissions');
 var errors = require('./errors');

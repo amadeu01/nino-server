@@ -1,3 +1,9 @@
+/**
+* Author: Carlos Eduardo Millani
+* Mailgun business
+* Last to modified:
+*/
+
 var api_key = 'key-febe2f50d1b01f0e641d58f04e91a2f3';
 var domain = 'ninoapp.com.br';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
@@ -5,7 +11,7 @@ var uid = require('uid-safe');
 var app = require('../app')
 var feedlist = mailgun.lists('noticias@ninoapp.com.br');
 var userslist = mailgun.lists('usuarios@ninoapp.com.br');
- 
+
 var data = {
   from: 'Myself <naoresponda@ninoapp.com.br>',
   to: 'carloseduardomillani@gmail.com',

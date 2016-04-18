@@ -1,3 +1,8 @@
+/**
+* Author: Carlos Eduardo Millani
+* Credential business
+* Last to modified:
+*/
 var permissions = require('./permissions');
 var errors = require('./errors');
 var services = require('../services');
@@ -6,7 +11,7 @@ var jwt = require('./jwt');
 
 module.exports = {
 	validateIdentity: function(user_id, roles_ids) {
-		
+
 	},
 	loginEducator: function(email, password, device) {
 		return services.users.read({email: email})
@@ -55,6 +60,6 @@ module.exports = {
 		})
 	},
 	logout: function(token) {
-		
+
 	}
 }

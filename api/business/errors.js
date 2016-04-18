@@ -1,3 +1,8 @@
+/**
+* Author: Carlos Eduardo Millani
+* Erros
+* Last to modified:
+*/
 module.exports = {
 	//Register related errors
 	inexistentRegister: function(data) {
@@ -14,7 +19,7 @@ module.exports = {
 			data: data
 		}
 	},
-	
+
 	//Server relayed errors
 	invalidParameters: function(data) {
 		return {
@@ -30,7 +35,7 @@ module.exports = {
 			data: data
 		}
 	},
-	
+
 	//Token related errors
 	invalidPermissions: function(data) {
 		return {
