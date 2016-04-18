@@ -78,8 +78,24 @@ var classroomServices = {
 		});
 	},
 	addStudent: function(parameters, student_id) {
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		return Classrooms.findOne(parameters).populate('students')
+		.then(function(classroom){
+			if (!classroom) throw errors.inexistentRegister('Classroom - Finding Error');
+			classroom.students.add(student_id);
+			return classroom.save();
+		});
+	},
+	addEducator: function(parameters, educator_id) {
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		parameters.active = true;
+		return Classrooms.findOne(parameters).populate('educators')
+		.then(function(classroom){
+			if (!classroom) throw errors.inexistentRegister('Classroom - Finding Error');
+			classroom.educators.add(educator_id);
+			return classroom.save();
+		});
 	}
-
 };
 
 module.exports = classroomServices;

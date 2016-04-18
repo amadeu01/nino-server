@@ -23,7 +23,8 @@
     "uid-safe": "^2.1.0",
     "validator": "^5.1.0",
     "waterline": "~0.11.1",
-    "mailgun-js":"~0.7.7"
+    "mailgun-js":"~0.7.7",
+    "chai": "~3.5.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

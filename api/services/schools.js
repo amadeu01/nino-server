@@ -63,6 +63,7 @@ var schoolServices = {
 			});
 		});
 	},
+	/* Create a school with a standard classroom void. */
 	createWithClassrom: function(parameters) {
 		if (!validator.isEmail(parameters.school.email)) throw errors.invalidParameters('Invalid School email');
 		if (!validator.isEmail(parameters.owner.email)) throw errors.invalidParameters('Invalid User email');
@@ -97,7 +98,7 @@ var schoolServices = {
 						role: role.id,
 						school: school.id
 					})
-					.then(function(educator) {
+					.then(function(educator) {//This is also owner.
 						if (!educator) throw errors.internalError('Educator - Creation Error');
 				 		school.owner = educator.id;
 				 		school.save();
@@ -154,7 +155,43 @@ var schoolServices = {
 	readComplete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Schools.findOne(parameters).populate(['educators', 'students', 'classrooms']);
+		return Schools.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner']);
+	},
+	description: function(parameters) {
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		parameters.active = true;
+		return Schools.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner'])
+		.then(function(school){
+			var data = "Name: " + JSON.stringify(school.name);
+			data += "\nemail: " + JSON.stringify(school.email);
+			data += "\nCNPJ: " + JSON.stringify(school.cnpj);
+			data += "\nOwner: " + JSON.stringify(school.owner.id);
+			data += "\nOwner: " + JSON.stringify(school.owner);
+			data += "\n=================Educator====================\n";
+			school.educators.forEach(function(educator){
+				data += "\nEducator: " + educator.id;
+				data += "\nRole: " + JSON.stringify(educator.role);
+				data += "\nSchool: " + educator.school;
+				data += "\n ------Next";
+			});
+			data += "\n=================Students====================\n";
+			school.students.forEach(function(student){
+				data += "\nStudent: " + student.id;
+				data += "\nName: " + student.name;
+				data += "\nSurname: " + student.surname;
+				data += "\nBirthdate: " + student.birthdate;
+				data += "\nSchool: " + JSON.stringify(student.school);
+				data += "\nClassroom: " + JSON.stringify(student.classroom);
+				data += "\n ------Next";
+			});
+			data += "\n=================Classroom====================\n";
+			school.classrooms.forEach(function(classroom){
+				data += "\nName: " + classroom.name;
+				data += "\nSchool: " + classroom.school;
+				data += "\n ------Next";
+			});
+			return data;
+		});
 	}
 };
 

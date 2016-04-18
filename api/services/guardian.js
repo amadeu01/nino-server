@@ -1,6 +1,7 @@
 /**
 * Amadeu Cavalcante
 * Module services
+* Last to modified: Amadeu Cavalcante
 */
 
 var models = require('../models');
@@ -80,13 +81,38 @@ var guardiansServices = {
 			return Roles.update({id: role.id}, roleParameters);
 		});
 	},
-	addStudent: function(parameters, studentID) {
+	addStudent: function(parameters, student_id) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		return Guardians.findOne(parameters).populate('students')
 		.then(function(guardian) {
 			if (!guardian) throw errors.inexistentRegister('Guardian - Finding Error');
-			guardian.students.add(studentID);
+			guardian.students.add(student_id);
 			return guardian.save();
+		});
+	},
+	description: function(parameters){
+		if (!parameters) throw errors.invalidParameters('Missing Parameter');
+		parameters.active = true;
+		return Guardians.findOne(parameters)
+		.then(function (guardian) {
+			if (!guardian) return undefined;
+			return Roles.findOne({id: guardian.role}).populate('owner').
+			then(function(role){
+				var data = "Name: " + JSON.stringify(role.owner.name);
+				data += "\nSurname: " + JSON.stringify(role.owner.surname);
+				data += "\nemail: " + JSON.stringify(role.owner.email);
+				data += "\n=================Students====================\n";
+				guardian.students.forEach(function(student){
+					data += "\nStudent: " + student.id;
+					data += "\nName: " + student.name;
+					data += "\nSurname:" + student.surname;
+					data += "\nBirthdate: " + student.birthdate;
+					data += "\nSchool: " + JSON.stringify(student.school);
+					data += "\nClassroom: " + JSON.stringify(student.classroom);
+					data += "\n ------Next";
+				});
+				return data;
+			});
 		});
 	}
 };

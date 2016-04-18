@@ -1,6 +1,7 @@
 /**
 * Carlos Millani
 * Module services
+* last modified: Amadeu Cavalcante
 */
 
 var assert = require('assert');
@@ -38,6 +39,7 @@ suite('School + Classroom Services', function () {
   });
 
   test('Create School + Classroom + Owner + Educator', function () {
+		//Initial is also owner Educator
 		var schoolServices = require('../services/schools.js');
 		var classroomServices = require('../services/classroom.js');
 		var parameters = {
@@ -65,8 +67,8 @@ suite('School + Classroom Services', function () {
 			assert.equal(!isNaN(result.school) & !isNaN(result.educator) & !isNaN(result.classroom), true, 'ID returned is Number');
 			return schoolServices.readComplete({id: result.school})
       .then(function(school) {
-				//console.log("********School********");
-				//console.log(school);
+				// console.log("********School********");
+				// console.log(school);
 				return classroomServices.readComplete({id: result.classroom})
 				.then(function(classroom){
 					// console.log("**********Classroom***********");
@@ -99,6 +101,36 @@ suite('School + Classroom Services', function () {
 			return;
 		});
 
+	});
+	test('Add educator', function() {
+		var classroomServices = require('../services/classroom.js');
+		var educatorServices = require('../services/educators.js');
+		var educatorParameters = {
+			user: {
+				name: 'Raimunda Marcia',
+				surname: 'Cavalcante',
+				password: 'password',
+				email: 'cida@cidamail.com',
+				cel: '984187636'
+			},
+			privileges: 123,
+			schoolID: 1,
+			classroomID: 1
+		};
+
+		return educatorServices.create(educatorParameters)
+		.then(function(result) {
+			assert.equal(!isNaN(result.educator), true, 'ID returned is Number');
+			return educatorServices.read({id: result.educator});
+		})
+		.then(function(record) {
+			console.log(record.owner.id);
+			assert.strictEqual(record.owner.name, 'Raimunda Marcia', 'Data not coherent - name');
+			assert.strictEqual(record.owner.surname, 'Cavalcante', 'Data not coherent - surname');
+			assert.strictEqual(record.owner.password, 'password', 'Data not coherent - password');
+			assert.strictEqual(record.owner.email, 'cida@cidamail.com', 'Data not coherent - email');
+			return;
+		});
 	});
 	test('Create guardian to student', function(){
 

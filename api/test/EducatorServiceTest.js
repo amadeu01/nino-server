@@ -1,6 +1,7 @@
 /**
 * Carlos Millani
 * Module services
+* Last to modified: Amadeu Cavalcante
 */
 
 var assert = require('assert');
@@ -48,7 +49,8 @@ suite('Educator Services', function () {
 				cel: '984187636'
 			},
 			privileges: 123,
-			schoolID: 1
+			schoolID: 1,
+			classroomID: 1
 		};
 		var parameters2 = {
 			user: {
@@ -59,7 +61,8 @@ suite('Educator Services', function () {
 				cel: '984187636'
 			},
 			privileges: 123,
-			schoolID: 1
+			schoolID: 1,
+			classroomID: 1
 		};
 		return educator.create(parameters)
 		.then(function(result) {
@@ -101,7 +104,7 @@ suite('Educator Services', function () {
 		var educator = require('../services/educators');
 		return educator.readAllFromSchool({school: 1})
 		.then(function(educators) {
-			assert.strictEqual(educators.length, 3, 'Educators Array length incorrect');
+			assert.strictEqual(educators.length, 4, 'Educators Array length incorrect');
 		})
 		.catch(function(error) {
 			console.log(error);
