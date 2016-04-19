@@ -10,8 +10,8 @@ var services = require('../services');
 var jwt = require('./jwt');
 
 module.exports = {
-	validateIdentity: function(user_id, roles_ids) {
-
+	validateIdentity: function(user_id, role_id, target) {
+		//To delete a credential must own that credential, must be the same user
 	},
 	loginEducator: function(email, password, device) {
 		return services.users.read({email: email})
