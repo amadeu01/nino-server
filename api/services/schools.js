@@ -20,24 +20,14 @@ var schoolServices = {
 	create: function(parameters) {
 		if (!validator.isEmail(parameters.school.email)) throw errors.invalidParameters('Invalid School email');
 		if (!validator.isEmail(parameters.owner.email)) throw errors.invalidParameters('Invalid User email');
-
-		return Schools.create({
-			name: parameters.school.name,
-			email: parameters.school.email,
-			cnpj: parameters.school.cnpj,
-			telephone: parameters.school.telephone,
-			addr: parameters.school.addr,
-			active: true
-		})
+		
+		parameters.school.active = true;
+		parameters.owner.active = true;
+		
+		return Schools.create(parameters.school)
 		.then (function(school) {
 			if (!school) throw errors.internalError('School - Creation Error');
-			return Users.create({
-					name: parameters.owner.name,
-					surname: parameters.owner.surname,
-					password: parameters.owner.password,
-					email: parameters.owner.email,
-					cel: parameters.owner.cel
-			})
+			return Users.create(parameters.owner)
 			.then(function(user) {
 				if (!user) throw errors.internalError('User - Creation Error');
 				return Roles.create({

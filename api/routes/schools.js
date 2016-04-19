@@ -3,6 +3,7 @@ var router = express.Router();
 var app = require('../app');
 var errors = require('../business/errors');
 var validator = require('validator');
+var services = require('../services');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -47,7 +48,7 @@ router.put('/:school_id', function(req, res, next) {
 	}
 	else {
 		//Should now call business
-	
+
 		//End response
 		res.send('WIP');
 	}
@@ -103,9 +104,38 @@ router.post('/', function(req, res, next) {
 	else if (req.body.owner.cel === undefined || !validator.isNumeric(req.body.owner.cel)) res.status(400).json(errors.invalidParameters("owner.cel"));
 	else {
 		//Should now call business
-	
+		parameters = {
+			owner: {
+				name: req.body.owner.name,
+				surname: req.body.owner.surname,
+				password: req.body.owner.password,
+				email: req.body.owner.email,
+				cel: req.body.owner.cel
+			},
+			school: {
+				name: req.body.school.name,
+				email: req.body.school.email
+			},
+		}
+		if (req.body.school.telephone !== undefined && validator.isNumeric(req.body.school.telephone)) {
+			parameters.school.telephone = req.body.school.telephone;
+		}
+		if (req.body.school.addr !== undefined) {
+			parameters.school.addr = req.body.school.addr;
+		}
+		if (req.body.school.cnpj !== undefined && validator.isNumeric(req.body.school.cnpj)) {
+			parameters.school.cnpj = req.body.school.cnpj;
+		}
+		
+		
+		services.school.create(parameters)
+		.then(function(success) {
+			res.send('WIP');
+		})
+		.catch(function(error) {
+			res.send('WIP');
+		});
 		//End response
-		res.send('WIP');
 	}
 });
 
