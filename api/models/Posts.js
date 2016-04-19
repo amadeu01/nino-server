@@ -23,12 +23,13 @@ module.exports =  Waterline.Collection.extend({
         required: true
       },
       date: {
-        type: 'string',
+        type: 'date',
         required: true,
         index: true
       },
       type: {
-        type: 'string'
+        type: 'string',
+        enum: ['photo', 'schedule', 'announcement', 'custom']
       },
       students: {
         collection: 'student',
