@@ -83,12 +83,13 @@ var schoolServices = {
 						if (!educator) throw errors.internalError('Educator - Creation Error');
 				 		school.owner = educator.id;
 				 		school.save();
-				 		return models.waterline.collections.classroom.create({
+				 		return models.waterline.collections.room.create({
 				  		name: parameters.classroom.name,
-					  	school: school.id
+					  	school: school.id,
+							type: parameters.classroom.type
 				  	})
 						.then(function(classroom){
-							educator.classrooms.add(classroom.id);
+							educator.rooms.add(classroom.id);
 							return educator.save().then(function(){
 								return ({school: school.id, classroom: classroom.id, educator: educator.id});
 							});
@@ -136,12 +137,12 @@ var schoolServices = {
 	readComplete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return models.waterline.collections.school.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner']);
+		return models.waterline.collections.school.findOne(parameters).populate(['educators', 'students', 'classes', 'owner']);
 	},
 	description: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return models.waterline.collections.school.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner'])
+		return models.waterline.collections.school.findOne(parameters).populate(['educators', 'students', 'classes', 'owner'])
 		.then(function(school){
 			var data = "Name: " + JSON.stringify(school.name);
 			data += "\nemail: " + JSON.stringify(school.email);
@@ -162,11 +163,11 @@ var schoolServices = {
 				data += "\nSurname: " + student.surname;
 				data += "\nBirthdate: " + student.birthdate;
 				data += "\nSchool: " + JSON.stringify(student.school);
-				data += "\nClassroom: " + JSON.stringify(student.classroom);
+				data += "\nClassroom: " + JSON.stringify(student.room);
 				data += "\n ------Next";
 			});
 			data += "\n=================Classroom====================\n";
-			school.classrooms.forEach(function(classroom){
+			school.classes.forEach(function(classroom){
 				data += "\nName: " + classroom.name;
 				data += "\nSchool: " + classroom.school;
 				data += "\n ------Next";

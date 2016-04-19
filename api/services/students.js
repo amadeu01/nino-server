@@ -21,7 +21,7 @@ var studentsServices = {
 		})
 		.then(function(student) {
 			if (!student) throw errors.internalError('Student - Creation Error');
-			return models.waterline.collections.classroom.findOne({id: parameters.classroomID})
+			return models.waterline.collections.room.findOne({id: parameters.classroomID})
 			.then(function(classroom){
 				if (!classroom) throw errors.inexistentRegister('Classroom - Finding Error');
 				//console.log(classroom);
@@ -72,7 +72,7 @@ var studentsServices = {
 	readComplete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return models.waterline.collections.student.findOne(parameters).populate(['school', 'guardians', 'posts', 'classroom'])
+		return models.waterline.collections.student.findOne(parameters).populate(['school', 'guardians', 'posts', 'room'])
 		.then(function(student) {
 			if(!student) return undefined;
 			return student;

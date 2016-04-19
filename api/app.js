@@ -18,6 +18,8 @@ var guardians = require('./routes/guardians');
 var schools = require('./routes/schools');
 var subscriptions = require('./routes/subscriptions');
 var timeline = require('./routes/timeline');
+var rooms = require('./routes/classes');
+var classes = require('./routes/rooms');
 
 var services = require('./services');
 
@@ -77,6 +79,8 @@ app.use('/guardians', guardians);
 app.use('/schools', schools);
 app.use('/subscriptions', subscriptions);
 app.use('/timeline', timeline);
+app.use('/classes', classes);
+app.use('/rooms', rooms);
 
 
 // catch 404 and forward to error handler

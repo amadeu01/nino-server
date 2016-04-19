@@ -13,7 +13,7 @@ var numberValidate = function(req, res, next, id) {
 
 //Always check all path parameters for NaN error
 router.param('school_id', numberValidate);
-router.param('classroom_id', numberValidate);
+router.param('room_id', numberValidate);
 router.param('educator_id', numberValidate);
 router.param('student_id', numberValidate);
 
@@ -43,7 +43,7 @@ router.post('/schools/:school_id', function(req, res, next) {
 });
 
 /* Update classroom information */
-router.put('/:classroom_id', function(req, res, next) {
+router.put('/:room_id', function(req, res, next) {
 	//Check required parameters
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else if (req.body.classroom_name === undefined) res.status(400).json(errors.invalidParameters("classroom_name"));
@@ -56,7 +56,7 @@ router.put('/:classroom_id', function(req, res, next) {
 });
 
 /* Marks a classroom for deletion */
-router.delete('/:classroom_id', function(req, res, next) {
+router.delete('/:room_id', function(req, res, next) {
 	//Only parameter is school_id, already checked
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
@@ -68,7 +68,7 @@ router.delete('/:classroom_id', function(req, res, next) {
 });
 
 /* Add an educator to a classroom */
-router.post('/:classroom_id/educators/:educator_id', function(req, res, next) {
+router.post('/:room_id/educators/:educator_id', function(req, res, next) {
 	//Only parameter are school_id and educator_id, already checked
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
@@ -80,7 +80,7 @@ router.post('/:classroom_id/educators/:educator_id', function(req, res, next) {
 });
 
 /* Remove an educator from a classroom */
-router.delete('/:classroom_id/educators/:educator_id', function(req, res, next) {
+router.delete('/:room_id/educators/:educator_id', function(req, res, next) {
 	//Only parameter are school_id and educator_id, already checked
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
@@ -92,7 +92,7 @@ router.delete('/:classroom_id/educators/:educator_id', function(req, res, next) 
 });
 
 /* Add a student to a classroom */
-router.post('/:classroom_id/students/:student_id', function(req, res, next) {
+router.post('/:room_id/students/:student_id', function(req, res, next) {
 	//Only parameter are school_id and student_id, already checked
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {
@@ -104,7 +104,7 @@ router.post('/:classroom_id/students/:student_id', function(req, res, next) {
 });
 
 /* Remove a student from a classroom */
-router.delete('/:classroom_id/students/:student_id', function(req, res, next) {
+router.delete('/:room_id/students/:student_id', function(req, res, next) {
 	//Only parameter are school_id and student_id, already checked
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {

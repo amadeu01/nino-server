@@ -46,8 +46,8 @@ module.exports =  Waterline.Collection.extend({
 				via: 'students',
         index: true
       },
-      classroom: {
-        model: 'classroom',
+      room: {
+        model: 'room',
         via: 'students'
       },
       school: {

@@ -74,10 +74,11 @@ suite('Student Services', function () {
   });
 
   test ('Create classroom for students', function() {
-		var classroomServices = require('../services/classroom.js');
+		var classroomServices = require('../services/rooms.js');
 		var parameters = {
-			classroom: {
-				name: "Sala Para Novos estudantes"
+			room: {
+				name: "Sala Para Novos estudantes",
+				type: 1
 			},
 			school: 1
 		};
@@ -143,7 +144,7 @@ suite('Student Services', function () {
   });
 
 	test('Retrieve all Students of classroom', function () {
-		var classroomServices = require('../services/classroom.js');
+		var classroomServices = require('../services/rooms.js');
 		return classroomServices.readAllStudents({id: 1})
 		.then(function(students){
 			//console.log(students);

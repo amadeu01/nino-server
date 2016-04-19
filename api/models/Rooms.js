@@ -5,7 +5,7 @@
 var Waterline = require('waterline');
 
 module.exports =  Waterline.Collection.extend({
-  identity : 'educator',
+  identity : 'room',
   connection: 'default',
 		attributes: {
 			id: {
@@ -13,17 +13,20 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
-      rooms: {
-        collection: 'room',
-				via: 'educators',
-        index: true
-      },
-      role: {
-        model: 'role',
+      name: {
+        type: 'string',
         required: true
       },
-			school: {
-				model: 'school',
+      students: {
+        collection: 'student',
+        index: true
+      },
+      educators: {
+        collection: 'educator',
+				via: 'rooms'
+      },
+			type: {
+				model: 'class',
 				required: true
 			},
 			active: {

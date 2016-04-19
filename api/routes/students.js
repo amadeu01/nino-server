@@ -14,7 +14,7 @@ var numberValidate = function(req, res, next, id) {
 //Always check all path parameters for NaN error
 router.param('guardian_id', numberValidate);
 router.param('student_id', numberValidate);
-router.param('classroom_id', numberValidate);
+router.param('room_id', numberValidate);
 
 /* Send push notification to all student's guardians */
 router.put('/:student_id/notifications', function(req, res, next) {
@@ -131,7 +131,7 @@ router.get('/guardians/:guardian_id', function(req, res, next) {
 });
 
 /* Get list of students for a classroom */
-router.get('/classrooms/:classroom_id', function(req, res, next) {
+router.get('/rooms/:room_id', function(req, res, next) {
 	//Check parameters
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
 	else {

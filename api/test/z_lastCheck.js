@@ -83,7 +83,7 @@ suite('Last Check of data', function () {
   });
 
 	test('should generate data results for classroom ', function (){
-		var classroomServices = require('../services/classroom.js');
+		var classroomServices = require('../services/rooms.js');
 		var fs = require('fs');
 		return classroomServices.readComplete({id: 1})
 		.then(function(classroom){
@@ -108,7 +108,7 @@ suite('Last Check of data', function () {
 	});
 
 	test('should generate description data', function() {
-		var classroomServices = require('../services/classroom.js');
+		var classroomServices = require('../services/rooms.js');
 		var educatorServices = require('../services/educators');
 		var guardianServices = require('../services/guardian');
 		var schoolServices = require('../services/schools.js');

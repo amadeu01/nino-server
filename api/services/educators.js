@@ -37,7 +37,7 @@ var educatorServices = {
 		})
 		.then(function(educator) {
 			if (!educator) throw errors.internalError('Educator - Creation Error');
-			educator.classrooms.add(parameters.classroomID);
+			educator.rooms.add(parameters.classroomID);
 			return educator.save()
 			.then(function(){
 				return ({educator: educator.id});
@@ -83,7 +83,7 @@ var educatorServices = {
 	readComplete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return models.waterline.collections.educator.findOne(parameters).populate(['classrooms', 'role', 'school'])
+		return models.waterline.collections.educator.findOne(parameters).populate(['rooms', 'role', 'school'])
 		.then(function (educator) {
 			if (!educator) throw errors.inexistentRegister('Educator - Finding Error');
 			return models.waterline.collections.role.findOne({id: educator.role.id}).populate('owner')

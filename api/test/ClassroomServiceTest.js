@@ -41,7 +41,7 @@ suite('School + Classroom Services', function () {
   test('Create School + Classroom + Owner + Educator', function () {
 		//Initial is also owner Educator
 		var schoolServices = require('../services/schools.js');
-		var classroomServices = require('../services/classroom.js');
+		var classroomServices = require('../services/rooms.js');
 		var parameters = {
 			school: {
 				name: 'Escola Becke',
@@ -58,7 +58,8 @@ suite('School + Classroom Services', function () {
 				cel: '984187636'
 			},
       classroom: {
-        name: 'Sala do Becke'
+        name: 'Sala do Becke',
+				type: 1
       }
 		};
 
@@ -103,7 +104,7 @@ suite('School + Classroom Services', function () {
 
 	});
 	test('Add educator', function() {
-		var classroomServices = require('../services/classroom.js');
+		var classroomServices = require('../services/rooms.js');
 		var educatorServices = require('../services/educators.js');
 		var educatorParameters = {
 			user: {
