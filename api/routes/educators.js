@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var app = require('../app');
-var permissions = require('../business/permissions');
-var errors = require('../business/errors');
+var permissions = require('../services/permissions');
+var errors = require('../services/errors');
 var validator = require('validator');
 
 var numberValidate = function(req, res, next, id) {

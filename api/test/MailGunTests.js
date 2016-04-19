@@ -4,7 +4,7 @@
 // */
 //
 // var assert = require('assert');
-// var mgs = require('../business/MailgunServices.js');
+// var mgs = require('../services/mail.js');
 //
 // suite('Mail Services', function () {
 //

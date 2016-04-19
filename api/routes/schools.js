@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var app = require('../app');
-var errors = require('../business/errors');
+var errors = require('../services/errors');
 var validator = require('validator');
 var services = require('../services');
 
@@ -116,7 +116,7 @@ router.post('/', function(req, res, next) {
 				name: req.body.school.name,
 				email: req.body.school.email
 			},
-		}
+		};
 		if (req.body.school.telephone !== undefined && validator.isNumeric(req.body.school.telephone)) {
 			parameters.school.telephone = req.body.school.telephone;
 		}
@@ -130,10 +130,10 @@ router.post('/', function(req, res, next) {
 		
 		services.school.create(parameters)
 		.then(function(success) {
-			res.send('WIP');
+			res.send(success);
 		})
 		.catch(function(error) {
-			res.send('WIP');
+			res.status(error.httpCode).send(error.json);
 		});
 		//End response
 	}

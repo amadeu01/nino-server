@@ -7,7 +7,7 @@ var models = require('../models');
 var Classrooms = models.waterline.collections.classroom;
 
 //errors and validator's module
-var errors = require('../business/errors');
+var errors = require('../services/errors');
 var validator = require('validator');
 
 var classroomServices = {

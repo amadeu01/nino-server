@@ -8,7 +8,7 @@ var models = require('../models');
 var Posts = models.waterline.collections.post;
 
 //errors and validator's module
-var errors = require('../business/errors');
+var errors = require('../services/errors');
 var validator = require('validator');
 
 var postsServices = {

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var errors = require('../business/errors');
+var errors = require('../services/errors');
 var validator = require('validator');
 
 /*Check if parameter is valid id*/

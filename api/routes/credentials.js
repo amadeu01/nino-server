@@ -3,7 +3,7 @@ var router = express.Router();
 var jwt = require('jsonwebtoken');
 var app = require('../app');
 var crypto = require('crypto');
-var errors = require('../business/errors');
+var errors = require('../services/errors');
 var validator = require('validator');
 
 var numberValidate = function(req, res, next, id) {

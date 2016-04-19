@@ -11,16 +11,13 @@ var Devices = models.waterline.collections.device;
 var Credentials = models.waterline.collections.credential;
 var Schools = models.waterline.collections.school;
 var Classrooms = models.waterline.collections.classroom;
-var errors = require('../business/errors');
+var errors = require('../services/errors');
 
 var validator = require('validator');
-var permissions = require('../business/permissions');
+var permissions = require('../services/permissions');
 
 var schoolServices = {
 	create: function(parameters) {
-		if (!validator.isEmail(parameters.school.email)) throw errors.invalidParameters('Invalid School email');
-		if (!validator.isEmail(parameters.owner.email)) throw errors.invalidParameters('Invalid User email');
-		
 		parameters.school.active = true;
 		parameters.owner.active = true;
 		
@@ -34,21 +31,21 @@ var schoolServices = {
 					type: 'educator',
 					privileges: permissions.all(),
 					owner: user.id
-				});
-			})
-			.then(function(role) {
-				if (!role) throw errors.internalError('Role - Creation Error');
-				return Educators.create({
-					role: role.id,
-					school: school.id
-				});
-			})
-			.then(function(educator) {
-				if (!educator) throw errors.internalError('Educator - Creation Error');
-				school.owner = educator.id;
-				return school.save()
-				.then(function(){
-					return ({school:school.id, educator: educator.id});
+				})
+				.then(function(role) {
+					if (!role) throw errors.internalError('Role - Creation Error');
+					return Educators.create({
+						role: role.id,
+						school: school.id
+					});
+				})
+				.then(function(educator) {
+					if (!educator) throw errors.internalError('Educator - Creation Error');
+					school.owner = educator.id;
+					return school.save()
+					.then(function(){
+						return ({school:school.id, educator: educator.id, user: user.id});
+					});
 				});
 			});
 		});
