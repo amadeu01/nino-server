@@ -57,15 +57,18 @@ suite('School + Classroom Services', function () {
 				email: 'schoolbecke@mail.com',
 				cel: '984187636'
 			},
-      classroom: {
-        name: 'Sala do Becke',
+      class: {
+        name: 'Turma do Becke'
+      },
+			room: {
+				name: 'Sala',
 				type: 1
-      }
+			}
 		};
 
-		return schoolServices.createWithClassrom(parameters)
+		return schoolServices.createWithClassAndRoom(parameters)
     .then(function(result) {
-			assert.equal(!isNaN(result.school) & !isNaN(result.educator) & !isNaN(result.classroom), true, 'ID returned is Number');
+			assert.equal(!isNaN(result.school) & !isNaN(result.educator) & !isNaN(result.createdClass) & !isNaN(result.room), true, 'ID returned is Number');
 			return schoolServices.readComplete({id: result.school})
       .then(function(school) {
 				// console.log("********School********");

@@ -44,8 +44,8 @@ var schoolServices = {
 			});
 		});
 	},
-	/* Create a school with a standard classroom void. */
-	createWithClassrom: function(parameters) {
+	/* Create a school with a standard class and room void. */
+	createWithClassAndRoom: function(parameters) {
 		if (!validator.isEmail(parameters.school.email)) throw errors.invalidParameters('Invalid School email');
 		if (!validator.isEmail(parameters.owner.email)) throw errors.invalidParameters('Invalid User email');
 
@@ -83,15 +83,20 @@ var schoolServices = {
 						if (!educator) throw errors.internalError('Educator - Creation Error');
 				 		school.owner = educator.id;
 				 		school.save();
-				 		return models.waterline.collections.room.create({
-				  		name: parameters.classroom.name,
-					  	school: school.id,
-							type: parameters.classroom.type
-				  	})
-						.then(function(classroom){
-							educator.rooms.add(classroom.id);
-							return educator.save().then(function(){
-								return ({school: school.id, classroom: classroom.id, educator: educator.id});
+						return models.waterline.collections.class.create({
+							name: parameters.class.name,
+							school: school.id
+						})
+						.then(function(createdClass) {
+					 		return models.waterline.collections.room.create({
+					  		name: parameters.room.name,
+								type: parameters.room.type
+					  	})
+							.then(function(room){
+								educator.rooms.add(room.id);
+								return educator.save().then(function(){
+									return ({school: school.id, room: room.id, educator: educator.id, createdClass: createdClass.id});
+								});
 							});
 						});
 					});
