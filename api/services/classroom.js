@@ -4,7 +4,6 @@
 */
 
 var models = require('../models');
-var Classrooms = models.waterline.collections.classroom;
 
 //errors and validator's module
 var errors = require('../services/errors');
@@ -12,7 +11,7 @@ var validator = require('validator');
 
 var classroomServices = {
 	create: function(parameters) {
-    return Classrooms.create({
+    return models.waterline.collections.classroom.create({
       name: parameters.classroom.name,
       school: parameters.school
     })
@@ -23,7 +22,7 @@ var classroomServices = {
 	},
 	delete: function(parameters) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    return Classrooms.findOne(parameters)
+    return models.waterline.collections.classroom.findOne(parameters)
     .then(function(classroom) {
       if (!classroom) throw erros.inexistentRegister('Classroom - Finding Error');
       classroom.active = false;
@@ -33,7 +32,7 @@ var classroomServices = {
 	update: function(parameters, newParameters) {
     if (!parameters || !newParameters ) throw errors.invalidParameters('Missing Parameter');
     parameters.active = true;
-    return Classrooms.update(parameters, newParameters)
+    return models.waterline.collections.classroom.update(parameters, newParameters)
     .then(function(classroom) {
       if (!classroom) throw errors.inexistentRegister('Classroom - Finding Error');
       return;
@@ -42,7 +41,7 @@ var classroomServices = {
   read: function(parameters) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
     parameters.active = true;
-    return Classrooms.findOne(parameters)
+    return models.waterline.collections.classroom.findOne(parameters)
     .then(function(classroom) {
       if (!classroom) return undefined;
       return;
@@ -51,7 +50,7 @@ var classroomServices = {
   readAllStudents: function(parameters) {//id classroom
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Classrooms.findOne(parameters).populate('students')
+		return models.waterline.collections.classroom.findOne(parameters).populate('students')
 		.then (function (classroom) {
 			if (!classroom) return undefined;
 			if (!classroom.students) return undefined;
@@ -62,7 +61,7 @@ var classroomServices = {
   readAllEducators: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Classrooms.findOne(parameters).populate('educators')
+		return models.waterline.collections.classroom.findOne(parameters).populate('educators')
 		.then (function (classroom) {
 			if (!classroom) return undefined;
 			if (!classroom.educators) return undefined;
@@ -71,7 +70,7 @@ var classroomServices = {
   },
 	readComplete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
-		return Classrooms.findOne(parameters).populate(['educators', 'students', 'school'])
+		return models.waterline.collections.classroom.findOne(parameters).populate(['educators', 'students', 'school'])
 		.then(function(classroom){
 			if (!classroom) return undefined;
 			return classroom;
@@ -79,7 +78,7 @@ var classroomServices = {
 	},
 	addStudent: function(parameters, student_id) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
-		return Classrooms.findOne(parameters).populate('students')
+		return models.waterline.collections.classroom.findOne(parameters).populate('students')
 		.then(function(classroom){
 			if (!classroom) throw errors.inexistentRegister('Classroom - Finding Error');
 			classroom.students.add(student_id);
@@ -89,7 +88,7 @@ var classroomServices = {
 	addEducator: function(parameters, educator_id) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Classrooms.findOne(parameters).populate('educators')
+		return models.waterline.collections.classroom.findOne(parameters).populate('educators')
 		.then(function(classroom){
 			if (!classroom) throw errors.inexistentRegister('Classroom - Finding Error');
 			classroom.educators.add(educator_id);

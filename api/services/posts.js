@@ -5,7 +5,6 @@
 */
 
 var models = require('../models');
-var Posts = models.waterline.collections.post;
 
 //errors and validator's module
 var errors = require('../services/errors');
@@ -14,7 +13,7 @@ var validator = require('validator');
 var postsServices = {
 	create: function(parameters) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    return Posts.create({
+    return models.waterline.collections.post.create({
       attachment: parameters.attachment,
       message: parameters.message,
       date: parameters.date,
@@ -27,7 +26,7 @@ var postsServices = {
 	},
 	delete: function(parameters) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    return Posts.findOne(parameters)
+    return models.waterline.collections.post.findOne(parameters)
     .then(function(post){
       if (!post) throw errors.inexistentRegister('Posts - Finding Error');
       post.active = false;
@@ -37,7 +36,7 @@ var postsServices = {
 	update: function(parameters, newParatemers) {
     if (!parameters || !newParatemers) throw errors.invalidParameters('Missing Parameter');
     parameters.active = true;
-    return Posts.update(parameters, newParatemers)
+    return models.waterline.collections.post.update(parameters, newParatemers)
     .then(function(posts){
       if (!posts) throw errors.inexistentRegister('Posts - Finding Error');
       return posts;
@@ -46,7 +45,7 @@ var postsServices = {
 	read: function(parameters) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
     parameters.active = true;
-		return Posts.findOne(parameters)
+		return models.waterline.collections.post.findOne(parameters)
     .then(function(post){
       if (!post) throw errors.inexistentRegister('Posts - Finding Error');
       return post;
@@ -55,7 +54,7 @@ var postsServices = {
   addEducator: function(parameters, educator_id) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
     parameters.active = true;
-		return Posts.findOne(parameters).populate('educators')
+		return models.waterline.collections.post.findOne(parameters).populate('educators')
     .then(function(post){
       if (!post) throw errors.inexistentRegister('Posts - Finding Error');
       post.educators.add(educator_id);
@@ -65,7 +64,7 @@ var postsServices = {
   addStudent: function(parameters, student_id) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');
     parameters.active = true;
-		return Posts.findOne(parameters).populate('students')
+		return models.waterline.collections.post.findOne(parameters).populate('students')
     .then(function(post){
       if (!post) throw errors.inexistentRegister('Posts - Finding Error');
       post.students.add(student_id);

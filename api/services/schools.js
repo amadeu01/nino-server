@@ -4,13 +4,7 @@
 */
 
 var models = require('../models');
-var Users = models.waterline.collections.user;
-var Educators = models.waterline.collections.educator;
-var Roles = models.waterline.collections.role;
-var Devices = models.waterline.collections.device;
-var Credentials = models.waterline.collections.credential;
-var Schools = models.waterline.collections.school;
-var Classrooms = models.waterline.collections.classroom;
+
 var errors = require('../services/errors');
 
 var validator = require('validator');
@@ -21,20 +15,20 @@ var schoolServices = {
 		parameters.school.active = true;
 		parameters.owner.active = true;
 		
-		return Schools.create(parameters.school)
+		return models.waterline.collections.school.create(parameters.school)
 		.then (function(school) {
 			if (!school) throw errors.internalError('School - Creation Error');
-			return Users.create(parameters.owner)
+			return models.waterline.collections.user.create(parameters.owner)
 			.then(function(user) {
 				if (!user) throw errors.internalError('User - Creation Error');
-				return Roles.create({
+				return models.waterline.collections.role.create({
 					type: 'educator',
 					privileges: permissions.all(),
 					owner: user.id
 				})
 				.then(function(role) {
 					if (!role) throw errors.internalError('Role - Creation Error');
-					return Educators.create({
+					return models.waterline.collections.educator.create({
 						role: role.id,
 						school: school.id
 					});
@@ -55,7 +49,7 @@ var schoolServices = {
 		if (!validator.isEmail(parameters.school.email)) throw errors.invalidParameters('Invalid School email');
 		if (!validator.isEmail(parameters.owner.email)) throw errors.invalidParameters('Invalid User email');
 
-		return Schools.create({
+		return models.waterline.collections.school.create({
 			name: parameters.school.name,
 			email: parameters.school.email,
 			cnpj: parameters.school.cnpj,
@@ -65,7 +59,7 @@ var schoolServices = {
 		})
 		.then (function(school) {
 			if (!school) throw errors.internalError('School - Creation Error');
-			return Users.create({
+			return models.waterline.collections.user.create({
 					name: parameters.owner.name,
 					surname: parameters.owner.surname,
 					password: parameters.owner.password,
@@ -74,14 +68,14 @@ var schoolServices = {
 			})
 			.then(function(user) {
 				if (!user) throw errors.internalError('User - Creation Error');
-				return Roles.create({
+				return models.waterline.collections.role.create({
 					type: 'educator',
 					privileges: permissions.all(),
 					owner: user.id
 				})
 				.then(function(role) {
 					if (!role) throw errors.internalError('Role - Creation Error');
-					return Educators.create({
+					return models.waterline.collections.educator.create({
 						role: role.id,
 						school: school.id
 					})
@@ -89,7 +83,7 @@ var schoolServices = {
 						if (!educator) throw errors.internalError('Educator - Creation Error');
 				 		school.owner = educator.id;
 				 		school.save();
-				 		return Classrooms.create({
+				 		return models.waterline.collections.classroom.create({
 				  		name: parameters.classroom.name,
 					  	school: school.id
 				  	})
@@ -106,48 +100,48 @@ var schoolServices = {
 	},
 	delete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
-		return Schools.findOne(parameters)
+		return models.waterline.collections.school.findOne(parameters)
 		.then(function(school) {
 			if (!school) throw errors.inexistentRegister('School - Deletion Error');
 			school.active = false;
 			school.save();
-			return Educators.find({school:school.id, active: true});
+			return models.waterline.collections.educator.find({school:school.id, active: true});
 		})
 		.then(function(educators) {
 			if (!educators) errors.inexistentRegister('Educator - Finding Error');
 			var eduList = educators.map(function(educator){return educator.id;});
-			return Educators.update({id: eduList}, {active: false});
+			return models.waterline.collections.educator.update({id: eduList}, {active: false});
 		})
 		.then(function(deleted) {
 			if (!deleted) throw errors.internalError('Educator - Deletion Error');
 			var eduList = deleted.map(function(educator){return educator.id;});
-			return Roles.find({id: eduList});
+			return models.waterline.collections.role.find({id: eduList});
 		})
 		.then(function(roles) {
 			if (!roles) throw errors.inexistentRegister('Role - Deletion Error');
 			var roleList = roles.map(function(role){return role.id;});
-			return Roles.update({id: roleList}, {active: false});
+			return models.waterline.collections.role.update({id: roleList}, {active: false});
 		});
 	},
 	update: function(parameters, newParatemers) {
 		if (!parameters || !newParatemers) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Schools.update(parameters, newParatemers);
+		return models.waterline.collections.school.update(parameters, newParatemers);
 	},
 	read: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Schools.findOne(parameters);
+		return models.waterline.collections.school.findOne(parameters);
 	},
 	readComplete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Schools.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner']);
+		return models.waterline.collections.school.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner']);
 	},
 	description: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Schools.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner'])
+		return models.waterline.collections.school.findOne(parameters).populate(['educators', 'students', 'classrooms', 'owner'])
 		.then(function(school){
 			var data = "Name: " + JSON.stringify(school.name);
 			data += "\nemail: " + JSON.stringify(school.email);

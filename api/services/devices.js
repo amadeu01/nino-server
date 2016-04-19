@@ -4,10 +4,6 @@
 */
 
 var models = require('../models');
-var Users = models.waterline.collections.user;
-var Roles = models.waterline.collections.role;
-var Devices = models.waterline.collections.device;
-var Credentials = models.waterline.collections.credential;
 
 //errors and validator's module
 var errors = require('../services/errors');
@@ -24,7 +20,7 @@ var deviceServices = {
 
 	},
 	read: function(parameters) {
-		return Devices.find(parameters).populate('credentials');
+		return models.waterline.collections.device.find(parameters).populate('credentials');
 	}
 };
 

@@ -5,11 +5,6 @@
 */
 
 var models = require('../models');
-var Users = models.waterline.collections.user;
-var Guardians = models.waterline.collections.guardian;
-var Roles = models.waterline.collections.role;
-var Devices = models.waterline.collections.device;
-var Credentials = models.waterline.collections.credential;
 
 //errors and validator's module
 var errors = require('../services/errors');
@@ -19,7 +14,7 @@ var guardiansServices = {
 	create: function(parameters) {
 		if (!validator.isEmail(parameters.user.email)) throw errors.invalidParameters('Invalid User email');
 
-		return Users.create({
+		return models.waterline.collections.user.create({
 				name: parameters.user.name,
 				surname: parameters.user.surname,
 				password: parameters.user.password,
@@ -28,7 +23,7 @@ var guardiansServices = {
 		})
 		.then(function(user) {
 			if (!user) throw errors.internalError('User - Creation Error');
-			return Roles.create({
+			return models.waterline.collections.role.create({
 				type: 'guardian',
 				privileges: parameters.privileges,
 				owner: user.id
@@ -36,7 +31,7 @@ var guardiansServices = {
 		})
 		.then(function(role) {
 			if (!role) throw errors.internalError('Role - Creation Error');
-			return Guardians.create({
+			return models.waterline.collections.guardian.create({
 				role: role.id
 			});
 		})
@@ -47,12 +42,12 @@ var guardiansServices = {
 	},
 	delete: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
-		return Guardians.findOne(parameters)
+		return models.waterline.collections.guardian.findOne(parameters)
 		.then(function(guardian) {
 			if (!guardian) throw errors.inexistentRegister('Guardian - Finding Error');
 			guardian.active = false;
 			guardian.save();
-			return Roles.findOne({id: guardian.role});
+			return models.waterline.collections.role.findOne({id: guardian.role});
 		})
 		.then(function (role) {
 			role.active = false;
@@ -62,28 +57,28 @@ var guardiansServices = {
 	read: function(parameters) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Guardians.findOne(parameters)
+		return models.waterline.collections.guardian.findOne(parameters)
 		.then(function (guardian) {
 			if (!guardian) return undefined;
-			return Roles.findOne({id: guardian.role}).populate('owner');
+			return models.waterline.collections.role.findOne({id: guardian.role}).populate('owner');
 		});
 	},
 	update: function(parameters, newParameters, roleParameters) {
 		if (!parameters || !newParameters || !roleParameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Guardians.update(parameters, newParameters)
+		return models.waterline.collections.guardian.update(parameters, newParameters)
 		.then(function(guardian) {
 			if (!guardian) throw errors.inexistentRegister('Educator - Finding Error');
-			return Roles.findOne({id: guardian[0].role});
+			return models.waterline.collections.role.findOne({id: guardian[0].role});
 		})
 		.then(function(role) {
 			if (!role) throw errors.inexistentRegister('Role - Finding Error');
-			return Roles.update({id: role.id}, roleParameters);
+			return models.waterline.collections.role.update({id: role.id}, roleParameters);
 		});
 	},
 	addStudent: function(parameters, student_id) {
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
-		return Guardians.findOne(parameters).populate('students')
+		return models.waterline.collections.guardian.findOne(parameters).populate('students')
 		.then(function(guardian) {
 			if (!guardian) throw errors.inexistentRegister('Guardian - Finding Error');
 			guardian.students.add(student_id);
@@ -93,10 +88,10 @@ var guardiansServices = {
 	description: function(parameters){
 		if (!parameters) throw errors.invalidParameters('Missing Parameter');
 		parameters.active = true;
-		return Guardians.findOne(parameters)
+		return models.waterline.collections.guardian.findOne(parameters)
 		.then(function (guardian) {
 			if (!guardian) return undefined;
-			return Roles.findOne({id: guardian.role}).populate('owner').
+			return models.waterline.collections.role.findOne({id: guardian.role}).populate('owner').
 			then(function(role){
 				var data = "Name: " + JSON.stringify(role.owner.name);
 				data += "\nSurname: " + JSON.stringify(role.owner.surname);

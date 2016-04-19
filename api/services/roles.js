@@ -4,9 +4,7 @@
 */
 
 var models = require('../models');
-var Users = models.waterline.collections.user;
-var Educators = models.waterline.collections.educator;
-var Roles = models.waterline.collections.role;
+
 var errors = require('../services/errors');
 
 var validator = require('validator');
@@ -25,7 +23,7 @@ var schoolServices = {
 	},
 	read: function(parameters) {
 		// return Roles.find()
-		return Roles.findOne(parameters);
+		return models.waterline.collections.role.findOne(parameters);
 	}
 };
 
