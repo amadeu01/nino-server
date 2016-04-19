@@ -9,8 +9,8 @@ var services = require('../services');
 var credentials = require('./credentials');
 
 module.exports = {
-	validateIdentity: function(user_id, roles_ids) {
-
+	validateIdentity: function(user_id, role_id, target) {
+		//To edit a school must be educator of the same school and have permissions
 	},
 	create: function(parameters) {
 		return services.schools.create(parameters)
