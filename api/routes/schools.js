@@ -9,7 +9,7 @@ var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).json(errors.invalidParameters("path_isNaN"));
+		res.status(400).json(errors.invalidParameters("path_isNaN").clean);
 	}
 };
 
@@ -19,7 +19,7 @@ router.param('school_id', numberValidate);
 /* Get School's info. */
 router.get('/:school_id', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
 	
@@ -31,7 +31,7 @@ router.get('/:school_id', function(req, res, next) {
 /* Update a School */
 router.put('/:school_id', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else if (req.body.name === undefined) {
 		if (req.body.addr === undefined) {
 			if (req.body.cnpj === undefined || !validator.isNumeric(req.body.cnpj)) {
@@ -39,7 +39,7 @@ router.put('/:school_id', function(req, res, next) {
 					if (req.body.email === undefined || !validator.isEmail(req.body.email)) {
 						if (req.body.owner === undefined || !validator.isNumeric(req.body.owner)){
 							//Every parameter for the update is null, req is empty
-							res.status(400).json(errors.invalidParameters("empty"));
+							res.status(400).json(errors.invalidParameters("empty").clean);
 						}
 					}
 				}
@@ -57,7 +57,7 @@ router.put('/:school_id', function(req, res, next) {
 /* Delete a School */
 router.delete('/:school_id', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
 	
@@ -69,8 +69,8 @@ router.delete('/:school_id', function(req, res, next) {
 /* Send push notification to all school guardians */
 router.post('/:school_id/notifications/guardians', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
+	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data").clean);
 	else {
 		//Should now call business
 	
@@ -82,8 +82,8 @@ router.post('/:school_id/notifications/guardians', function(req, res, next) {
 /* Send push notification to all school educators */
 router.post('/:school_id/notifications/educators', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
+	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data").clean);
 	else {
 		//Should now call business
 	
@@ -94,14 +94,16 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 
 /* Create new school */
 router.post('/', function(req, res, next) {
-	//Check parameters
-	if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name"));
-	else if (req.body.school.email === undefined || !validator.isEmail(req.body.school.email)) res.status(400).json(errors.invalidParameters("school.email"));
-	else if (req.body.owner.name === undefined) res.status(400).json(errors.invalidParameters=== undefined("owner.name"));
-	else if (req.body.owner.surname === undefined) res.status(400).json(errors.invalidParameters("owner.surname"));
-	else if (req.body.owner.password === undefined) res.status(400).json(errors.invalidParameters("owner.password"));
-	else if (req.body.owner.email === undefined || !validator.isEmail(req.body.owner.email)) res.status(400).json(errors.invalidParameters("owner.email"));
-	else if (req.body.owner.cel === undefined || !validator.isNumeric(req.body.owner.cel)) res.status(400).json(errors.invalidParameters("owner.cel"));
+	//Check parameters 
+	if (req.body.school == undefined) res.status(400).json(errors.invalidParameters("school").clean);
+	else if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name").clean);
+	else if (req.body.school.email === undefined || !validator.isEmail(req.body.school.email)) res.status(400).json(errors.invalidParameters("school.email").clean);
+	else if (req.body.owner == undefined) res.status(400).json(errors.invalidParameters("owner").clean);
+	else if (req.body.owner.name === undefined) res.status(400).json(errors.invalidParameters=== undefined("owner.name").clean);
+	else if (req.body.owner.surname === undefined) res.status(400).json(errors.invalidParameters("owner.surname").clean);
+	else if (req.body.owner.password === undefined) res.status(400).json(errors.invalidParameters("owner.password").clean);
+	else if (req.body.owner.email === undefined || !validator.isEmail(req.body.owner.email)) res.status(400).json(errors.invalidParameters("owner.email").clean);
+	else if (req.body.owner.cel === undefined || !validator.isNumeric(req.body.owner.cel)) res.status(400).json(errors.invalidParameters("owner.cel").clean);
 	else {
 		//Should now call business
 		parameters = {
@@ -128,12 +130,12 @@ router.post('/', function(req, res, next) {
 		}
 		
 		
-		services.school.create(parameters)
+		services.schools.create(parameters)
 		.then(function(success) {
-			res.send(success);
+			res.json(success);
 		})
 		.catch(function(error) {
-			res.status(error.httpCode).send(error.json);
+			res.status(error.httpCode).json(error.clean);
 		});
 		//End response
 	}
@@ -142,8 +144,8 @@ router.post('/', function(req, res, next) {
 /* Updates school logotype */
 router.put('/:school_id/logotype', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else if (req.body.image === undefined) res.status(400).json(errors.invalidParameters("image"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
+	else if (req.body.image === undefined) res.status(400).json(errors.invalidParameters("image").clean);
 	else {
 		//Should now call business
 
@@ -155,7 +157,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 /* Reads school logotype */
 router.get('/:school_id/logotype', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
 	

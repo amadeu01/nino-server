@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var errors = require('../services/errors');
 var validator = require('validator');
+var services = require('../services');
 
 /*Check if parameter is valid id*/
 var numberValidate = function(req, res, next, id) {

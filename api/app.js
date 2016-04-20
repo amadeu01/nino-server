@@ -50,7 +50,7 @@ app.use(function(req, res, next) {
 
 // Gets user
 app.use(function(req, res, next) {
-	console.log(req.useragent);
+	// console.log(req.useragent);
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   // decode token
@@ -58,12 +58,12 @@ app.use(function(req, res, next) {
     // verifies secret and checks exp - Gets params and proceed! <-TODO
 		services.jwt.validate(token)
 		.then(function(decoded) {
-			console.log(decoded);
+			// console.log(decoded);
 			req.token = decoded;
 	    next();
 		})
 		.catch(function(error) {
-			console.log(error);
+			// console.log(error);
 			next();
 		});
   } else {

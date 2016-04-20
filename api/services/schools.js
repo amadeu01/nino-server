@@ -42,6 +42,9 @@ var schoolServices = {
 					});
 				});
 			});
+		})
+		.catch(function(err) {
+			throw(errors.internalError('Creation Error'));
 		});
 	},
 	/* Create a school with a standard class and room void. */

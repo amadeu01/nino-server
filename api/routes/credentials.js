@@ -5,6 +5,7 @@ var app = require('../app');
 var crypto = require('crypto');
 var errors = require('../services/errors');
 var validator = require('validator');
+var services = require('../services');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -21,21 +22,25 @@ router.param('credential_id', numberValidate);
 router.post('/educators', function(req, res, next) {
 	//TODO: console.log(req.useragent);//Register new device or check existing
 	//Check parameters
-	if (req.body.password === undefined) res.status(400).json(errors.invalidParameters("password"));
-	else if (req.body.email === undefined || !validator.isEmail(req.body.email)) res.status(400).json(errors.invalidParameters("email"));
+	if (req.body.password === undefined) res.status(400).json(errors.invalidParameters("password").clean);
+	else if (req.body.email === undefined || !validator.isEmail(req.body.email)) res.status(400).json(errors.invalidParameters("email").clean);
 	else {
-	//Done checking, should call business
-		
-	//Done, send response
-		res.send('WIP');
+		//Done checking, should call business
+		services.credentials.loginEducator(req.body.email, req.body.password, req.useragent.browser + ' ' + req.useragent.os)
+		.then(function(token) {
+			res.json({token: token});
+		})
+		.catch(function(error) {
+			res.status(error.httpCode).json(error.clean);
+		});
 	}
 });
 
 /* Create a Guardian credential : LogIn. */
 router.post('/guardians', function(req, res, next) {
 	//Check parameters
-	if (req.body.password === undefined) res.status(400).json(errors.invalidParameters("password"));
-	else if (req.body.email === undefined || !validator.isEmail(req.body.email)) res.status(400).json(errors.invalidParameters("email"));
+	if (req.body.password === undefined) res.status(400).json(errors.invalidParameters("password").clean);
+	else if (req.body.email === undefined || !validator.isEmail(req.body.email)) res.status(400).json(errors.invalidParameters("email").clean);
 	else {
 	//Done checking, should call business
 		
@@ -47,7 +52,7 @@ router.post('/guardians', function(req, res, next) {
 /*LogOut*/
 router.delete('/:credential_id', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
+	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
 	
