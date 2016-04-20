@@ -45,7 +45,7 @@ var credentialServices = {
 						device.credentials.add({token: token, active: true});
 						return device.save()
 						.then(function() {
-							return token;
+							return {token: token};
 						});
 					});
 				});

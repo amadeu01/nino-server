@@ -27,8 +27,8 @@ router.post('/educators', function(req, res, next) {
 	else {
 		//Done checking, should call business
 		services.credentials.loginEducator(req.body.email, req.body.password, req.useragent.browser + ' ' + req.useragent.os)
-		.then(function(token) {
-			res.json({token: token});
+		.then(function(success) {
+			res.json(success);
 		})
 		.catch(function(error) {
 			res.status(error.httpCode).json(error.clean);
