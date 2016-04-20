@@ -44,7 +44,8 @@ var schoolServices = {
 			});
 		})
 		.catch(function(err) {
-			throw(errors.internalError('Creation Error'));
+			if (err.status === 400) throw(errors.invalidParameters(err.invalidAttributes));
+			else throw(errors.internalError('Creation Error'));
 		});
 	},
 	/* Create a school with a standard class and room void. */
