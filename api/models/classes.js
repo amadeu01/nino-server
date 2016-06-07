@@ -17,13 +17,19 @@ module.exports =  Waterline.Collection.extend({
         type: 'string',
         required: true
       },
+			rooms: {
+				collection: 'room',
+				via: 'type'
+			},
       school: {
         model: 'school',
         required: true
       },
-			rooms: {
-				collection: 'room',
-				via: 'type'
+			menu: {
+				model: 'menu'
+			},
+			activities: {
+				collection: 'activity'
 			},
 			active: {
 				type: 'boolean',

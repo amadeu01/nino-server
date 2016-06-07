@@ -13,17 +13,31 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
-      //reference to s3
-      attachment: {
-        type: 'string',
-        required: false
-      },
       message: {
         type: 'string',
         required: true
       },
+      attachment: { //reference to s3
+        type: 'string',
+        required: false
+      },
+      school: {
+        model: 'school',
+        index: true
+      },
+      students: {
+        collection: 'profile',
+				via: 'posts',
+        index: true
+      },
+			class: {
+				model: 'class'
+			},
+			room: {
+				model: 'room'
+			},
       date: {
-        type: 'date',
+        type: 'datetime',
         required: true,
         index: true
       },
@@ -31,21 +45,14 @@ module.exports =  Waterline.Collection.extend({
         type: 'string',
         enum: ['photo', 'schedule', 'announcement', 'custom']
       },
-      students: {
-        collection: 'student',
-				via: 'posts',
-        index: true
-      },
       educators: {
-        collection: 'educator',
+        collection: 'profile',
         index: true,
         required: true
       },
-      school: {
-        model: 'school',
-        index: true,
-        required: true
-      },
+			read: {
+				type: 'string'
+			},
 			active: {
 				type: 'boolean',
 				defaultsTo: true

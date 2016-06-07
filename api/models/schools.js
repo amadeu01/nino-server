@@ -13,57 +13,60 @@ module.exports =  Waterline.Collection.extend({
       primaryKey: true,
       autoIncrement: true
     },
-    name: {
-      type: 'string',
-      size: 40,
-      required: true
-    },
     owner: {
-      model: 'educator',
+      model: 'profile',
       via: 'school'
     },
-    email: {
-      type: 'string',
-      size: 50,
-      unique: true,
-      required: true,
-			index: true
-    },
-    //reference to s3
-    logotype: {
-      type: 'string'
-    },
-    addr: {
-      type: 'string',
-      size: 100
-    },
-    cnpj: {
-      type: 'string',
-      size: 30
-    },
-    telephone: {
-      type: 'string',
-      size: 15
-    },
-    bucket: {
-      type: 'string',
-			size: 100
-    },
-    educators: {
-      collection: 'educator',
-      via: 'school'
-    },
-    students: {
-      collection: 'student',
-      via: 'school'
-    },
-    classes: {
-      collection: 'class',
-      via: 'school'
-    },
+		employees: {
+      collection: 'profile',
+      via: 'employer'
+		},
+		classes: {
+			collection: 'class',
+			via: 'school'
+		},
+		menus: {
+			collection: 'menu',
+			via: 'school'
+		},
+		activities: {
+			collection: 'activity',
+			via: 'school'
+		},
+		pedagogues: {
+			collection: 'profile'
+		},
+		educators: {
+			collection: 'profile'
+		},
+		nutritionists: {
+			collection: 'profile'
+		},
+		coordinators: {
+			collection: 'profile'
+		},
+		notificationGroup: {
+			type: 'integer',
+			required: true
+		},
+		address: {
+			type: 'string'
+		},
+		cnpj: {
+			type: 'string'
+		}, 
+		telephone: {
+			type: 'string'
+		},
+		email: {
+			type: 'string'
+		},
+		name: {
+			type: 'string'
+		},
 		active: {
 			type: 'boolean',
 			defaultsTo: true
 		}
-  }
+	}
 });

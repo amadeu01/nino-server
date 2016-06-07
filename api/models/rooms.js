@@ -17,17 +17,19 @@ module.exports =  Waterline.Collection.extend({
         type: 'string',
         required: true
       },
+			class: {
+				model: 'class'
+			},
       students: {
-        collection: 'student',
+        collection: 'profile',
         index: true
       },
       educators: {
-        collection: 'educator',
+        collection: 'profile',
 				via: 'rooms'
       },
-			type: {
-				model: 'class',
-				required: true
+			notificationGroup: {
+				type: 'integer'
 			},
 			active: {
 				type: 'boolean',

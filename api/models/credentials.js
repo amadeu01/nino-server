@@ -13,11 +13,21 @@ module.exports =  Waterline.Collection.extend({
 				primaryKey: true,
 				autoIncrement: true
 			},
+			account: {
+				model: 'account'
+			},
       device: {
         model: 'device',
         required: true,
 				index: true
     	},
+			notifiable: {
+				type: 'boolean',
+				defaultsTo: true
+			}, 
+			notificationID: {
+				type: 'string'
+			}
 			token: {
 				type: 'string',
 				required: true
