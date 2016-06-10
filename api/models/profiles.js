@@ -54,6 +54,14 @@ module.exports =  Waterline.Collection.extend({
 			active: {
 				type: 'boolean',
 				defaultsTo: true
-			}
+			},
+			posts: {
+				collection: 'post',
+				via: 'profiles'
+			}, 
+			drafts: {
+				collection: 'draft',
+				via: 'profiles'
+			},
     }
   });

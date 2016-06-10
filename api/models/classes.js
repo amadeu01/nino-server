@@ -29,7 +29,8 @@ module.exports =  Waterline.Collection.extend({
 				model: 'menu'
 			},
 			activities: {
-				collection: 'activity'
+				collection: 'activity',
+				via: 'classes'
 			},
 			active: {
 				type: 'boolean',

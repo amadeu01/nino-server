@@ -25,7 +25,8 @@ module.exports =  Waterline.Collection.extend({
         required: true
       },
 			classes: {
-				collection: 'class'
+				collection: 'class',
+				via: 'activities'
 			}
 			active: {
 				type: 'boolean',

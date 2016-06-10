@@ -20,7 +20,8 @@ module.exports =  Waterline.Collection.extend({
 				type: 'string'
 			},
 			credentials: {
-				collection: 'credential'
+				collection: 'credential',
+				via: 'account'
 			},
 			cellphone: {
 				type: 'string'

@@ -25,9 +25,9 @@ module.exports =  Waterline.Collection.extend({
         model: 'school',
         index: true
       },
-      students: {
+      profiles: {
         collection: 'profile',
-				via: 'posts',
+				via: 'drafts',
         index: true
       },
 			class: {

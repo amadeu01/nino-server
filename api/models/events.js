@@ -30,7 +30,7 @@ module.exports =  Waterline.Collection.extend({
 				type: 'string'
 			},
 			confirmations: {
-				collection: 'profile'
+				type: 'array'
 			},
 			active: {
 				type: 'boolean',
