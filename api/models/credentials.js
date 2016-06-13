@@ -17,7 +17,7 @@ module.exports =  Waterline.Collection.extend({
 				model: 'account'
 			},
       device: {
-        model: 'device',
+        type: 'string',
         required: true,
 				index: true
     	},
@@ -27,7 +27,7 @@ module.exports =  Waterline.Collection.extend({
 			}, 
 			notificationID: {
 				type: 'string'
-			}
+			},
 			token: {
 				type: 'string',
 				required: true

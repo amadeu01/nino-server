@@ -10,3 +10,5 @@ function response(code, data, error) {
 		error: error
 	};
 }
+
+module.exports = response;

@@ -1,4 +1,4 @@
-var waterline = 
+var Waterline = require('waterline');
 
 var Transaction = {};
 

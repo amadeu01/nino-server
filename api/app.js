@@ -5,23 +5,26 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var useragent = require('express-useragent');
-var jwt = require('jsonwebtoken');
 
 var app = express();
 module.exports = app;
 
-var students = require('./routes/students');
+var accounts = require('./routes/accounts');
+var activities = require('./routes/activities');
+var classes = require('./routes/classes');
+var drafts = require('./routes/drafts');
 var educators = require('./routes/educators');
-var credentials = require('./routes/credentials');
-var devices = require('./routes/devices');
+var events = require('./routes/events');
 var guardians = require('./routes/guardians');
+var menus = require('./routes/menus');
+var posts = require('./routes/posts');
+var profiles = require('./routes/profiles');
+var rooms = require('./routes/rooms');
 var schools = require('./routes/schools');
-var subscriptions = require('./routes/subscriptions');
-var timeline = require('./routes/timeline');
-var rooms = require('./routes/classes');
-var classes = require('./routes/rooms');
+var students = require('./routes/students');
 
-var services = require('./services');
+
+var jwt = require('./mechanisms/jwt');
 
 // var services = require ('./services');
 
@@ -56,7 +59,7 @@ app.use(function(req, res, next) {
   // decode token
   if (token) {
     // verifies secret and checks exp - Gets params and proceed! <-TODO
-		services.jwt.validate(token)
+		mechanisms.jwt.validate(token)
 		.then(function(decoded) {
 			// console.log(decoded);
 			req.token = decoded;
@@ -71,16 +74,19 @@ app.use(function(req, res, next) {
 	}
 });
 
-app.use('/students', students);
-app.use('/educators', educators); 
-app.use('/credentials', credentials);
-app.use('/devices', devices);
-app.use('/guardians', guardians);
-app.use('/schools', schools);
-app.use('/subscriptions', subscriptions);
-app.use('/timeline', timeline);
+app.use('/accounts', accounts);
+app.use('/activities', activities);
 app.use('/classes', classes);
+app.use('/drafts', drafts);
+app.use('/educators', educators);
+app.use('/events', events);
+app.use('/guardians', guardians);
+app.use('/menus', menus);
+app.use('/posts', posts);
+app.use('/profiles', profiles);
 app.use('/rooms', rooms);
+app.use('/schools', schools);
+app.use('/students', students);
 
 
 // catch 404 and forward to error handler

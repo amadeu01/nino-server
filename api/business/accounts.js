@@ -3,7 +3,7 @@ var response = require('../mechanisms/response.js') ;
 
 var accountsDAO = require('../persistence/accounts.js');
 
-var business;
+var business = {};
 
 
 /* Create a new Profile and links it to a new Account
@@ -15,9 +15,11 @@ business.createNewUser = function(account, profile){
 		//Keep validating parameters
 		else {
 			accountsDAO.createNewUser(account, profile)
-			.then(response) {
+			.then(function(response) {
 				resolve(response);
-			};
+			}).catch(function(error) {
+				reject(error);
+			});
 		}
 	});
 }

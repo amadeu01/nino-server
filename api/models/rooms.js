@@ -21,12 +21,12 @@ module.exports =  Waterline.Collection.extend({
 				model: 'class'
 			},
       students: {
-        collection: 'profile',
-				via: 'rooms',
+        collection: 'student',
+				via: 'room',
         index: true
       },
-      educators: {
-        collection: 'profile',
+      employees: {
+        collection: 'employee',
 				via: 'rooms'
       },
 			notificationGroup: {

@@ -4,10 +4,9 @@
 */
 
 var jwt = require('jsonwebtoken');
-var permissions = require('./permissions');
-var errors = require('./errors');
+var errors = require('./error');
 
-var jwtSecret = 'neveperocoftwvamoninow';
+var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 
 
 module.exports = {

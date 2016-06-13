@@ -15,11 +15,10 @@ module.exports =  Waterline.Collection.extend({
     },
     owner: {
       model: 'profile',
-      via: 'school'
     },
 		employees: {
-      collection: 'profile',
-      via: 'employer'
+      collection: 'employee',
+      via: 'school'
 		},
 		classes: {
 			collection: 'class',
@@ -34,16 +33,16 @@ module.exports =  Waterline.Collection.extend({
 			via: 'school'
 		},
 		pedagogues: {
-			collection: 'profile'
+			collection: 'employee'
 		},
 		educators: {
-			collection: 'profile'
+			collection: 'employee'
 		},
 		nutritionists: {
-			collection: 'profile'
+			collection: 'employee'
 		},
 		coordinators: {
-			collection: 'profile'
+			collection: 'employee'
 		},
 		notificationGroup: {
 			type: 'integer',

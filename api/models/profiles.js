@@ -29,27 +29,14 @@ module.exports =  Waterline.Collection.extend({
 				type: 'integer', //Define enum in Business
 				required: true
 			},
-			students: { //Guardian case
-        collection: 'profile',
-        via: 'guardians'
+			guardianData: {
+				model: 'guardian'
 			},
-			school: { //Student case
-				model: 'school'
+			employeeData: {
+				model: 'employee'
 			},
-			employer: { //Educator case
-				model: 'school'
-			},
-			classes: { //Educator case
-				collection: 'class',
-				via: 'educators'
-			},
-			rooms: { //Educator case
-				collection: 'room',
-				via: 'educators'
-			},
-			guardians: { //Student case
-				collection: 'profile',
-				via: 'students'
+			studentData: {
+				model: 'student'
 			},
 			active: {
 				type: 'boolean',

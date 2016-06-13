@@ -1,8 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var errors = require('../services/errors');
+var errors = require('../mechanisms/error');
 var validator = require('validator');
-var services = require('../services');
 
 var accountsBO = require('../business/accounts.js');
 
@@ -57,10 +56,10 @@ router.post('/', function(req, res, next) {
 	};
 	
 	accountsBO.createNewUser(account, profile)
-	.then(response) {
+	.then(function(response) {
 		res.status(response.status).json(response.json);
-	}.catch(response {
-		res.status(response.status).json(response.json);
+	}).catch(function(error) {
+		res.status(error.status).json(error.json);
 	});
 });
 
