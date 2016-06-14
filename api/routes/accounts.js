@@ -1,7 +1,10 @@
+/*
+*
+* Last to modify: Amadeu Cavalcante
+*/
 var express = require('express');
 var router = express.Router();
 var errors = require('../mechanisms/error');
-
 var accountsBO = require('../business/accounts.js');
 
 var numberValidate = function(req, res, next, id) {
@@ -34,6 +37,7 @@ var numberValidate = function(req, res, next, id) {
  * 						404 									- When there is no such school
  */
 router.post('/', function(req, res, next) {
+
 	//Check if needed params exists 
 	return new Promise(function(resolve, reject) {
 		if (req.body.email === undefined);
@@ -57,7 +61,7 @@ router.post('/', function(req, res, next) {
 	
 		return accountsBO.createNewUser(account, profile)
 		
-	}
+	})
 	.then(function(response) {
 		res.status(response.status).json(response.json);
 	}).catch(function(error) {
