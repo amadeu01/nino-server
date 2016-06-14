@@ -1,8 +1,11 @@
+/*
+*
+* Last to modify: Amadeu Cavalcante
+*/
+
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
-
 var accountsDAO = require('../persistence/accounts.js');
-
 var business = {};
 
 
@@ -22,6 +25,24 @@ business.createNewUser = function(account, profile){
 			});
 		}
 	});
+}
+/* Confirm Account
+ * Validates requires confirmationHash and Origin, cofirm User and clear hash.
+ */
+business.confirmAccount = function(confirmationHash, origin) {
+
+}
+/*
+ @Parameters:
+* email
+* password (hash)
+* device (via header)
+
+ @Returns:
+ * Token + Profile
+ */
+business.login = function() {
+
 }
 
 module.exports = business;

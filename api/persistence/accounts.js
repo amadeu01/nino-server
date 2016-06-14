@@ -1,3 +1,8 @@
+
+/*
+*
+* Last to modify: Amadeu Cavalcante
+*/
 var transaction = require('../mechanisms/transaction');
 var models = require('../models');
 var response = require('../mechanisms/response');
