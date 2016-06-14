@@ -16,7 +16,7 @@ DAO.createNewUser = function(account, profile) {
 			return models.account.create()
 			.then(function(account) {
 				transaction.commit(); //Everything ok, commits changes to database and returns success
-				resolve(new response(200, {profile: profile.id ,account: account.id}));
+				resolve(new response(200, profile.id));
 			})
 		})
 		.catch(function(error) {

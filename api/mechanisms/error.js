@@ -32,8 +32,5 @@ module.exports = {
 	},
 	expiredCredential: function(data) {
 		return new response( 403, data, 301);
-	},
-	unauthorizedCredential: function(data) {
-		return new response( 401, data, 303);
 	}
 };
