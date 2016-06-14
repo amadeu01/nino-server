@@ -8,12 +8,12 @@ var models = require('../models');
 var response = require('../mechanisms/response');
 var error = require('../mechanisms/error');
 
-var DAO = {};
+var accountsDAO = {};
 
 /* Create a new Profile and links it to a new Account
  * Initiates transaction and creates new entities, linking them
  */
-DAO.createNewUser = function(account, profile) {
+accountsDAO.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
 		transaction.start(); //Starts DB transaction
 		models.profile.create()//Creates first model
@@ -31,4 +31,4 @@ DAO.createNewUser = function(account, profile) {
 	});
 }
 
-module.exports = DAO;
+module.exports = accountsDAO;

@@ -29,6 +29,9 @@ module.exports =  Waterline.Collection.extend({
 				type: 'integer', //Define enum in Business
 				required: true
 			},
+			account: {
+				model: 'account'
+			},
 			guardianData: {
 				model: 'guardian'
 			},

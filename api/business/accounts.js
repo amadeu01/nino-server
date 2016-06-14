@@ -6,13 +6,13 @@
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
-var business = {};
+var accountsBusiness = {};
 
 
 /* Create a new Profile and links it to a new Account
  * Validates required parameters and returns a promisse, calling the DAO to write to the DB
  */
-business.createNewUser = function(account, profile){
+accountsBusiness.createNewUser = function(account, profile){
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
 		//Keep validating parameters
@@ -29,7 +29,7 @@ business.createNewUser = function(account, profile){
 /* Confirm Account
  * Validates requires confirmationHash and Origin, cofirm User and clear hash.
  */
-business.confirmAccount = function(confirmationHash, origin) {
+accountsBusiness.confirmAccount = function(confirmationHash, origin) {
 
 }
 /*
@@ -41,8 +41,8 @@ business.confirmAccount = function(confirmationHash, origin) {
  @Returns:
  * Token + Profile
  */
-business.login = function() {
+accountsBusiness.login = function() {
 
 }
 
-module.exports = business;
+module.exports = accountsBusiness;

@@ -40,10 +40,10 @@ router.post('/', function(req, res, next) {
 
 	//Check if needed params exists 
 	return new Promise(function(resolve, reject) {
-		if (req.body.email === undefined);
+		if (req.body.email === undefined) reject(errors.missingParameter('email'));
 		// else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
-		else if (req.body.name === undefined);
-		else if (req.body.surname === undefined);
+		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
+		else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
 	
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {

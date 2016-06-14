@@ -23,6 +23,10 @@ module.exports =  Waterline.Collection.extend({
 				collection: 'credential',
 				via: 'account'
 			},
+			profile: {
+				model: 'profile',
+				required: true
+			},
 			cellphone: {
 				type: 'string'
 			},
