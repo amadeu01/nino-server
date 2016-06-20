@@ -20,7 +20,7 @@ router.get('/:school_id', function(req, res, next) {
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
-	
+
 		//End response
 		res.send('WIP');
 	}
@@ -58,7 +58,7 @@ router.delete('/:school_id', function(req, res, next) {
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
-	
+
 		//End response
 		res.send('WIP');
 	}
@@ -71,7 +71,7 @@ router.post('/:school_id/notifications/guardians', function(req, res, next) {
 	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data").clean);
 	else {
 		//Should now call business
-	
+
 		//End response
 		res.send('WIP');
 	}
@@ -84,7 +84,7 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data").clean);
 	else {
 		//Should now call business
-	
+
 		//End response
 		res.send('WIP');
 	}
@@ -92,11 +92,11 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 
 /* Create new school */
 router.post('/', function(req, res, next) {
-	//Check parameters 
-	if (req.body.school == undefined) res.status(400).json(errors.invalidParameters("school").clean);
+	//Check parameters
+	if (req.body.school === undefined) res.status(400).json(errors.invalidParameters("school").clean);
 	else if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name").clean);
 	else if (req.body.school.email === undefined || !validator.isEmail(req.body.school.email)) res.status(400).json(errors.invalidParameters("school.email").clean);
-	else if (req.body.owner == undefined) res.status(400).json(errors.invalidParameters("owner").clean);
+	else if (req.body.owner === undefined) res.status(400).json(errors.invalidParameters("owner").clean);
 	else if (req.body.owner.name === undefined) res.status(400).json(errors.invalidParameters=== undefined("owner.name").clean);
 	else if (req.body.owner.surname === undefined) res.status(400).json(errors.invalidParameters("owner.surname").clean);
 	else if (req.body.owner.password === undefined) res.status(400).json(errors.invalidParameters("owner.password").clean);
@@ -126,8 +126,8 @@ router.post('/', function(req, res, next) {
 		if (req.body.school.cnpj !== undefined && validator.isNumeric(req.body.school.cnpj)) {
 			parameters.school.cnpj = req.body.school.cnpj;
 		}
-		
-		
+
+
 		services.schools.create(parameters)
 		.then(function(success) {
 			res.json(success);
@@ -158,7 +158,7 @@ router.get('/:school_id/logotype', function(req, res, next) {
 	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
 	else {
 		//Should now call business
-	
+
 		//End response
 		res.send('WIP');
 	}

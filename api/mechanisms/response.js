@@ -1,6 +1,5 @@
 /**
-* Author: Carlos Eduardo Millani
-* Responses
+* @author: Carlos Eduardo Millani
 */
 
 function response(code, data, error) {
@@ -10,5 +9,5 @@ function response(code, data, error) {
 		error: error
 	};
 }
-
+/** @module mechanisms/response */
 module.exports = response;

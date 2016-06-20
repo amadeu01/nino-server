@@ -1,18 +1,25 @@
-/*
-*
-* Last to modify: Amadeu Cavalcante
-*/
+/** @module business */
 
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
-var accountsBusiness = {};
 
-
-/* Create a new Profile and links it to a new Account
- * Validates required parameters and returns a promisse, calling the DAO to write to the DB
+/**
+ * Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
+ * @class
  */
-accountsBusiness.createNewUser = function(account, profile){
+var accounts = {};
+
+
+
+/**
+ * Create a new Profile and links it to a new Account
+ * Validates required parameters and returns a promisse, calling the DAO to write to the DB
+ * @param account
+ * @param profile
+ */
+accounts.createNewUser = function(account, profile){
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
 		//Keep validating parameters
@@ -26,22 +33,23 @@ accountsBusiness.createNewUser = function(account, profile){
 		}
 	});
 }
-/* Confirm Account
+/**
+ * Confirm Account
  * Validates requires confirmationHash and Origin, cofirm User and clear hash.
+ * @param confirmationHash
+ * @param origin
  */
-accountsBusiness.confirmAccount = function(confirmationHash, origin) {
+accounts.confirmAccount = function(confirmationHash, origin) {
 
 }
-/*
- @Parameters:
-* email
-* password (hash)
-* device (via header)
-
- @Returns:
- * Token + Profile
- */
-accountsBusiness.login = function() {
+/**
+* Log In
+* @param email
+* @param password
+* @param device
+* @returns Token + Profile
+*/
+accounts.login = function() {
 
 }
 

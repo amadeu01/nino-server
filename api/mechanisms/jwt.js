@@ -1,21 +1,24 @@
-/**
-* Author: Carlos Eduardo Millani
-* JWT
-*/
-
 var jwt = require('jsonwebtoken');
 var errors = require('./error');
 
 var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 
-
+/**
+* @module mechanisms/jwt
+*/
 module.exports = {
+	/**
+	* Create
+	*/
 	create: function(tokenData) {
 		var token = jwt.sign(tokenData, jwtSecret, {
       expiresIn: 1440 // expires in 24 hours
     });
 		return new Promise(function(resolve, reject) {resolve(token);});
 	},
+	/**
+	* Renew
+	*/
 	renew: function(token) {
 		return new Promise(function (resolve, reject) {
 	    jwt.verify(token, jwtSecret, function(err, decoded) {
@@ -32,6 +35,9 @@ module.exports = {
 	    });
 		});
 	},
+	/**
+	* Validate
+	*/
 	validate: function(token, client) {
 	  return new Promise(function (resolve, reject) {
 	    jwt.verify(token, jwtSecret, function(err, decoded) {

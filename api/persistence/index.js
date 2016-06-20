@@ -1,6 +1,8 @@
 /**
-* Amadeu Cavalcante
-* Module dependencies.
+* @author Carlos Millani
+* Module Specific Configuration
+* @module persistence/
+* Last to modify: Amadeu Cavalcante
 */
 
 var fs = require('fs');

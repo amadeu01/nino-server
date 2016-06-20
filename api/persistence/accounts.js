@@ -1,13 +1,8 @@
+/** @module persistence */
 
-/*
-*
-* Last to modify: Amadeu Cavalcante
+/**
+* @class
 */
-var transaction = require('../mechanisms/transaction');
-var models = require('../models');
-var response = require('../mechanisms/response');
-var error = require('../mechanisms/error');
-
 var accountsDAO = {};
 
 /* Create a new Profile and links it to a new Account

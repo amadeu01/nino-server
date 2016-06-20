@@ -1,10 +1,12 @@
-/*
-*
-* Last to modify: Amadeu Cavalcante
-*/
+/** @module routes */
+
 var express = require('express');
 var router = express.Router();
 var errors = require('../mechanisms/error');
+
+/**
+* @class
+*/
 var accountsBO = require('../business/accounts.js');
 
 var numberValidate = function(req, res, next, id) {
@@ -20,7 +22,7 @@ var numberValidate = function(req, res, next, id) {
 //router.param('school_id', numberValidate);
 
 /* Create a new Profile and links it to a new Account
- * Parameters: 
+ * Parameters:
  *						Name *
  *						Surname *
  *						Email *
@@ -38,29 +40,29 @@ var numberValidate = function(req, res, next, id) {
  */
 router.post('/', function(req, res, next) {
 
-	//Check if needed params exists 
+	//Check if needed params exists
 	return new Promise(function(resolve, reject) {
 		if (req.body.email === undefined) reject(errors.missingParameter('email'));
 		// else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
 		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
 		else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
-	
+
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {
 			email: req.body.email,
 			cellphone: req.body.cellphone,
 			password: req.body.password
 		};
-	
+
 		var profile = {
 			name: req.body.name,
 			surname: req.body.surname,
 			birthdate: req.body.birthdate,
 			gender: req.body.gender
 		};
-	
-		return accountsBO.createNewUser(account, profile)
-		
+
+		return accountsBO.createNewUser(account, profile);
+
 	})
 	.then(function(response) {
 		res.status(response.status).json(response.json);
@@ -70,7 +72,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.post('/authentication', function(req, res, next) {
-	
+
 });
 
 module.exports = router;

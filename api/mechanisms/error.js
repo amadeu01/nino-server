@@ -1,11 +1,10 @@
 /**
-* Author: Carlos Eduardo Millani
-* Erros
-* Last to modified:
+* @author: Carlos Eduardo Millani
 */
 
 var response = require('./response.js');
 
+/** @module mechanisms/errors */
 module.exports = {
 	//Register related errors
 	inexistentRegister: function(data) {

@@ -1,12 +1,13 @@
-/**
-* Carlos Millani
-* Module services
-*/
+/** @module persistence */
 
 var models = require('../models');
 var errors = require('../services/errors');
 var jwt = require('./jwt');
 
+/**
+* @class
+* @author CarLos Millani
+*/
 var credentialServices = {
 	create: function(device, token, owner) {
 		return models.waterline.collections.device.findOrCreate({description:device}, {description:device, owner: owner})

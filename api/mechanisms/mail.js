@@ -1,9 +1,3 @@
-/**
-* Author: Carlos Eduardo Millani
-* Mailgun business
-* Last to modified:
-*/
-
 var api_key = 'key-febe2f50d1b01f0e641d58f04e91a2f3';
 var domain = 'ninoapp.com.br';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
@@ -19,7 +13,14 @@ var data = {
   text: 'Testing some Mailgun awesomness!'
 };
 
+/**
+* @module mechanisms/MailgunServices
+*/
 var MailgunServices = {
+  /**
+  @param userMail
+  @param parameters
+  */
 	sendUserConfirmation: function(userMail, parameters) {
 		var promise = new Promise( function(resolve, reject) {
 			app.render('confirmation', parameters, function(error, html) {
@@ -41,6 +42,11 @@ var MailgunServices = {
     });
     return promise;
 	},
+  /**
+  @param email
+  @param name
+  @param vars
+  */
 	subscribeToFeed: function(email, name, vars) {
 		return new Promise( function(resolve, reject) {
 			vars.unsubshash = uid.sync(50);

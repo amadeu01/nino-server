@@ -1,7 +1,5 @@
-/**
-* Amadeu Cavalcante
-* Module services
-*/
+/** @module persistence */
+
 
 var models = require('../models');
 
@@ -9,18 +7,34 @@ var models = require('../models');
 var errors = require('../services/errors');
 var validator = require('validator');
 
+/**
+* @class
+*/
 var classServices = {
+	/**
+	* Create
+	*/
 	create: {
-		
+
 	},
+	/**
+	* Read
+	*/
 	read: {
-		
+
 	},
+
+	/**
+	* Update
+	*/
 	update: {
-		
+
 	},
+	/**
+	* Delete
+	*/
 	delete: {
-		
+
 	}
 };
 
