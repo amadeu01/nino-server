@@ -1,11 +1,26 @@
 module.exports = function(grunt) {
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-shell');
-	grunt.loadNpmTasks('grunt-jsdoc');
 	grunt.initConfig({
 		jshint: {
    		all: ['Gruntfile.js','test/*.js', 'routes/**/*.js', 'bin/**/*.js', 'app.js', 'models/**/*.js', 'bin/www', 'services/**/*.js']
   	},
+		clean: {
+				nino: {
+						src: "nino-doc"
+				}
+		},
+		jsdoc: {
+				nino: {
+						src: [
+								'README_NINO.md'
+						],
+						options: {
+								verbose: true,
+								destination: 'nino-doc',
+								configure: 'nino.conf.json',
+								'private': false
+						}
+					}
+				},
 		shell: {
 			cleanDB: {
 				command: 'rm -rf .tmp/'
@@ -13,7 +28,24 @@ module.exports = function(grunt) {
 			runMocha: {
 				command: 'mocha'
 			}
+		}
 	});
+
+	// Load task libraries
+	[
+			'grunt-shell',
+			'grunt-contrib-jshint',
+			'grunt-contrib-copy',
+			'grunt-contrib-clean',
+			'grunt-jsdoc'
+	].forEach(function (taskName) {
+			grunt.loadNpmTasks(taskName);
+	});
+
+	// Definitions of tasks
 	grunt.registerTask('default', ['jshint', 'shell']);
-	grunt.registerTask('demo', 'Create documentations for demo', ['jsdoc:demo']);
+	grunt.registerTask('doc', 'Create documentations for Nino', [
+		'clean:nino',
+		'jsdoc:nino'
+	]);
 };
