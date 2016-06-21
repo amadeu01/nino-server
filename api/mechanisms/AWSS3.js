@@ -1,4 +1,4 @@
 /**
-* Amadeu Cavalcante
-* @module mechanisms/AWSS3
+* @author Amadeu Cavalcante
+* @module mechanisms
 */

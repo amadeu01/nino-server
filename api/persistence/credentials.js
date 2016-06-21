@@ -6,7 +6,6 @@ var jwt = require('./jwt');
 
 /**
 * @class
-* @author CarLos Millani
 */
 var credentialServices = {
 	create: function(device, token, owner) {

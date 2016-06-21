@@ -1,7 +1,4 @@
-/**
-* Carlos Millani
-* Module services
-*/
+/** @module persistence */
 
 var models = require('../models');
 
@@ -10,11 +7,14 @@ var errors = require('../services/errors');
 var validator = require('validator');
 var permissions = require('../services/permissions');
 
+/**
+* @class
+*/
 var schoolServices = {
 	create: function(parameters) {
 		parameters.school.active = true;
 		parameters.owner.active = true;
-		
+
 		return models.waterline.collections.school.create(parameters.school)
 		.then (function(school) {
 			if (!school) throw errors.internalError('School - Creation Error');

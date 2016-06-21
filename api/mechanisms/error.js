@@ -1,10 +1,10 @@
 /**
 * @author: Carlos Eduardo Millani
+* @module mechanisms
 */
 
 var response = require('./response.js');
 
-/** @module mechanisms/errors */
 module.exports = {
 	//Register related errors
 	inexistentRegister: function(data) {

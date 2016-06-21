@@ -1,14 +1,16 @@
+/**
+* @author Carlos Millani
+* @module mechanisms
+*/
+
 var jwt = require('jsonwebtoken');
 var errors = require('./error');
-
 var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 
-/**
-* @module mechanisms/jwt
-*/
 module.exports = {
 	/**
 	* Create
+	* @param tokenData
 	*/
 	create: function(tokenData) {
 		var token = jwt.sign(tokenData, jwtSecret, {
@@ -18,6 +20,7 @@ module.exports = {
 	},
 	/**
 	* Renew
+	* @param token
 	*/
 	renew: function(token) {
 		return new Promise(function (resolve, reject) {
@@ -37,6 +40,8 @@ module.exports = {
 	},
 	/**
 	* Validate
+	* @param token
+	* @param client
 	*/
 	validate: function(token, client) {
 	  return new Promise(function (resolve, reject) {

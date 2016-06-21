@@ -1,8 +1,10 @@
+/**
+* @author Carlos Millani
+* @module mechanisms
+*/
+
 var Waterline = require('waterline');
 
-/**
-* @module mechanisms/transaction
-*/
 var Transaction = {};
 
 /**

@@ -1,7 +1,5 @@
 /**
-* Amadeu Cavalcante
-* Module services
-* Last to modified: Amadeu Cavalcante Filho
+* @module persistence
 */
 
 var models = require('../models');
@@ -10,6 +8,9 @@ var models = require('../models');
 var errors = require('../services/errors');
 var validator = require('validator');
 
+/**
+* @class
+*/
 var postsServices = {
 	create: function(parameters) {
     if (!parameters) throw errors.invalidParameters('Missing Parameter');

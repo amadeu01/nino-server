@@ -1,3 +1,8 @@
+/**
+* @author Carlos Millani
+* @module mechanisms
+*/
+
 var api_key = 'key-febe2f50d1b01f0e641d58f04e91a2f3';
 var domain = 'ninoapp.com.br';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
@@ -14,12 +19,13 @@ var data = {
 };
 
 /**
-* @module mechanisms/MailgunServices
+*@class
 */
 var MailgunServices = {
   /**
-  @param userMail
-  @param parameters
+  * @function
+  * @param userMail
+  * @param parameters
   */
 	sendUserConfirmation: function(userMail, parameters) {
 		var promise = new Promise( function(resolve, reject) {
@@ -43,9 +49,9 @@ var MailgunServices = {
     return promise;
 	},
   /**
-  @param email
-  @param name
-  @param vars
+  * @param email
+  * @param name
+  * @param vars
   */
 	subscribeToFeed: function(email, name, vars) {
 		return new Promise( function(resolve, reject) {
