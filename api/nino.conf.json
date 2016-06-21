@@ -1,0 +1,37 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": [
+            "business/",
+            "mechanisms/",
+            "persistence/",
+            "./README_NINO.md"
+        ]
+    },
+    "plugins": ["plugins/markdown"],
+    "opts": {
+        "encoding": "utf8",
+        "template": "./node_modules/docdash",
+        "destination": "./nino-doc/",
+        "recurse": true,
+        "verbose": true
+    },
+    "markdown": {
+        "parser": "gfm",
+        "hardwrap": true
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "outputSourceFiles": true,
+            "includeDate": false
+        }
+    },
+    "docdash": {
+        "static": false,
+        "sort": true
+    }
+}
