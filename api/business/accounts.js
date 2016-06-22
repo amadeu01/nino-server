@@ -1,16 +1,9 @@
-/** @module business */
+/** @module business/accounts */
 
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
-
-/**
- * Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
- * @class
- */
 var accounts = {};
-
 
 
 /**
@@ -44,13 +37,18 @@ accounts.confirmAccount = function(confirmationHash, origin) {
 }
 /**
 * Log In
-* @param email
-* @param password
+* @param email {string}
+* @param password {string}
 * @param device
 * @returns Token + Profile
 */
-accounts.login = function() {
+accounts.login = function(email, password, device) {
+	return new Promise(function(resolve, reject) {
+		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
 
+
+
+	});
 }
 
 module.exports = accountsBusiness;

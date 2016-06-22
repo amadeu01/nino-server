@@ -1,6 +1,4 @@
-/** @module persistence*/
+/** @module persistence/activities */
 
-/**
-* @class
-*/
+
 var activities = {};

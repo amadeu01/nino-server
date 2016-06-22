@@ -37,6 +37,7 @@
     "grunt-jsdoc": "^2.1.0",
     "grunt-shell": "^1.2.1",
     "supertest": "^1.2.0",
+    "grunt-mocha": "^1.0.2",
     "underscore": "^1.8.3",
     "underscore-contrib": "^0.3.0"
   },
