@@ -1,6 +1,6 @@
 /**
 * @author Carlos Millani
-* @module mechanisms
+* @module mechanisms/jwt
 */
 
 var jwt = require('jsonwebtoken');
@@ -9,7 +9,7 @@ var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 
 module.exports = {
 	/**
-	* Create
+	* @description Create <tt>Token</tt> when a user logs in.
 	* @param tokenData
 	*/
 	create: function(tokenData) {
@@ -19,7 +19,7 @@ module.exports = {
 		return new Promise(function(resolve, reject) {resolve(token);});
 	},
 	/**
-	* Renew
+	* @description Renew <tt>Token</tt> when is needed 
 	* @param token
 	*/
 	renew: function(token) {

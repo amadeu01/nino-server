@@ -1,6 +1,6 @@
 /**
-* Amadeu Cavalcante
-* Module for Roles
+* @author Amadeu Cavalcante
+* @description Model for drafts
 */
 var Waterline = require('waterline');
 

@@ -1,6 +1,6 @@
 /**
-* Amadeu Cavalcante
-* Module for Roles
+* @author Amadeu Cavalcante | Carlos Millani
+* @description Model for events
 */
 var Waterline = require('waterline');
 

@@ -1,6 +1,6 @@
 /**
 * @author: Carlos Eduardo Millani
-* @module mechanisms
+* @module mechanisms/errors
 */
 
 var response = require('./response.js');

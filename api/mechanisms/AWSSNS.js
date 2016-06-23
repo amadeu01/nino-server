@@ -1,4 +1,4 @@
 /**
 * @author Amadeu Cavalcante
-* @module mechanisms
+* @module mechanisms/AWSSNS
 */

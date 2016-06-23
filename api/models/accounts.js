@@ -1,8 +1,11 @@
 /**
-* Amadeu Cavalcante
-* Module for Roles
+* @author Amadeu Cavalcante | Carlos Millani
+* @description Model for account
 */
+
 var Waterline = require('waterline');
+//To create an unique id to refer to that user
+var uid = require('uid-safe');
 
 module.exports =  Waterline.Collection.extend({
   identity : 'account',
@@ -45,5 +48,9 @@ module.exports =  Waterline.Collection.extend({
 				type: 'boolean',
 				defaultsTo: true
 			}
+    },
+  	beforeCreate: function (values, cb) {
+      values.confirmationUID = uid.sync(100);
+      cb();
     }
   });

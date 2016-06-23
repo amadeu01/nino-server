@@ -1,6 +1,6 @@
 /**
-* Amadeu Cavalcante
-* Module for Roles
+* @author Amadeu Cavalcante
+* @description Model for schools
 */
 var Waterline = require('waterline');
 
@@ -53,7 +53,7 @@ module.exports =  Waterline.Collection.extend({
 		},
 		cnpj: {
 			type: 'string'
-		}, 
+		},
 		telephone: {
 			type: 'string'
 		},

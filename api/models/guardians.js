@@ -1,6 +1,6 @@
 /**
-* Carlos Millani
-* Module for Guardians
+* @author Carlos Millani
+* @description Model for Guardians
 */
 var Waterline = require('waterline');
 

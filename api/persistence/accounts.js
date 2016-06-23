@@ -15,7 +15,7 @@ var accountsDAO = {};
 accountsDAO.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
 		transaction.start(); //Starts DB transaction
-		models.profile.create()//Creates first model
+		return models.profile.create()//Creates first model
 		.then(function(profile) {
 			return models.account.create()
 			.then(function(account) {
@@ -23,27 +23,29 @@ accountsDAO.createNewUser = function(account, profile) {
 				resolve(new response(200, profile.id));
 			})
 		})
-		.catch(function(error) {
+		.catch(function(err) {
 			transaction.abort(); //Error, discards changes and returns error
-			reject(new error.internalError(error)); //
+			reject(new error.internalError(err)); //
 		});//Creates account
 	});
 }
 /** @method confirmAccount
 * @param confirmationHash {string} hash when the model is created on the data.
 * @param orgin {string} comes on the body of the request
-* @return Promise {Promise}
+* @return Promise {Promise} if successful, returns responde wih account information.
 */
-accountsDAO.confirmAccount = function(confirmationHash, origin) {
+accountsDAO.confirmAccount = function(confirmationHash) {
 	return new Promise(function(resolve, reject) {
 		transaction.start(); //Starts DB transaction
-		models.account.findOne({hash: confirmationHash})
+		return models.account.findOne({hash: confirmationHash})
 		.then(function(account) {
-			
+			transaction.commit();
+			resolve(new response(200, account))
 		})
-		transaction.commit();
-		resolve(new response(200));
-
+		.catch(function(err) {
+			transaction.abort();
+			reject(new error.internalError(err));
+		});
 	});
 }
 /** @method recoverAccount
@@ -73,9 +75,9 @@ accountsDAO.logOut = function(device, token) {
 * @param token {string}
 * @return [Devices] {Array<Devices>}
 */
-accountsDAO.getAccountDevices = function() {
+accountsDAO.getAccountDevices = function(token) {
 	return new Promise( function(resolve, reject) {
-
+		//i dont know
 	});
 }
 

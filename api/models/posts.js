@@ -1,6 +1,6 @@
 /**
 * Amadeu Cavalcante
-* Module for Roles
+* Model for posts
 */
 var Waterline = require('waterline');
 

@@ -1,6 +1,6 @@
 /**
 * Amadeu Cavalcante
-* Module for Roles
+* Module for models warterline
 */
 var mysqlAdapter = require('sails-mysql');
 var myDiskAdapter = require('sails-disk');

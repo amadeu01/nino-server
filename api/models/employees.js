@@ -1,6 +1,6 @@
 /**
-* Carlos Millani
-* Module for Employees
+* @author Carlos Millani | Amadeu Cavalcante
+* @description Module for Employees
 */
 var Waterline = require('waterline');
 

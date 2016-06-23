@@ -1,6 +1,6 @@
 /**
-* Carlos Millani
-* Model for Profiles
+* @author Carlos Millani
+* @description Model for Profiles
 */
 var Waterline = require('waterline');
 
@@ -48,7 +48,7 @@ module.exports =  Waterline.Collection.extend({
 			posts: {
 				collection: 'post',
 				via: 'profiles'
-			}, 
+			},
 			drafts: {
 				collection: 'draft',
 				via: 'profiles'

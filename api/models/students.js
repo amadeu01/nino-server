@@ -1,7 +1,8 @@
 /**
-* Carlos Millani
-* Module for Students
+* @author Carlos Millani
+* @description Model for Students
 */
+
 var Waterline = require('waterline');
 
 module.exports =  Waterline.Collection.extend({

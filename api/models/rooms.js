@@ -1,6 +1,6 @@
 /**
 * Amadeu Cavalcante
-* Module for Roles
+* Model for rooms
 */
 var Waterline = require('waterline');
 
