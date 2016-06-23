@@ -3,6 +3,7 @@
 var models = require('../models');
 var errors = require('../mechanisms/errors');
 var validator = require('validator');
+var useragent = require('express-useragent');
 
 var accountsDAO = {};
 
@@ -36,7 +37,10 @@ accountsDAO.createNewUser = function(account, profile) {
 accountsDAO.confirmAccount = function(confirmationHash, origin) {
 	return new Promise(function(resolve, reject) {
 		transaction.start(); //Starts DB transaction
-		
+		models.account.findOne({hash: confirmationHash})
+		.then(function(account) {
+			
+		})
 		transaction.commit();
 		resolve(new response(200));
 
