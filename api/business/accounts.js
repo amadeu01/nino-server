@@ -6,9 +6,8 @@ var accountsDAO = require('../persistence/accounts.js');
 var accounts = {};
 
 
-/**
- * Create a new Profile and links it to a new Account
- * Validates required parameters and returns a promisse, calling the DAO to write to the DB
+/** @method createNewUser
+ * @description Create a new Profile and links it to a new Account. Validates required parameters and returns a promisse, calling the DAO to write to the DB
  * @param account
  * @param profile
  */
@@ -26,27 +25,26 @@ accounts.createNewUser = function(account, profile){
 		}
 	});
 }
-/**
- * Confirm Account
- * Validates requires confirmationHash and Origin, cofirm User and clear hash.
- * @param confirmationHash
- * @param origin
+/** @method confirmAccount
+ * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
+ * @param confirmationHash {string}
+ * @param origin {json}
  */
 accounts.confirmAccount = function(confirmationHash, origin) {
+	return new Promise(function(resolve, reject){
 
+	});
 }
-/**
-* Log In
+/** @method login
 * @param email {string}
 * @param password {string}
 * @param device
-* @returns Token + Profile
+* @return Token {string}
+* @return Profile {id}
 */
 accounts.login = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
-
-
 
 	});
 }

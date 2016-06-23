@@ -1,12 +1,11 @@
-/** @module routes */
+/** @module routes/accounts */
 
 var express = require('express');
 var router = express.Router();
 var errors = require('../mechanisms/error');
+var useragent = require('express-useragent');
 
-/**
-* @class
-*/
+
 var accountsBO = require('../business/accounts.js');
 
 var numberValidate = function(req, res, next, id) {
@@ -21,17 +20,18 @@ var numberValidate = function(req, res, next, id) {
 
 //router.param('school_id', numberValidate);
 
-/* Create a new Profile and links it to a new Account
- * Parameters:
- *						Name *
- *						Surname *
- *						Email *
- *						BirthDate
- *						Gender
- *						School
- *						Token
- *						Cellphone
- * Responses:
+/** 
+ * @param	name {string}
+ * @param	surname {string}
+ * @param	email {string}
+ * @param	birthDate {datetime}
+ * @param	gender {Gender}
+ * @param	school {School}
+ * @param	token {string}
+ * @param	cellphone {string}
+ * @description Create a new Profile and links it to a new Account
+ *
+ * 						Responses:
  * 						200: profileID				- Success
  * 						400: wrong parameter 	- Parameter missing or invalid
  * 						500 									- Internal error

@@ -27,6 +27,9 @@ module.exports = function(grunt) {
 			},
 			runMocha: {
 				command: 'mocha'
+			},
+			openDoc: {
+				command: 'open nino-doc/index.html'
 			}
 		}
 	});
@@ -46,6 +49,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('default', ['jshint', 'shell']);
 	grunt.registerTask('doc', 'Create documentations for Nino', [
 		'clean:nino',
-		'jsdoc:nino'
+		'jsdoc:nino',
+		'shell:openDoc'
 	]);
 };

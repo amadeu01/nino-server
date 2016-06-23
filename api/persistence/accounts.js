@@ -1,11 +1,15 @@
 /** @module persistence/accounts */
 
+var models = require('../models');
+var errors = require('../mechanisms/errors');
+var validator = require('validator');
 
 var accountsDAO = {};
 
 /** @method createNewUser
- * Create a new Profile and links it to a new Account
- * Initiates transaction and creates new entities, linking them
+ * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
+ * @param account {Account}
+ * @param profile {Profile}
  */
 accountsDAO.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
@@ -32,7 +36,7 @@ accountsDAO.createNewUser = function(account, profile) {
 accountsDAO.confirmAccount = function(confirmationHash, origin) {
 	return new Promise(function(resolve, reject) {
 		transaction.start(); //Starts DB transaction
-		//i dont know
+		
 		transaction.commit();
 		resolve(new response(200));
 
@@ -53,10 +57,22 @@ accountsDAO.recoverAccount = function(email) {
 /** @method logOut
 * @param device {Device}
 * @param token {string}
+* @return Promise {Promise}
 */
-accountsDAO.logOut = function() {
+accountsDAO.logOut = function(device, token) {
+	return new Promise( function(resolve, reject) {
 
+	});
 }
 
+/** @method logOut
+* @param token {string}
+* @return [Devices] {Array<Devices>}
+*/
+accountsDAO.getAccountDevices = function() {
+	return new Promise( function(resolve, reject) {
+
+	});
+}
 
 module.exports = accountsDAO;
