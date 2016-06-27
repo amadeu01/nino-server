@@ -3,8 +3,6 @@
 var models = require('../models');
 var errors = require('../mechanisms/errors');
 var validator = require('validator');
-var useragent = require('express-useragent');
-
 var accountsDAO = {};
 
 /** @method createNewUser
@@ -30,8 +28,8 @@ accountsDAO.createNewUser = function(account, profile) {
 	});
 }
 /** @method confirmAccount
+* @description find account with hash and applied true to <tt>account.confirmed</tt>.
 * @param confirmationHash {string} hash when the model is created on the data.
-* @param orgin {string} comes on the body of the request
 * @return Promise {Promise} if successful, returns responde wih account information.
 */
 accountsDAO.confirmAccount = function(confirmationHash) {
@@ -39,6 +37,7 @@ accountsDAO.confirmAccount = function(confirmationHash) {
 		transaction.start(); //Starts DB transaction
 		return models.account.findOne({hash: confirmationHash})
 		.then(function(account) {
+			account.confirmed = true;
 			transaction.commit();
 			resolve(new response(200, account))
 		})

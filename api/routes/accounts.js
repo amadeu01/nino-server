@@ -4,9 +4,10 @@ var express = require('express');
 var router = express.Router();
 var errors = require('../mechanisms/error');
 var useragent = require('express-useragent');
-
-
 var accountsBO = require('../business/accounts.js');
+
+var app = express();
+app.use(useragent.express());
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -20,7 +21,7 @@ var numberValidate = function(req, res, next, id) {
 
 //router.param('school_id', numberValidate);
 
-/** 
+/**
  * @param	name {string}
  * @param	surname {string}
  * @param	email {string}
@@ -72,6 +73,11 @@ router.post('/', function(req, res, next) {
 });
 
 router.post('/authentication', function(req, res, next) {
+
+});
+
+router.post('/confirmAccount', function(req, res, next) {
+	var origin = req.useragent;
 
 });
 

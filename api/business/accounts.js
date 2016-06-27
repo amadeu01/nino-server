@@ -28,11 +28,18 @@ accounts.createNewUser = function(account, profile){
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param confirmationHash {string}
- * @param origin {json}
+ * @param origin {json} JSON with information about origin of data.
  */
 accounts.confirmAccount = function(confirmationHash, origin) {
+	if
 	return new Promise(function(resolve, reject){
+		accountsDAO.confirmAccount(confirmationHash)
+		.then(function (account) {
 
+		})
+		.catch(function (err) {
+
+		});
 	});
 }
 /** @method login
