@@ -79,5 +79,23 @@ accountsDAO.getAccountDevices = function(token) {
 		//i dont know
 	});
 }
-
+/** @method findOne
+* @param criteria {data} {...}
+* @return promise {Promise} promise with a user account data.
+*/
+accountsDAO.findOne = function (criteria) {
+	return new Promise (function(resolve, reject){
+		criteria.active = true;
+		transaction.start();
+		return models.account.findOne(criteria)
+		.then(function(account){
+			transaction.commit();
+			resolve(account);
+		})
+		.catch(function(err){
+			transaction.abort();
+			reject(err);
+		});
+	});
+}
 module.exports = accountsDAO;

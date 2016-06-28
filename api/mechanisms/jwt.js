@@ -10,7 +10,8 @@ var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 module.exports = {
 	/**
 	* @description Create <tt>Token</tt> when a user logs in.
-	* @param tokenData
+	* @param tokenData {JSON}
+	* @return promise {Promise} Returns promise with token
 	*/
 	create: function(tokenData) {
 		var token = jwt.sign(tokenData, jwtSecret, {
@@ -19,8 +20,9 @@ module.exports = {
 		return new Promise(function(resolve, reject) {resolve(token);});
 	},
 	/**
-	* @description Renew <tt>Token</tt> when is needed 
-	* @param token
+	* @description Renew <tt>Token</tt> when is needed
+	* @param token {string}
+	* @return promise {Promise} returns promise with <tt>newToken</tt>
 	*/
 	renew: function(token) {
 		return new Promise(function (resolve, reject) {
@@ -39,9 +41,10 @@ module.exports = {
 		});
 	},
 	/**
-	* Validate
-	* @param token
+	* @description Validate the client
+	* @param token {string}
 	* @param client
+	* @return promise {Promise} promise with decoded client
 	*/
 	validate: function(token, client) {
 	  return new Promise(function (resolve, reject) {

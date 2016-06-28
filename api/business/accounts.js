@@ -3,6 +3,7 @@
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
+var jwt = require('../mechanisms/')
 var accounts = {};
 
 
@@ -16,11 +17,11 @@ accounts.createNewUser = function(account, profile){
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
 		//Keep validating parameters
 		else {
-			accountsDAO.createNewUser(account, profile)
+			return accountsDAO.createNewUser(account, profile)
 			.then(function(response) {
 				resolve(response);
-			}).catch(function(error) {
-				reject(error);
+			}).catch(function(err) {
+				reject(err);
 			});
 		}
 	});
@@ -31,14 +32,16 @@ accounts.createNewUser = function(account, profile){
  * @param origin {json} JSON with information about origin of data.
  */
 accounts.confirmAccount = function(confirmationHash, origin) {
-	if
 	return new Promise(function(resolve, reject){
-		accountsDAO.confirmAccount(confirmationHash)
+		if (origin.isMobile === true ) { //it could be any other validation
+			reject(new response(400), 'mobile', 1); // i dont know what i'm doing here, must be changed
+		}
+		return accountsDAO.confirmAccount(confirmationHash)
 		.then(function (account) {
 
 		})
 		.catch(function (err) {
-
+			reject(err)
 		});
 	});
 }
@@ -52,7 +55,17 @@ accounts.confirmAccount = function(confirmationHash, origin) {
 accounts.login = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
-
+		else {
+			tokenData = {
+				email: email,
+				password: password,
+				device: device
+			}
+			return accountsDAO.findOne({email: email, password: password})
+			.then(function (user) {
+				
+			})
+		}
 	});
 }
 
