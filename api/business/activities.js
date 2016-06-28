@@ -13,8 +13,8 @@ var activities = {};
 */
 activities.createActivityToSchool = function(school, description, token ) {
   return new Promise(function(resolve, reject) {
-		//if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
-		//if (token)
+		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
+		if (token) reject(new response(400),'token',1);
 		else {
 			activitiesDAO.createActivityToSchool(school, description)
 			.then(function(response) {

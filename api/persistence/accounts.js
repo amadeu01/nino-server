@@ -1,7 +1,7 @@
 /** @module persistence/accounts */
 
 var models = require('../models');
-var errors = require('../mechanisms/errors');
+var errors = require('../mechanisms/error');
 var validator = require('validator');
 var accountsDAO = {};
 

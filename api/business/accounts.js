@@ -3,7 +3,7 @@
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
-var jwt = require('../mechanisms/')
+var jwt = require('../mechanisms/jwt.js')
 var accounts = {};
 
 
@@ -69,4 +69,4 @@ accounts.login = function(email, password, device) {
 	});
 }
 
-module.exports = accountsBusiness;
+module.exports = accounts;
