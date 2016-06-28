@@ -4,6 +4,7 @@
 */
 var mysqlAdapter = require('sails-mysql');
 var myDiskAdapter = require('sails-disk');
+var myPsql = require('sails-postgresql');
 var Waterline = require('waterline');
 var orm = new Waterline();
 var config = {
@@ -11,7 +12,8 @@ var config = {
   //I do not know which db will be used, so for test's sake I used more than one.
   adapters: {
     'default': mysqlAdapter,
-    'disk': myDiskAdapter
+    'disk': myDiskAdapter,
+	'psql': myPsql
   },
   // setup all type of connections you could have
   connections: {
@@ -24,9 +26,17 @@ var config = {
     //   				database: 'NinoDB'
     //   			},
     //using sails-disk method
-    default: {
-        adapter: 'disk'
-    }
+	//
+	default: {
+	  adapter: 'psql',
+	  database: 'ubuntu',
+	  host: 'localhost',
+      user: 'nino',
+	  password: 'nino'
+	}
+    //default: {
+    //    adapter: 'disk'
+    //}
   },
 };
 

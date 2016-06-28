@@ -23,11 +23,11 @@
     "sails-disk": "~0.10.9",
     "sails-memory": "~0.10.6",
     "sails-mysql": "~0.12.0",
+    "sails-postgresql": "^0.11.4",
     "serve-favicon": "~2.3.0",
     "uid-safe": "^2.1.0",
     "validator": "^5.1.0",
-    "waterline": "~0.11.1",
-    "waterline-postgresql": "^0.14.8"
+    "waterline": "~0.11.1"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
