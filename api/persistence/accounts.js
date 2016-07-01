@@ -11,21 +11,21 @@ var accountsDAO = {};
  * @param profile {Profile}
  */
 accountsDAO.createNewUser = function(account, profile) {
-	return new Promise(function(resolve, reject) {
-		transaction.start(); //Starts DB transaction
-		return models.profile.create()//Creates first model
-		.then(function(profile) {
-			return models.account.create()
-			.then(function(account) {
-				transaction.commit(); //Everything ok, commits changes to database and returns success
-				resolve(new response(200, profile.id));
-			})
-		})
-		.catch(function(err) {
-			transaction.abort(); //Error, discards changes and returns error
-			reject(new error.internalError(err)); //
-		});//Creates account
-	});
+	//return new Promise(function(resolve, reject) {
+	//	transaction.start(); //Starts DB transaction
+	//	return models.profile.create()//Creates first model
+	//	.then(function(profile) {
+	//		return models.account.create()
+	//		.then(function(account) {
+	//			transaction.commit(); //Everything ok, commits changes to database and returns success
+	//			resolve(new response(200, profile.id));
+	//		})
+	//	})
+	//	.catch(function(err) {
+	//		transaction.abort(); //Error, discards changes and returns error
+	//		reject(new error.internalError(err)); //
+	//	});//Creates account
+	//});
 }
 /** @method confirmAccount
 * @description find account with hash and applied true to <tt>account.confirmed</tt>.
@@ -33,30 +33,30 @@ accountsDAO.createNewUser = function(account, profile) {
 * @return Promise {Promise} if successful, returns responde wih account information.
 */
 accountsDAO.confirmAccount = function(confirmationHash) {
-	return new Promise(function(resolve, reject) {
-		transaction.start(); //Starts DB transaction
-		return models.account.findOne({hash: confirmationHash})
-		.then(function(account) {
-			account.confirmed = true;
-			transaction.commit();
-			resolve(new response(200, account));
-		})
-		.catch(function(err) {
-			transaction.abort();
-			reject(new error.internalError(err));
-		});
-	});
+	//return new Promise(function(resolve, reject) {
+	//	transaction.start(); //Starts DB transaction
+	//	return models.account.findOne({hash: confirmationHash})
+	//	.then(function(account) {
+	//		account.confirmed = true;
+	//		transaction.commit();
+	//		resolve(new response(200, account));
+	//	})
+	//	.catch(function(err) {
+	//		transaction.abort();
+	//		reject(new error.internalError(err));
+	//	});
+	//});
 }
 /** @method recoverAccount
 * @param email {string}
 * @return Promise {Promise}
 */
 accountsDAO.recoverAccount = function(email) {
- return new Promise(function (resolve, reject) {
-	 transaction.start();
-	 transaction.commit();
-	 resolve(new response(200)); //success
- });
+ //return new Promise(function (resolve, reject) {
+ //	 transaction.start();
+ //	 transaction.commit();
+ //	 resolve(new response(200)); //success
+ //});
 }
 
 /** @method logOut
@@ -84,18 +84,18 @@ accountsDAO.getAccountDevices = function(token) {
 * @return promise {Promise} promise with a user account data.
 */
 accountsDAO.findOne = function (criteria) {
-	return new Promise (function(resolve, reject){
-		criteria.active = true;
-		transaction.start();
-		return models.account.findOne(criteria).populate({'device'})
-		.then(function(account){
-			transaction.commit();
-			resolve(new response(200, account));
-		})
-		.catch(function(err){
-			transaction.abort();
-			reject(err);
-		});
-	});
+	//return new Promise (function(resolve, reject){
+	//	criteria.active = true;
+	//	transaction.start();
+	//	return models.account.findOne(criteria).populate({'device'})
+	//	.then(function(account){
+	//		transaction.commit();
+	//		resolve(new response(200, account));
+	//	})
+	//	.catch(function(err){
+	//		transaction.abort();
+	//		reject(err);
+	//	});
+	//});
 }
 module.exports = accountsDAO;
