@@ -39,7 +39,7 @@ accountsDAO.confirmAccount = function(confirmationHash) {
 		.then(function(account) {
 			account.confirmed = true;
 			transaction.commit();
-			resolve(new response(200, account))
+			resolve(new response(200, account));
 		})
 		.catch(function(err) {
 			transaction.abort();
@@ -87,10 +87,10 @@ accountsDAO.findOne = function (criteria) {
 	return new Promise (function(resolve, reject){
 		criteria.active = true;
 		transaction.start();
-		return models.account.findOne(criteria)
+		return models.account.findOne(criteria).populate({'device'})
 		.then(function(account){
 			transaction.commit();
-			resolve(account);
+			resolve(new response(200, account));
 		})
 		.catch(function(err){
 			transaction.abort();

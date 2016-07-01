@@ -10,7 +10,7 @@ var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 module.exports = {
 	/**
 	* @description Create <tt>Token</tt> when a user logs in.
-	* @param tokenData {JSON}
+	* @param tokenData {JSON} client?
 	* @return promise {Promise} Returns promise with token
 	*/
 	create: function(tokenData) {

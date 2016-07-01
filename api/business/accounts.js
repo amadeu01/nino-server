@@ -49,6 +49,9 @@ accounts.confirmAccount = function(confirmationHash, origin) {
 * @param email {string}
 * @param password {string}
 * @param device
+* @param populateEmployee {bool}
+* @param populateStudent {bool}
+* @param populateGuardian {bool}
 * @return Token {string}
 * @return Profile {id}
 */
@@ -56,6 +59,7 @@ accounts.login = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
 		else {
+			transaction.start();
 			tokenData = {
 				email: email,
 				password: password,
@@ -63,8 +67,13 @@ accounts.login = function(email, password, device) {
 			}
 			return accountsDAO.findOne({email: email, password: password})
 			.then(function (user) {
-				
+				transaction.commit();
+				resolve(user.id, user.credential.token);
 			})
+			.catch(function(err){
+				transaction.abort();
+				reject(err);
+			});
 		}
 	});
 }
