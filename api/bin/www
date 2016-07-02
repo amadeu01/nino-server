@@ -27,27 +27,15 @@ var server = http.createServer(app);
  */
 
 // Start Server
-//client.query('SELECT * FROM room', function(err, result) {
-//	console.log(err);
-//	console.log(result);
-//});
 db.createTables()
 .then(function(success) {
-	console.log("Succ");
-	//client.query("SELECT * from accounts", function(err, result) {
-		//console.log(err);
-		//console.log(result);
-	//});
-	//client.query("INSERT INTO accounts (email) VALUES ('emailTest')", function(err, result) {
-		//console.log(err);
-		//console.log(result);
-	//})
+	console.log("Server Starting");
+	server.listen(port);
+	server.on('error', onError);
+	server.on('listening', onListening);
 }).catch(function(err) {
 	console.log(err);
 });
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
 db.pool.on('error', function(err, client) {
 	console.log('idle client error', err.message, err.stack);

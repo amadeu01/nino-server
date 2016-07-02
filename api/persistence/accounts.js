@@ -4,6 +4,8 @@ var models = require('../models');
 var errors = require('../mechanisms/error');
 var validator = require('validator');
 var accountsDAO = {};
+var transaction = require('../mechanisms/transaction');
+var pool = require('../mechanisms/database.js').pool;
 
 /** @method createNewUser
  * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
@@ -11,21 +13,44 @@ var accountsDAO = {};
  * @param profile {Profile}
  */
 accountsDAO.createNewUser = function(account, profile) {
-	//return new Promise(function(resolve, reject) {
-	//	transaction.start(); //Starts DB transaction
-	//	return models.profile.create()//Creates first model
-	//	.then(function(profile) {
-	//		return models.account.create()
-	//		.then(function(account) {
-	//			transaction.commit(); //Everything ok, commits changes to database and returns success
-	//			resolve(new response(200, profile.id));
-	//		})
-	//	})
-	//	.catch(function(err) {
-	//		transaction.abort(); //Error, discards changes and returns error
-	//		reject(new error.internalError(err)); //
-	//	});//Creates account
-	//});
+	return new Promise(function(resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			transaction.start(client)
+			.then(function() {
+				return new Promise(function(res, rej) {
+					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4)', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
+						console.log(result);
+						if (err) rej (err);
+						else res(result);
+					});
+				});
+			}).then(function(result) {
+				return transaction.commit(client)
+				.then(function() {
+					console.log("Deu Commit");
+					done();
+					resolve();
+				}).catch(function(err) {
+					console.log("Commit deu erro :(");
+					done();
+					reject(err);
+				});
+			}).catch(function (err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					resolve();
+				}).catch(function(err) {
+					done();
+					reject(err);
+				});
+			});
+		});
+	});
 }
 /** @method confirmAccount
 * @description find account with hash and applied true to <tt>account.confirmed</tt>.
@@ -98,4 +123,5 @@ accountsDAO.findOne = function (criteria) {
 	//	});
 	//});
 }
+
 module.exports = accountsDAO;

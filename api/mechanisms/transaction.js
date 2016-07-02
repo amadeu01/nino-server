@@ -5,25 +5,42 @@
 
 var Waterline = require('waterline');
 
-var Transaction = {};
+var transaction = {};
 
 /**
 * Start
 */
-Transaction.start = function() {
-	//BEGIN;
-}
+transaction.start = function(client) {
+	return new Promise(function(resolve, reject) {
+		client.query('BEGIN', function(err) {
+			if (err) reject(err);
+			else resolve();
+		});
+	});
+};
 
 /**
 * Commit
 */
-Transaction.commit = function() {
-	//COMMIT;
-}
+transaction.commit = function(client) {
+	return new Promise(function(resolve, reject) {
+		client.query('COMMIT', function(err) { 
+			if (err) reject(err);
+			else resolve();
+		});
+	});
+};
 
 /**
 * Abort
 */
-Transaction.abort = function() {
-	//ROLLBACK
-}
+transaction.abort = function(client) {
+	return new Promise(function(resolve, reject) {
+		client.query('ROLLBACK', function(err) { 
+			if (err) reject(err);
+			else resolve();
+		});
+	});
+};
+
+module.exports = transaction;
