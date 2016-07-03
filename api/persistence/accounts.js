@@ -22,8 +22,14 @@ accountsDAO.createNewUser = function(account, profile) {
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4)', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
-						console.log(result);
+					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING *', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
+						if (err) rej (err);
+						else res(result);
+					});
+				});
+			}).then(function(result) {
+				return new Promise(function(res, rej) {
+					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING *', [result.rows[0].id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
 						else res(result);
 					});
@@ -31,21 +37,19 @@ accountsDAO.createNewUser = function(account, profile) {
 			}).then(function(result) {
 				return transaction.commit(client)
 				.then(function() {
-					console.log("Deu Commit");
 					done();
-					resolve();
+					resolve(result);
 				}).catch(function(err) {
-					console.log("Commit deu erro :(");
-					done();
+					done(err);
 					reject(err);
 				});
 			}).catch(function (err) {
 				return transaction.abort(client)
 				.then(function() {
 					done();
-					resolve();
-				}).catch(function(err) {
-					done();
+					reject(err);
+				}).catch(function(err2) {
+					done(err2);
 					reject(err);
 				});
 			});
@@ -57,20 +61,42 @@ accountsDAO.createNewUser = function(account, profile) {
 * @param confirmationHash {string} hash when the model is created on the data.
 * @return Promise {Promise} if successful, returns responde wih account information.
 */
-accountsDAO.confirmAccount = function(confirmationHash) {
-	//return new Promise(function(resolve, reject) {
-	//	transaction.start(); //Starts DB transaction
-	//	return models.account.findOne({hash: confirmationHash})
-	//	.then(function(account) {
-	//		account.confirmed = true;
-	//		transaction.commit();
-	//		resolve(new response(200, account));
-	//	})
-	//	.catch(function(err) {
-	//		transaction.abort();
-	//		reject(new error.internalError(err));
-	//	});
-	//});
+accountsDAO.confirmAccount = function(confirmationHash, password) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			transaction.start(client)
+			.then(function() {
+				return new Promise(function(res, rej) {
+					client.query('UPDATE accounts SET (hash, confirmed, password) = ($1, $2, $3) WHERE hash = $4',[null, true, password, confirmationHash], function(err, result) {
+						if (err) rej(err);
+						else res(result);
+					});
+				});
+			}).then(function(result) {
+				return transaction.commit(client)
+				.then(function() {
+					done();
+					resolve(result);
+				}).catch(function(err) {
+					done(err);
+					reject(err);
+				})
+			}).catch(function(err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					reject(err);
+				}).catch(function(err2) {
+					done(err2);
+					reject(err);
+				});
+			});
+		});	
+	});
 }
 /** @method recoverAccount
 * @param email {string}

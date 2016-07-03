@@ -18,12 +18,11 @@ suite('Account Persistence', function () {
 	});
 
 	//Create
-	test('should create User', function () {
-		this.timeout(10000);
+	test('Should create Profile and Account', function () {
 		var acc = {
 			email: "carloseduardomillani@gmail.com",
 			cellphone: "+5519984187636",
-			password: "senhafacil"
+			hash: "mysupersecrethash"
 		};
 		var profile = {
 			name: "Carlos",
@@ -34,7 +33,21 @@ suite('Account Persistence', function () {
 		return account.createNewUser(acc, profile)
 		.then(function(res) {
 			console.log(res);
-		});
+			return(res);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		})
 	});
-
+	
+	test('Should confirm Account email', function() {
+		return account.confirmAccount("mysupersecrethash", "mydupernewpassword")
+		.then(function (res) {
+			console.log(res);
+			return(res);
+		}).catch(function (err) {
+			console.log(err);
+			throw(err);
+		})
+	})
 });

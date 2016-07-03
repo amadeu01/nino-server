@@ -24,7 +24,7 @@ accounts.createNewUser = function(account, profile, device){
 				device: device,
 				token: token
 			}
-			return accountsDAO.createNewUser(account, profile, credential);
+			return accountsDAO.createNewUser(account, profile, credential)
 			.then(function(newUser) {
 				resolve(newUser.id);
 			}).catch(function(err) {
