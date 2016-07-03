@@ -19,11 +19,15 @@ accounts.createNewUser = function(account, profile, device){
 		else if (name.isAlpha(account.name, 'pt-PT')) reject(new response (400, 'name', 1));
 		else if (name.isAlpha(account.surname, 'pt-PT')) reject(new response (400, 'name', 1));
 		else {
+			//TODO: token não é gerado mais aqui
+			//TODO: Gerar um hash de confirmação para passar para o accountsDAO.createNewUser dentro de account
+			//TODO: Enviar um email com hash de convirmação
 			var token = jwt.create({email: account.email, password: account.password, device: device});
 			var credential = {
 				device: device,
 				token: token
 			}
+			//TODO: accountsDAO.createNewUser nao recebe mais uma credential
 			return accountsDAO.createNewUser(account, profile, credential)
 			.then(function(newUser) {
 				resolve(newUser.id);
@@ -40,7 +44,7 @@ accounts.createNewUser = function(account, profile, device){
  */
 accounts.confirmAccount = function(confirmationHash, origin) {
 	return new Promise(function(resolve, reject){
-
+		//TODO: o accountsDAO tem um metodo confirmAccount agora, da uma olhada lá :) ele já faz tudo, acha conta com o hash, confirma e seta o email, botando o hash pra null
 		return accountsDAO.findOne(confirmationHash)
 		.then(function (userAccount) {
 			return accountsDAO.update({id: userAccount.id}, {hash: null})
@@ -67,9 +71,10 @@ accounts.login = function(email, password, device, populate) {
 		else {
 			tokenData = {
 				email: email,
-				password: password,
+				password: password, //TODO: o token não tem a senha naaaaaao D: hahahaha se não a gente expoe a senha do cara!
 				device: device
 			}
+			//TODO: não precisa do findOne, eu fiz um metodo no accountsDAO e um  no credentialsDAO, o do acocunts pega um usuario com aquele email e o do credentials salva a credencial :) olha lá
 			return accountsDAO.findOne({email: email, password: password}).populate(populate)
 			.then(function (userAccount) {
 				if (userAccount.credentials === undefined) {

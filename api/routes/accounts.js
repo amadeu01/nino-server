@@ -56,6 +56,7 @@ router.post('/', function(req, res, next) {
 			email: req.body.email,
 			cellphone: req.body.cellphone,
 			password: req.body.password
+			//TODO: Password nao é inserido aqui mais
 		};
 
 		var profile = {
@@ -65,7 +66,7 @@ router.post('/', function(req, res, next) {
 			gender: req.body.gender
 		};
 		var device = req.useragent.Platform + " " + req.useragent.OS;
-
+		//TODO: Aqui nao precisa do device :v
 
 
 		return accountsBO.createNewUser(account, profile);
@@ -84,6 +85,8 @@ router.post('/authentication/:hash', function(req, res, next) {
 		if (req.useragent.isBot === true ) reject(new response(400), "Bot");
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
+		//TODO: Preciso passar a senha para o accountsBO
+		//TODO: aqui é acocuntsBO, não DAO, certo?
 		return accountsDAO.confirmAccount(hashConfirmation, origin);
 	})
 	.then(function(response){
@@ -94,7 +97,7 @@ router.post('/authentication/:hash', function(req, res, next) {
 		reject(new response(400), 'confirmAccount');
 	})
 });
-
+//TODO: Tem um routes.post em / ali em cima tb, acho que ta duplicado :v
 router.post('/', function(req, res, next) {
 
 	return new Promise(function (resolve, reject){
@@ -115,6 +118,7 @@ router.post('/user/:user/:hash/*', function(req, res) {
 		var email = req.params.user;
 		var password = req.params.hash;
 		var populate = req.query.populate;
+		//TODO: aqui ele chama o BO de novo, não?
 		return accountsDAO.login(email, password, device, populate);
 	})
 	.then(function(response) {

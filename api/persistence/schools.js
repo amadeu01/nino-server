@@ -12,6 +12,8 @@ var permissions = require('../services/permissions');
 */
 var schoolServices = {
 	create: function(parameters) {
+		//TODO: aqui eu vou criar a escola
+		//TODO; preciso botar campo de active das coisas do DB :O
 		parameters.school.active = true;
 		parameters.owner.active = true;
 
