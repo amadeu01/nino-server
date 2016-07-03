@@ -7,9 +7,6 @@
 var app = require('../app');
 var debug = require('debug')('api:server');
 var http = require('http');
-var models = require('../models');
-var pg = require('pg');
-var pool = new pg.Pool(models.config);
 var db = require('../mechanisms/database.js');
 
 /**
@@ -29,32 +26,18 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-pool.connect(function(err, client, done) { 
-  // Start Server
-	//client.query('SELECT * FROM room', function(err, result) {
-	//	console.log(err);
-	//	console.log(result);
-	//});
-	//db.createTables(client)
-	//.then(function(success) {
-		//console.log("Succ");
-		//client.query("SELECT * from accounts", function(err, result) {
-			//console.log(err);
-			//console.log(result);
-		//});
-		//client.query("INSERT INTO accounts (email) VALUES ('emailTest')", function(err, result) {
-			//console.log(err);
-			//console.log(result);
-		//})
-	//}).catch(function(err) {
-	//	console.log(err);
-	//});
+// Start Server
+db.createTables()
+.then(function(success) {
+	console.log("Server Starting");
 	server.listen(port);
 	server.on('error', onError);
 	server.on('listening', onListening);
+}).catch(function(err) {
+	console.log(err);
 });
 
-pool.on('error', function(err, client) {
+db.pool.on('error', function(err, client) {
 	console.log('idle client error', err.message, err.stack);
 })
 
