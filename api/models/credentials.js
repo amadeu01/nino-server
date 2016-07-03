@@ -24,7 +24,7 @@ module.exports =  Waterline.Collection.extend({
 			notifiable: {
 				type: 'boolean',
 				defaultsTo: true
-			}, 
+			},
 			notificationID: {
 				type: 'string'
 			},

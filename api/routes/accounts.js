@@ -17,6 +17,7 @@ var numberValidate = function(req, res, next, id) {
 	}
 };
 
+
 //Always check all path parameters for NaN error
 
 //router.param('school_id', numberValidate);
@@ -47,6 +48,8 @@ router.post('/', function(req, res, next) {
 		// else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
 		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
 		else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
+		else if (req.body.birthdate === undefined) reject(errors.missingParameter('birthdate'));
+		else if (req.useragent.isBot === true ) reject(new response(400), "Bot");
 
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {
@@ -61,6 +64,9 @@ router.post('/', function(req, res, next) {
 			birthdate: req.body.birthdate,
 			gender: req.body.gender
 		};
+		var device = req.useragent.Platform + " " + req.useragent.OS;
+
+
 
 		return accountsBO.createNewUser(account, profile);
 
@@ -71,13 +77,56 @@ router.post('/', function(req, res, next) {
 		res.status(error.status).json(error.json);
 	});
 });
-
-router.post('/authentication', function(req, res, next) {
-
+/** @description confirmAccount
+*/
+router.post('/authentication/:hash', function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		if (req.useragent.isBot === true ) reject(new response(400), "Bot");
+		var origin = req.useragent.Platform + " " + req.useragent.OS;
+		var hashConfirmation = req.params.hash;
+		return accountsDAO.confirmAccount(hashConfirmation, origin);
+	})
+	.then(function(response){
+		res.status(response.status).json(response.json);
+		resolve(response);
+	}).catch(function(err) {
+		res.status(err.status).json(err.json);
+		reject(new response(400), 'confirmAccount');
+	})
 });
 
-router.post('/confirmAccount', function(req, res, next) {
-	var origin = req.useragent;
+router.post('/', function(req, res, next) {
+
+	return new Promise(function (resolve, reject){
+
+	})
+	.then(function(response){
+
+	}).catch(function(err){
+		res.status(err.status).json(err.json);
+	})
+});
+/**
+* @description login
+*/
+router.post('/user/:user/:hash/*', function(req, res) {
+	return new Promise(function (resolve, reject) {
+		var device = req.useragent.Platform + " " + req.useragent.OS;
+		var email = req.params.user;
+		var password = req.params.hash;
+		var populate = req.query.populate;
+		return accountsDAO.login(email, password, device, populate);
+	})
+	.then(function(response) {
+		res.status(response.status).json(response.json);
+		resolve(response)
+	}).catch(function(err){
+		res.status(err.status).json(err.json);
+		reject(new response(400), 'Login');
+	});
+});
+
+router.post('/logout', function(req, res){
 
 });
 
