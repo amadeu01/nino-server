@@ -73,7 +73,10 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 				return new Promise(function(res, rej) {
 					client.query('UPDATE accounts SET (hash, confirmed, password) = ($1, $2, $3) WHERE hash = $4',[null, true, password, confirmationHash], function(err, result) {
 						if (err) rej(err);
-						else res(result);
+						else {
+							if (result.rowCount == 1) res(result); //Updated one row, user confirmed!
+							else rej("User not found");
+						}
 					});
 				});
 			}).then(function(result) {
@@ -108,6 +111,25 @@ accountsDAO.recoverAccount = function(email) {
  //	 transaction.commit();
  //	 resolve(new response(200)); //success
  //});
+}
+
+/** @method logIn
+ * @param email {string}
+ * @return Promise {Promise}
+ */
+accountsDAO.logIn = function(email) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('SELECT a.email, a.password, a.cellphone, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p WHERE a.profile = p.id AND a.email = $1 AND a.confirmed = $2', [email, true], function(err, result) {
+				if (err) reject(err);
+				else resolve(result.rows[0]);
+			});
+		});
+	});
 }
 
 /** @method logOut

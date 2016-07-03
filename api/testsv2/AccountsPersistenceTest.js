@@ -49,5 +49,16 @@ suite('Account Persistence', function () {
 			console.log(err);
 			throw(err);
 		})
-	})
+	});
+	
+	test('Should return logIn select', function() {
+		return account.logIn("carloseduardomillani@gmail.com")
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function (err) {
+			console.log(err);
+			throw(err);
+		})
+	});
 });
