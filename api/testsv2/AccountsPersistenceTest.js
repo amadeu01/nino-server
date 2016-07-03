@@ -5,9 +5,10 @@
 
 var assert = require('assert');
 var account = require('../persistence/accounts.js');
+var credential = require('../persistence/credentials.js');
 //var account = require('../mechanisms/database.js');
 
-suite('Account Persistence', function () {
+suite('Account Profile and Credential Persistence', function () {
 
 	setup(function (done) {
 		done();
@@ -59,6 +60,17 @@ suite('Account Persistence', function () {
 		}).catch(function (err) {
 			console.log(err);
 			throw(err);
-		})
+		});
+	});
+
+	test('Should try create Credential', function() {
+		return credential.logIn("My Device", "thisismysuperdupertoken", {id:1})
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
 	});
 });

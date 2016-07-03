@@ -1,18 +1,65 @@
 /** @module persistence */
 
 var models = require('../models');
-var errors = require('../services/errors');
-var jwt = require('./jwt');
+var errors = require('../mechanisms/error');
+var transaction = require('../mechanisms/transaction');
+var pool = require('../mechanisms/database.js').pool;
 
 /**
 * @class
 */
 var credentialServices = {
-	create: function(device, token, owner) {
-		return models.waterline.collections.device.findOrCreate({description:device}, {description:device, owner: owner})
-		.then(function(device) {
-			device.credentials.add({token: token, active: true});
-			return device.save();
+	/** @method logIn
+	 * @description Create a new <tt>Credential</tt> or updates an existent one based on the user and the device
+	 * @param device {Device}
+	 * @param token {string}
+	 * @param account {Account}
+	 * @return Promise {Promise}
+	 */
+	logIn: function(device, token, account) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account.id, device], function(err, result) {
+							if (err) rej(err);
+							else res(result);
+						});
+					});
+				}).then(function(result) {
+				   return new Promise(function (res, rej) {
+					   if (result.rowCount == 0) { //No row was updated, meaning that we need to create one
+						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account.id, device, token], function(err, result) {
+							   if (err) rej(err);
+							   else res(result);
+						   });
+					   } else res(result);
+				   })	
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result);
+					}).catch(function(err) {
+						done(err);
+						reject(err);
+					});
+				}).catch(function(err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err);
+					}).catch(function(err2) {
+						done(err2);
+						reject(err);
+					});
+				});
+			});
 		});
 	},
 	delete: function(token) {
