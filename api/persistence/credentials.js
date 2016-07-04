@@ -39,7 +39,7 @@ var credentialServices = {
 							   else res(result);
 						   });
 					   } else res(result);
-				   })	
+				   })
 				}).then(function(result) {
 					return transaction.commit(client)
 					.then(function() {
