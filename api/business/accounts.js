@@ -16,7 +16,7 @@ var accounts = {};
  * @param profile
  * @param device {string} it defines from which plataform and os the request come from
  */
-accounts.createNewUser = function(account, profile){
+accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
 		else if (name.isAlpha(account.name, 'pt-PT')) reject(new response (400, 'name', 1));
@@ -33,6 +33,7 @@ accounts.createNewUser = function(account, profile){
 		}
 	});
 }
+
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param confirmationHash {string}
@@ -43,12 +44,14 @@ accounts.confirmAccount = function(confirmationHash, origin, password) {
 		return accountsDAO.confirmAccount(confirmationHash, password);
 	})
 	.then(function(userInfo) {
-		//TODO: check origin ?
+		// TODO: check Ipad ?
+		if (!(userInfo.credentials.device === origin)) reject(new response(500, "Wrong device", 1));
 		resolve(userInfo);
 	}).catch(function(err){
 		reject(err);
 	});
 }
+
 /** @method login
 * @param email {string}
 * @param password {string}
@@ -61,26 +64,27 @@ accounts.login = function(email, password, device, populate) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
 		else {
-			tokenData = {
+			var tokenData = {
 			email: email,
 			device: device
-		}
+		};
+
 		return accountsDAO.login(email)
 		.then(function(account) {
-			jwt.create(tokenData)
+			return jwt.create(tokenData)
 			.then(function(token) {
-				credentialDAO.logIn(device, account, token)
-				.then(function(result){
-					//Idon't know where i expect here.
+				return credentialDAO.logIn(device, account, token)
+				.then(function(result) {
 					resolve(result);
-				})
-			})
+				});
+			});
 		}).catch(function(err){
 			reject(err);
 		});
 	}
+});
 }
-}
+
 /** @method logout
 * @param device
 * @param token

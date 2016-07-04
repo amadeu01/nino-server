@@ -25,3 +25,7 @@ activities.createActivityToSchool = function(school, description, token ) {
 		}
 	});
 }
+
+activities.addActivityToClass = function() {
+  
+}
