@@ -1,54 +1,65 @@
 /** @module persistence */
 
-var models = require('../models');
+//var models = require('../models');
 
-var errors = require('../services/errors');
+//var errors = require('../services/errors');
 
 var validator = require('validator');
-var permissions = require('../services/permissions');
+//var permissions = require('../services/permissions');
+var transaction = require('../mechanisms/transaction');
+var pool = require('../mechanisms/database.js').pool;
 
 /**
 * @class
 */
 var schoolServices = {
-	create: function(parameters) {
+<<<<<<< HEAD
+	/** 
+	 * @method create
+	 * @description Creates a new school with account.id as owner
+	 * @param school {School}
+	 * @param account {Account}
+	 * @return promise {Promise}
+	 */
+	create: function(school, account) {
 		//TODO: aqui eu vou criar a escola
 		//TODO; preciso botar campo de active das coisas do DB :O
-		parameters.school.active = true;
-		parameters.owner.active = true;
-
-		return models.waterline.collections.school.create(parameters.school)
-		.then (function(school) {
-			if (!school) throw errors.internalError('School - Creation Error');
-			return models.waterline.collections.user.create(parameters.owner)
-			.then(function(user) {
-				if (!user) throw errors.internalError('User - Creation Error');
-				return models.waterline.collections.role.create({
-					type: 'educator',
-					privileges: permissions.all(),
-					owner: user.id
-				})
-				.then(function(role) {
-					if (!role) throw errors.internalError('Role - Creation Error');
-					return models.waterline.collections.educator.create({
-						role: role.id,
-						school: school.id
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(rej,res) {
+						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[account.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
+							if (err) rej(err);
+							else if (result.rowCount == 0) rej (new Error("School not created"));
+							else res (result);	
+						});
 					});
-				})
-				.then(function(educator) {
-					if (!educator) throw errors.internalError('Educator - Creation Error');
-					school.owner = educator.id;
-					return school.save()
-					.then(function(){
-						return ({school:school.id, educator: educator.id, user: user.id});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result.rows[0]);
+					}).catch(function(err) {
+						done(err);
+						reject(err);
+					});
+				}).catch(function(err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err);
+					}).catch( function(err2) {
+						done(err2);
+						reject(err);
 					});
 				});
 			});
-		})
-		.catch(function(err) {
-			if (err.status === 400) throw(errors.invalidParameters(err.invalidAttributes));
-			else throw(errors.internalError('Creation Error'));
-		});
+		});	
 	},
 	/* Create a school with a standard class and room void. */
 	createWithClassAndRoom: function(parameters) {

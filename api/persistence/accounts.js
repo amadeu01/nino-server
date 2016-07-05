@@ -22,16 +22,23 @@ accountsDAO.createNewUser = function(account, profile) {
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING *', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
+					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
+						else if (result.rowCount == 0) rej (new Error("Account not created"));
 						else res(result);
 					});
 				});
 			}).then(function(result) {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING *', [result.rows[0].id, account.email, account.cellphone, account.hash], function(err, result) {
+					var response = {}
+					response.profile = result.rows[0];
+					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [result.rows[0].id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
-						else res(result);
+						else if (result.rowCount == 0) rej (new Error("Account not created"));
+						else {
+							response.account = result.rows[0];
+							res(response);
+						}
 					});
 				});
 			}).then(function(result) {

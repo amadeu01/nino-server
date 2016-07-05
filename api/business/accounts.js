@@ -25,7 +25,7 @@ accounts.createNewUser = function(account, profile) {
 			account.hash = values.confirmationUID = uid.sync(100);
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
-				mail.sendUserConfirmation(newUser.email, newUser.profile);
+				mail.sendUserConfirmation(newUser.email, {hash: account.hash});
 				resolve(newUser.id);
 			}).catch(function(err) {
 				reject(err);

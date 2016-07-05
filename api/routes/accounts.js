@@ -79,7 +79,7 @@ router.post('/', function(req, res, next) {
 /**
 * @description confirmAccount
 */
-router.post('/authentication/:hash', function(req, res, next) {
+router.post('/confirmation/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
@@ -100,7 +100,7 @@ router.post('/authentication/:hash', function(req, res, next) {
 /**
 * @description login
 */
-router.post('/login/:user/*', function(req, res) {
+router.post('/authentication/:user', function(req, res) {
 	return new Promise(function (resolve, reject) {
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
@@ -120,7 +120,8 @@ router.post('/login/:user/*', function(req, res) {
 /**
 * @description logout
 */
-router.post('/logout/:user', function(req, res){
+router.delete('/authentication/:user', function(req, res){
+	//TODO: Eu usei o delete aqui pra indicar logout pois vamos deletar a credencial dele do nosso banco e ela nao vai valer mais. E achei que fica mair REST :)
 	return new Promise (function (resolve, reject){
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
