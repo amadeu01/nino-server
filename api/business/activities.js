@@ -10,7 +10,7 @@ var activities = {};
 * @description
 * @param School {id}
 * @param Description {string}
-* @param token {string}
+* @param token {string} token decoded
 * @return activity {id}
 */
 activities.createActivityToSchool = function(school, description, token ) {
@@ -18,7 +18,7 @@ activities.createActivityToSchool = function(school, description, token ) {
 		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
 		return (jwt.validate(token, school))
 		.then (function (decoded) {
-			activitiesDAO.createActivityToSchool(school, description)
+			return activitiesDAO.createActivityToSchool(school, description)
 			.then(function(response) {
 				resolve(response);
 			}).catch(function(err) {
@@ -27,20 +27,17 @@ activities.createActivityToSchool = function(school, description, token ) {
 		}
 	});
 }
-
+//02-154-980
 /**
-* @description Add activity to the current class in process
+* @description Add activity to the current class in process after validates the <tt>Token</tt>
 * @param School {id}
-* @param activity {id}
-* @param token {string}
-* @return activity {JSON}
+* @param Class {id}
+* @param activity {Activity} parameters filled with information about activity
 */
-activities.addActivityToClass = function(school, activity, class, token) {
+activities.addActivityToClass = function(school, class_id, activity) {
   return new Promise(function(resolve, reject) {
-    return jwt.validate(token, school).then(function(decoded){
-
-    })
-  }).then(function(classes){
+    return activitiesDAO.addActivityToClass(school, class_id, activity);
+  }).then(function(response){
     resolve(response);
   }).catch(function(err) {
     reject(err);
@@ -48,23 +45,31 @@ activities.addActivityToClass = function(school, activity, class, token) {
 }
 
 /**
-* @description
+* @description get activities for a given <tt>School</tt> after validates the <tt>Token</tt>
 * @param School {id}
-* @param Description {string}
-* @param token {string}
-* @return activity {id}
+* @return activity {Array} it returns an array of activities
 */
-activities.getActivityForSchool = function() {
-
+activities.getActivityForSchool = function(school) {
+  return new Promise(function(resolve, reject) {
+    return activitiesDAO.getActivityForSchool(school);
+  }).then(function(activities){
+    resolve(activities);
+  }).catch(function(err) {
+    reject(err);
+  });
 }
 
 /**
-* @description
-* @param School {id}
-* @param Description {string}
-* @param token {string}
-* @return activity {id}
+* @description get activities for a given <tt>Class</tt> after validates the <tt>Token</tt>
+* @param Class {id}
+* @return activity {Array} it returns an array of activities
 */
-activities.getActivityForClass = function() {
-
+activities.getActivityForClass = function(class_id) {
+  return new Promise(function(resolve, reject) {
+    return activitiesDAO.getActivityForClass(class_id);
+  }).then(function(activities){
+    resolve(activities);
+  }).catch(function(err) {
+    reject(err);
+  });
 }
