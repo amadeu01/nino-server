@@ -13,6 +13,7 @@ var pool = require('../mechanisms/database.js').pool;
 * @class
 */
 var schoolServices = {
+<<<<<<< HEAD
 	/** 
 	 * @method create
 	 * @description Creates a new school with account.id as owner
@@ -21,6 +22,8 @@ var schoolServices = {
 	 * @return promise {Promise}
 	 */
 	create: function(school, account) {
+		//TODO: aqui eu vou criar a escola
+		//TODO; preciso botar campo de active das coisas do DB :O
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {

@@ -92,6 +92,7 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 
 /* Create new school */
 router.post('/', function(req, res, next) {
+	//TODO: amadeu, da uma checada nesse daqui :) acredito que eh o melhor pra fazer depois do login e do cadastro
 	//Check parameters
 	if (req.body.school === undefined) res.status(400).json(errors.invalidParameters("school").clean);
 	else if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name").clean);

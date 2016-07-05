@@ -3,7 +3,10 @@
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
+var credentialDAO = require('../persistence/credentials.js');
 var jwt = require('../mechanisms/jwt.js')
+var uid = require('uid-safe');
+var mail = require('../mechanisms/mail.js')
 var accounts = {};
 
 
@@ -13,19 +16,16 @@ var accounts = {};
  * @param profile
  * @param device {string} it defines from which plataform and os the request come from
  */
-accounts.createNewUser = function(account, profile, device){
+accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
 		else if (name.isAlpha(account.name, 'pt-PT')) reject(new response (400, 'name', 1));
 		else if (name.isAlpha(account.surname, 'pt-PT')) reject(new response (400, 'name', 1));
 		else {
-			var token = jwt.create({email: account.email, password: account.password, device: device});
-			var credential = {
-				device: device,
-				token: token
-			}
-			return accountsDAO.createNewUser(account, profile, credential)
+			account.hash = values.confirmationUID = uid.sync(100);
+			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
+				mail.sendUserConfirmation(newUser.email, newUser.profile);
 				resolve(newUser.id);
 			}).catch(function(err) {
 				reject(err);
@@ -33,26 +33,25 @@ accounts.createNewUser = function(account, profile, device){
 		}
 	});
 }
+
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param confirmationHash {string}
  * @param origin {string} it defines from which plataform and os the request come from
  */
-accounts.confirmAccount = function(confirmationHash, origin) {
+accounts.confirmAccount = function(confirmationHash, origin, password) {
 	return new Promise(function(resolve, reject){
-
-		return accountsDAO.findOne(confirmationHash)
-		.then(function (userAccount) {
-			return accountsDAO.update({id: userAccount.id}, {hash: null})
-			.then(function(userAccount){
-				resolve("Success")
-			}).catch(function(err){
-				var data = err.message + " Problem to confirm Account ";
-				reject(new response(400, data, 1));
-			})
-		});
+		return accountsDAO.confirmAccount(confirmationHash, password);
+	})
+	.then(function(userInfo) {
+		// TODO: check Ipad ?
+		if (!(userInfo.credentials.device === origin)) reject(new response(500, "Wrong device", 1));
+		resolve(userInfo);
+	}).catch(function(err){
+		reject(err);
 	});
 }
+
 /** @method login
 * @param email {string}
 * @param password {string}
@@ -63,52 +62,42 @@ accounts.confirmAccount = function(confirmationHash, origin) {
 */
 accounts.login = function(email, password, device, populate) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
+		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
 		else {
-			tokenData = {
-				email: email,
-				password: password,
-				device: device
-			}
-			return accountsDAO.findOne({email: email, password: password}).populate(populate)
-			.then(function (userAccount) {
-				if (userAccount.credentials === undefined) {
-					return jwt.create(tokenData)
-					.then(function(token){
-						return credentialDAO.create({
-						 account: userAccount.id,
-						 device: device,
-						 token: token
-					 })
-				 });
-				}
-				else if (!(userAccount.credentials.device === device)) {
-					var newCredential = userAccount.credentials;
-					return jwt.create(tokenData)
-					.then(function(token) {
-						newCredential.token = token;
-						newCredential.device = device;
-						return accountsDAO.update({email: email}, {credentials: newCredential})
-						.then(function(userAccount) {
-							resolve(userAccount.credentials.token);
-						});
-					})
-				}
-			})
-			.catch(function(err){
-				var data = err.message + " Problem to login";
-				reject(new response(400, data, 1));
+			var tokenData = {
+			email: email,
+			device: device
+		};
+
+		return accountsDAO.login(email)
+		.then(function(account) {
+			return jwt.create(tokenData)
+			.then(function(token) {
+				return credentialDAO.logIn(device, account, token)
+				.then(function(result) {
+					resolve(result);
+				});
 			});
-		}
-	});
+		}).catch(function(err){
+			reject(err);
+		});
+	}
+});
 }
+
 /** @method logout
 * @param device
 * @param token
 */
 accounts.logout = function(device, token) {
 	return new Promise(function(resolve, reject) {
-		return credentialDAO.findOne()
+		//TODO: if (jwt.validate(token, device) === )
+		return credentialDAO.logout(device, token)
+		.then(function(response){
+			resolve(response)
+		}).catch(function(err){
+			reject(err);
+		});
 	});
 }
 

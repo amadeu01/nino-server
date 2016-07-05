@@ -54,8 +54,7 @@ router.post('/', function(req, res, next) {
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {
 			email: req.body.email,
-			cellphone: req.body.cellphone,
-			password: req.body.password
+			cellphone: req.body.cellphone
 		};
 
 		var profile = {
@@ -64,27 +63,30 @@ router.post('/', function(req, res, next) {
 			birthdate: req.body.birthdate,
 			gender: req.body.gender
 		};
-		var device = req.useragent.Platform + " " + req.useragent.OS;
-
-
 
 		return accountsBO.createNewUser(account, profile);
-
 	})
 	.then(function(response) {
 		res.status(response.status).json(response.json);
-	}).catch(function(error) {
+		resolve(response);
+	}).catch(function(err) {
 		res.status(error.status).json(error.json);
+		var data = err.message + " Problem creating account"
+		reject(new response(400, data, 1));
 	});
 });
-/** @description confirmAccount
+
+/**
+* @description confirmAccount
 */
 router.post('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.useragent.isBot === true ) reject(new response(400), "Bot");
+		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
-		return accountsDAO.confirmAccount(hashConfirmation, origin);
+		var password = req.body.password;
+
+		return accountsBO.confirmAccount(hashConfirmation, origin, password);
 	})
 	.then(function(response){
 		res.status(response.status).json(response.json);
@@ -95,39 +97,42 @@ router.post('/authentication/:hash', function(req, res, next) {
 	})
 });
 
-router.post('/', function(req, res, next) {
-
-	return new Promise(function (resolve, reject){
-
-	})
-	.then(function(response){
-
-	}).catch(function(err){
-		res.status(err.status).json(err.json);
-	})
-});
 /**
 * @description login
 */
-router.post('/user/:user/:hash/*', function(req, res) {
+router.post('/login/:user/*', function(req, res) {
 	return new Promise(function (resolve, reject) {
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
-		var password = req.params.hash;
+		var password = req.body.password;
 		var populate = req.query.populate;
-		return accountsDAO.login(email, password, device, populate);
+
+		return accountsBO.login(email, password, device, populate);
 	})
 	.then(function(response) {
 		res.status(response.status).json(response.json);
 		resolve(response)
 	}).catch(function(err){
 		res.status(err.status).json(err.json);
-		reject(new response(400), 'Login');
+		reject(new response(400, 'Login', 1));
 	});
 });
-
-router.post('/logout', function(req, res){
-
+/**
+* @description logout
+*/
+router.post('/logout/:user', function(req, res){
+	return new Promise (function (resolve, reject){
+		var device = req.useragent.Platform + " " + req.useragent.OS;
+		var email = req.params.user;
+		accountsBO.logout(email, device);
+	})
+	.then(function(response){
+		res.status(response.status).json(response.json);
+		resolve(response)
+	}).catch(function(err){
+		res.status(err.status).json(err.json);
+		reject(new response(400, 'Logout', 1));
+	});
 });
 
 module.exports = router;

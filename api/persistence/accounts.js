@@ -98,7 +98,7 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 					reject(err);
 				});
 			});
-		});	
+		});
 	});
 }
 /** @method recoverAccount
