@@ -24,7 +24,7 @@ activities.createActivityToSchool = function(school, description, token ) {
 			}).catch(function(err) {
 				reject(err);
 			});
-		}
+		}); //TODO: faltou parenteses de novo hahaha lembra de testar cara :)
 	});
 }
 
@@ -35,7 +35,7 @@ activities.createActivityToSchool = function(school, description, token ) {
 * @param token {string}
 * @return activity {JSON}
 */
-activities.addActivityToClass = function(school, activity, class, token) {
+activities.addActivityToClass = function(school, activity, _class, token) { //TODO: aqui o class é palavra reservada D: ele serve como campo de um objeto mas nao como variavel pelo que parece... assim vai rodar :)
   return new Promise(function(resolve, reject) {
     return jwt.validate(token, school).then(function(decoded){
 

@@ -38,7 +38,7 @@ var credentialServices = {
 							   if (err) rej(err);
 							   else res(result);
 						   });
-					   } else res(result);
+					   } else res(result); // A row was updated, credential is up to date!
 				   })
 				}).then(function(result) {
 					return transaction.commit(client)
@@ -68,8 +68,47 @@ var credentialServices = {
 	update: function(token, newToken) {
 		return models.waterline.collections.credential.update({token: token}, {token: newToken});
 	},
+	/** @method read
+	 *	@description Read a <tt>Credential</tt> provided a <tt>Token</tt>
+	 *	@param token <Token>
+	 *	@return credential <Credential>
+	 */
 	read: function(token) {
-		return models.waterline.collections.credential.findOne({token: token}).populate('device');
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, dont) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('SELECT device, token FROM credentials WHERE token = $1 ', [token], function(err, result) {
+							if (err) rej(err);
+							else res(result)
+						});
+					});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result);
+					}).catch(function(err) {
+						done(err);
+						reject(err);
+					});
+				}).catch(function(err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err);
+					}).catch(function(err2) {
+						done(err2);
+						reject(err);
+					});
+				})
+			});
+		});
 	},
 	loginEducator: function(email, password, device) {
 		return models.waterline.collections.user.findOne({email: email}).populate('roles', {
