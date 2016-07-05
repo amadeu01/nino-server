@@ -91,6 +91,7 @@ accounts.login = function(email, password, device, populate) {
 */
 accounts.logout = function(device, token) {
 	return new Promise(function(resolve, reject) {
+		//TODO: if (jwt.validate(token, device) === )
 		return credentialDAO.logout(device, token)
 		.then(function(response){
 			resolve(response)

@@ -75,7 +75,9 @@ router.post('/', function(req, res, next) {
 		reject(new response(400, data, 1));
 	});
 });
-/** @description confirmAccount
+
+/**
+* @description confirmAccount
 */
 router.post('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
