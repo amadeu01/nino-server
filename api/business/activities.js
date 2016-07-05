@@ -34,11 +34,7 @@ activities.createActivityToSchool = function(school, description, token ) {
 * @param Class {id}
 * @param activity {Activity} parameters filled with information about activity
 */
-<<<<<<< HEAD
-activities.addActivityToClass = function(school, class_id, activity) {
-=======
-activities.addActivityToClass = function(school, activity, _class, token) { //TODO: aqui o class é palavra reservada D: ele serve como campo de um objeto mas nao como variavel pelo que parece... assim vai rodar :)
->>>>>>> 5d2fe33378b6ba363382fd9a446e098c3e730805
+activities.addActivityToClass = function(school, activity, class_id, token) {
   return new Promise(function(resolve, reject) {
     return activitiesDAO.addActivityToClass(school, class_id, activity);
   }).then(function(response){

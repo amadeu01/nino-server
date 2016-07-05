@@ -68,7 +68,7 @@ router.post('/', function(req, res, next) {
 	})
 	.then(function(response) {
 		res.status(response.status).json(response.json);
-		resolve(response);
+		return resolve(response);
 	}).catch(function(err) {
 		res.status(error.status).json(error.json);
 		var data = err.message + " Problem creating account"
@@ -117,11 +117,11 @@ router.post('/authentication/:user', function(req, res) {
 		reject(new response(400, 'Login', 1));
 	});
 });
+
 /**
 * @description logout
 */
 router.delete('/authentication/:user', function(req, res){
-	//TODO: Eu usei o delete aqui pra indicar logout pois vamos deletar a credencial dele do nosso banco e ela nao vai valer mais. E achei que fica mair REST :)
 	return new Promise (function (resolve, reject){
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
