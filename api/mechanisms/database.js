@@ -82,7 +82,7 @@ var createSchools = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS schools' +
 				'(id	SERIAL PRIMARY KEY,' +
-				 'owner	INTEGER REFERENCES accounts (id) ON DELETE RESTRICT,' +
+				 'owner	INTEGER REFERENCES accounts (id) ON DELETE RESTRICT NOT NULL,' +
 				 'notificationGroup	VARCHAR,' +
 				 'address	VARCHAR,' +
 				 'cnpj	VARCHAR,' +
