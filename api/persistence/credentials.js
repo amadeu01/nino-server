@@ -28,6 +28,7 @@ var credentialServices = {
 					return new Promise(function(res, rej) {
 						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account.id, device], function(err, result) {
 							if (err) rej(err);
+							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);
 						});
 					});
@@ -36,6 +37,8 @@ var credentialServices = {
 					   if (result.rowCount == 0) { //No row was updated, meaning that we need to create one
 						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account.id, device, token], function(err, result) {
 							   if (err) rej(err);
+		 						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+		 						else if (result.name == "error") rej(result); //Some error occured : rejects
 							   else res(result);
 						   });
 					   } else res(result); // A row was updated, credential is up to date!
@@ -44,7 +47,7 @@ var credentialServices = {
 					return transaction.commit(client)
 					.then(function() {
 						done();
-						resolve(result);
+						resolve();
 					}).catch(function(err) {
 						done(err);
 						reject(err);
@@ -56,7 +59,7 @@ var credentialServices = {
 						reject(err);
 					}).catch(function(err2) {
 						done(err2);
-						reject(err);
+						reject(err2);
 					});
 				});
 			});

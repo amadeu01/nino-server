@@ -24,20 +24,22 @@ accountsDAO.createNewUser = function(account, profile) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount == 0) rej (new Error("Account not created"));
+						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else res(result);
 					});
 				});
 			}).then(function(result) {
 				return new Promise(function(res, rej) {
 					var response = {}
-					response.profile = result.rows[0];
+					response.profile = result.rows[0]; //Sets profile to response
 					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [result.rows[0].id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount == 0) rej (new Error("Account not created"));
+						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
-							response.account = result.rows[0];
-							res(response);
+							response.account = result.rows[0]; //Sets account to response
+							res(response); //Sends account and profile in response dictionary
 						}
 					});
 				});
@@ -45,19 +47,19 @@ accountsDAO.createNewUser = function(account, profile) {
 				return transaction.commit(client)
 				.then(function() {
 					done();
-					resolve(result);
+					resolve(result); //Success! Resolve to BO
 				}).catch(function(err) {
 					done(err);
-					reject(err);
+					reject(err); //Reject other to BO
 				});
 			}).catch(function (err) {
 				return transaction.abort(client)
 				.then(function() {
 					done();
-					reject(err);
+					reject(err); //Successfully aborted, rejects to BO
 				}).catch(function(err2) {
 					done(err2);
-					reject(err);
+					reject(err2); // Reject another error to BO
 				});
 			});
 		});
@@ -72,37 +74,36 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
-				reject(err);
+				reject(err); //Encaminha pro BO
 				return;
 			}
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('UPDATE accounts SET (hash, confirmed, password) = ($1, $2, $3) WHERE hash = $4',[null, true, password, confirmationHash], function(err, result) {
+					client.query('UPDATE accounts SET (confirmed, password) = ($1, $2) WHERE hash = $3',[true, password, confirmationHash], function(err, result) {
 						if (err) rej(err);
-						else {
-							if (result.rowCount == 1) res(result); //Updated one row, user confirmed!
-							else rej("User not found");
-						}
+						else if (result.rowCount == 0) rej(result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else res(); //Updated one row, user confirmed! - proceed
 					});
 				});
 			}).then(function(result) {
 				return transaction.commit(client)
 				.then(function() {
 					done();
-					resolve(result);
+					resolve(result); //Ended transaction and resolved to BO
 				}).catch(function(err) {
 					done(err);
-					reject(err);
+					reject(err); //Error on transaction, reject to BO
 				})
 			}).catch(function(err) {
 				return transaction.abort(client)
 				.then(function() {
 					done();
-					reject(err);
+					reject(err); //Reject error to BO
 				}).catch(function(err2) {
 					done(err2);
-					reject(err);
+					reject(err2); //Reject other error to BO
 				});
 			});
 		});
@@ -120,7 +121,28 @@ accountsDAO.recoverAccount = function(email) {
  //});
 }
 
-/** @method logIn
+/** @method findWithHash
+ * @param confirmationHash {string}
+ * @return account {Account}
+ */
+accountsDAO.findWithHash = function(confirmationHash) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Connection error, aborts already
+				return;
+			}
+			client.query('SELECT confirmed FROM accounts WHERE hash = $1', [confirmationHash], function(err, result) {
+				if (err) reject(err); //Error: rejects to BO
+				else if (result.rowCount == 0) rej(result); //Nothing found, sends error
+				else if (result.name == "error") rej(result); //Some error occured : rejects
+				else resolve(result.rows[0]); //Executed correctly
+			});
+		});
+	});
+}
+
+/** @method logIn - A.K.A find validated with email
  * @param email {string}
  * @return Promise {Promise}
  */
@@ -133,7 +155,9 @@ accountsDAO.logIn = function(email) {
 			}
 			client.query('SELECT a.email, a.password, a.cellphone, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p WHERE a.profile = p.id AND a.email = $1 AND a.confirmed = $2', [email, true], function(err, result) {
 				if (err) reject(err);
-				else resolve(result.rows[0]);
+				else if (result.rowCount == 0) rej(result); //Nothing found, sends error
+				else if (result.name == "error") rej(result); //Some error occured : rejects
+				else resolve(result.rows[0]); //Returns what was found
 			});
 		});
 	});

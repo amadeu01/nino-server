@@ -33,16 +33,17 @@ var schoolServices = {
 				.then(function() {
 					return new Promise(function(res,rej) {
 						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[account.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
-							if (err) rej(err);
-							else if (result.rowCount == 0) rej(new Error("School not created"));
-							else res(result);	
+							if (err) rej(err); //Error, reject to BO
+							else if (result.rowCount == 0) rej(result); //Reject here - will stop transaction
+							else if (result.name == "error") rej(result); //Some error occured : rejects
+							else res(result);	//Proceed to commit transaction
 						});
 					});
 				}).then(function(result) {
 					return transaction.commit(client)
 					.then(function() {
 						done();
-						resolve(result.rows[0]);
+						resolve({school:result.rows[0]}); //Resolves created to BO
 					}).catch(function(err) {
 						done(err);
 						reject(err);
@@ -54,7 +55,7 @@ var schoolServices = {
 						reject(err);
 					}).catch( function(err2) {
 						done(err2);
-						reject(err);
+						reject(err2);
 					});
 				});
 			});
