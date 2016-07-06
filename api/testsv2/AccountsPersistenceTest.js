@@ -10,6 +10,7 @@ var school = require ('../persistence/schools.js');
 var _class = require ('../persistence/classes.js');
 var room = require ('../persistence/rooms.js');
 var employee = require ('../persistence/employees.js');
+var student = require('../persistence/students.js');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
@@ -105,7 +106,7 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
 	
 	test('Should Create Class to School', function() {
@@ -120,7 +121,7 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
 	
 	test('Should Create Room to Class', function() {
@@ -136,7 +137,7 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});	
 	
 	test('Should Create Educator to School', function() {
@@ -159,7 +160,25 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
+	});	
+	
+	test('Should Create Student to School in Class', function() {
+		var stuprof = {
+			name: "Amadeu",
+			surname: "Cavalcante",
+			birthdate: new Date(),
+			gender: 0
+		};		
+		return student.create(stuprof, schl, rm)
+		.then(function(done) {
+			dctr = done.room;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
 	});	
 	
 	
