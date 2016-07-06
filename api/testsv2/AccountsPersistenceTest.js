@@ -9,6 +9,9 @@ var credential = require('../persistence/credentials.js');
 var school = require ('../persistence/schools.js');
 var _class = require ('../persistence/classes.js');
 var room = require ('../persistence/rooms.js');
+var employee = require ('../persistence/employees.js');
+var student = require('../persistence/students.js');
+var guardian = require('../persistence/guardians.js');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
@@ -17,6 +20,11 @@ var prfl;
 var schl;
 var clss;
 var rm;
+
+
+var dctr;
+var stdnt;
+var grdn;
 
 suite('Account Profile and Credential Persistence', function () {
 
@@ -32,7 +40,7 @@ suite('Account Profile and Credential Persistence', function () {
 	test('Should create Profile and Account', function () {
 		var acc = {
 			email: "carloseduardomillani@gmail.com",
-			cellphone: "+5519984187636",
+			cellphone: "+5519909876543",
 			hash: "mysupersecrethash"
 		};
 		var profile = {
@@ -94,7 +102,7 @@ suite('Account Profile and Credential Persistence', function () {
 			email: "myemail@email.com",
 			name: "My Name"
 		}
-		return school.create(schoolMod, accnt)
+		return school.create(schoolMod, prfl)
 		.then(function(done) {
 			schl = done.school;
 			console.log(done);
@@ -102,7 +110,7 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
 	
 	test('Should Create Class to School', function() {
@@ -117,7 +125,7 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
 	
 	test('Should Create Room to Class', function() {
@@ -133,7 +141,67 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});	
+	
+	test('Should Create Educator to School', function() {
+		var eduacc = {
+			email: "danilobecke@gmail.com",
+			cellphone: "+5519912345678",
+			hash: "secondhashsuchsecretwow"
+		};
+		var eduprof = {
+			name: "Danilo",
+			surname: "Becke",
+			birthdate: new Date(),
+			gender: 0
+		};		
+		return employee.createEducator(eduacc, eduprof, schl)
+		.then(function(done) {
+			dctr = done.employee;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});	
+	
+	test('Should Create Student to School in Class', function() {
+		var stuprof = {
+			name: "Amadeu",
+			surname: "Cavalcante",
+			birthdate: new Date(),
+			gender: 0
+		};		
+		return student.create(stuprof, schl, rm)
+		.then(function(done) {
+			stdnt = done.student;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});	
+
+	test('Should Create Guardian to student', function() {
+		var guardprof = {
+			name: "Alfredo",
+			surname: "Cavalcante",
+			birthdate: new Date(),
+			gender: 0
+		};
+		return guardian.create(guardprof, stdnt)
+		.then(function(done) {
+			grdn = done.guardian;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});	
+	
 	
 });

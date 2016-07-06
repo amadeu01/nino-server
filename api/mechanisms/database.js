@@ -83,7 +83,7 @@ var createSchools = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS schools' +
 				'(id	SERIAL PRIMARY KEY,' +
-				 'owner	INTEGER REFERENCES accounts (id) ON DELETE RESTRICT NOT NULL,' +
+				 'owner	INTEGER REFERENCES profiles (id) ON DELETE RESTRICT NOT NULL,' +
 				 'notificationGroup	VARCHAR,' +
 				 'address	VARCHAR,' +
 				 'cnpj	VARCHAR,' +
@@ -151,7 +151,7 @@ var createStudents = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS students' +
 				'(id	SERIAL PRIMARY KEY,' +
-				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
+				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE NOT NULL,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE SET NULL)'
 			, function(err, result) {

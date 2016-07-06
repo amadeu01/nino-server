@@ -15,12 +15,12 @@ var pool = require('../mechanisms/database.js').pool;
 var schoolServices = {
 	/** 
 	 * @method create
-	 * @description Creates a new school with account.id as owner
+	 * @description Creates a new school with profile.id as owner
 	 * @param school {School}
-	 * @param account {Account}
+	 * @param profile {Profile}
 	 * @return promise {Promise}
 	 */
-	create: function(school, account) {
+	create: function(school, profile) {
 		//TODO: aqui eu vou criar a escola
 		//TODO; preciso botar campo de active das coisas do DB :O
 		return new Promise(function(resolve, reject) {
@@ -32,7 +32,7 @@ var schoolServices = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res,rej) {
-						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[account.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
+						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[profile.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
 							else if (result.rowCount == 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
