@@ -109,7 +109,7 @@ var createClasses = function(pool) {
 			client.query('CREATE TABLE IF NOT EXISTS classes' +
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
-				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
+				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE NOT NULL,' +
 				 'menu	INTEGER REFERENCES menus (id) ON DELETE SET NULL)'
 			, function(err, result) {
 				done();

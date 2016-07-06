@@ -6,14 +6,15 @@
 var assert = require('assert');
 var account = require('../persistence/accounts.js');
 var credential = require('../persistence/credentials.js');
-var school = require ('../persistence/schools.js')
+var school = require ('../persistence/schools.js');
+var _class = require ('../persistence/classes.js');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
 var accnt;
 var prfl;
 var schl;
-
+var clss;
 
 suite('Account Profile and Credential Persistence', function () {
 
@@ -101,4 +102,20 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		})
 	});
+	
+	test('Should Create Class to School', function() {
+		var myClass = {
+			name: "Prezinho"
+		} 
+		return _class.create(myClass, schl)
+		.then(function(done) {
+			clss = done;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		})
+	});
+	
 });
