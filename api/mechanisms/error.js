@@ -21,6 +21,9 @@ module.exports = {
 	internalError: function(data) {
 		return new response( 500, data, 201);
 	},
+	missingParameters: function(data) {
+		return new response( 400, data, 202);
+	},
 
 	//Token related errors
 	invalidPermissions: function(data) {

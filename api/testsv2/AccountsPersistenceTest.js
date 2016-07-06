@@ -8,6 +8,7 @@ var account = require('../persistence/accounts.js');
 var credential = require('../persistence/credentials.js');
 var school = require ('../persistence/schools.js');
 var _class = require ('../persistence/classes.js');
+var room = require ('../persistence/rooms.js');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
@@ -15,6 +16,7 @@ var accnt;
 var prfl;
 var schl;
 var clss;
+var rm;
 
 suite('Account Profile and Credential Persistence', function () {
 
@@ -94,7 +96,7 @@ suite('Account Profile and Credential Persistence', function () {
 		}
 		return school.create(schoolMod, accnt)
 		.then(function(done) {
-			schl = done;
+			schl = done.school;
 			console.log(done);
 			return(done);
 		}).catch(function(err) {
@@ -105,11 +107,11 @@ suite('Account Profile and Credential Persistence', function () {
 	
 	test('Should Create Class to School', function() {
 		var myClass = {
-			name: "Prezinho"
+			name: "Prezinho",
 		} 
 		return _class.create(myClass, schl)
 		.then(function(done) {
-			clss = done;
+			clss = done.class;
 			console.log(done);
 			return(done);
 		}).catch(function(err) {
@@ -117,5 +119,21 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		})
 	});
+	
+	test('Should Create Room to Class', function() {
+		var myRoom = {
+			name: "Um",
+			notificationGroup: "thisroomgroup"
+		} 
+		return room.create(myRoom, clss)
+		.then(function(done) {
+			rm = done.room;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		})
+	});	
 	
 });

@@ -15,7 +15,8 @@ var createAccounts = function(pool) {
 					 'email	VARCHAR UNIQUE NOT NULL,' +
 					 'password	VARCHAR,' + 
 					 'cellphone	VARCHAR,' +
-					 'hash	VARCHAR UNIQUE,' +
+					 'hash	VARCHAR UNIQUE NOT NULL,' +
+					 'passwordHash	VARCHAR UNIQUE,' +
 					 'confirmed	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'lost BOOLEAN NOT NULL DEFAULT false)'
 			, function(err, result) {
@@ -130,7 +131,7 @@ var createRooms = function(pool) {
 			client.query('CREATE TABLE IF NOT EXISTS rooms' +
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
-				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
+				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE NOT NULL,' +
 				 'notificationGroup	VARCHAR)'
 			, function(err, result) {
 				done();
