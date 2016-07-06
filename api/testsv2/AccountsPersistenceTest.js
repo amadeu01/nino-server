@@ -6,7 +6,14 @@
 var assert = require('assert');
 var account = require('../persistence/accounts.js');
 var credential = require('../persistence/credentials.js');
+var school = require ('../persistence/schools.js')
 //var account = require('../mechanisms/database.js');
+
+//Returned variables
+var accnt;
+var prfl;
+var schl;
+
 
 suite('Account Profile and Credential Persistence', function () {
 
@@ -33,6 +40,8 @@ suite('Account Profile and Credential Persistence', function () {
 		};
 		return account.createNewUser(acc, profile)
 		.then(function(res) {
+			accnt = res.account;
+			prfl = res.profile;
 			console.log(res);
 			return(res);
 		}).catch(function(err) {
@@ -72,5 +81,24 @@ suite('Account Profile and Credential Persistence', function () {
 			console.log(err);
 			throw(err);
 		});
+	});
+	
+	test('Should Create School', function() {
+		var schoolMod = {
+			notificationGroup: "mydupergroup",
+			address: "righthererightnow",
+			cnpj: "mycnpj",
+			email: "myemail@email.com",
+			name: "My Name"
+		}
+		return school.create(schoolMod, accnt)
+		.then(function(done) {
+			schl = done;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		})
 	});
 });

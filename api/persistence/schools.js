@@ -13,7 +13,6 @@ var pool = require('../mechanisms/database.js').pool;
 * @class
 */
 var schoolServices = {
-<<<<<<< HEAD
 	/** 
 	 * @method create
 	 * @description Creates a new school with account.id as owner
@@ -32,11 +31,11 @@ var schoolServices = {
 				}
 				transaction.start(client)
 				.then(function() {
-					return new Promise(function(rej,res) {
+					return new Promise(function(res,rej) {
 						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[account.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
 							if (err) rej(err);
-							else if (result.rowCount == 0) rej (new Error("School not created"));
-							else res (result);	
+							else if (result.rowCount == 0) rej(new Error("School not created"));
+							else res(result);	
 						});
 					});
 				}).then(function(result) {
