@@ -41,15 +41,16 @@ var numberValidate = function(req, res, next, id) {
  * 						404 									- When there is no such school
  */
 router.post('/', function(req, res, next) {
-
+	console.log("Start Router");
 	//Check if needed params exists
 	return new Promise(function(resolve, reject) {
-		if (req.body.email === undefined) reject(errors.missingParameter('email'));
+		console.log("Start Promise");
+		//if (req.body.email === undefined) reject(errors.missingParameter('email'));
 		// else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
-		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
-		else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
-		else if (req.body.birthdate === undefined) reject(errors.missingParameter('birthdate'));
-		else if (req.useragent.isBot === true ) reject(new response(400), "Bot");
+		//else if (req.body.name === undefined) reject(errors.missingParameter('name'));
+		//else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
+		//else if (req.body.birthdate === undefined) reject(errors.missingParameter('birthdate'));
+		//else if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {
@@ -63,16 +64,22 @@ router.post('/', function(req, res, next) {
 			birthdate: req.body.birthdate,
 			gender: req.body.gender
 		};
-
-		return accountsBO.createNewUser(account, profile);
-	})
-	.then(function(response) {
-		res.status(response.status).json(response.json);
-		return resolve(response);
-	}).catch(function(err) {
-		res.status(error.status).json(error.json);
-		var data = err.message + " Problem creating account"
-		reject(new response(400, data, 1));
+		console.log("Call BO");
+		return accountsBO.createNewUser(account, profile)
+		.then(function(response) {
+			console.log(response);
+			//res.status(response.status).json(response.json);
+			console.log("Send response: ");
+			res.send(response);
+			//console.log(response.message);
+			resolve(response);
+		}).catch(function(err) {
+			console.log(err.message);
+			//res.status(err.status).json(err.json);
+			var data = err.message + " Problem creating account"
+			res.send(err);
+			reject(new response(400, data, 1));
+		});
 	});
 });
 
@@ -90,6 +97,7 @@ router.post('/confirmation/:hash', function(req, res, next) {
 	})
 	.then(function(response){
 		res.status(response.status).json(response.json);
+		res.send(response);
 		resolve(response);
 	}).catch(function(err) {
 		res.status(err.status).json(err.json);
@@ -111,6 +119,7 @@ router.post('/authentication/:user', function(req, res) {
 	})
 	.then(function(response) {
 		res.status(response.status).json(response.json);
+		res.send(response);
 		resolve(response)
 	}).catch(function(err){
 		res.status(err.status).json(err.json);
@@ -129,7 +138,8 @@ router.delete('/authentication/:user', function(req, res){
 	})
 	.then(function(response){
 		res.status(response.status).json(response.json);
-		resolve(response)
+		res.send(response);
+		resolve(response);
 	}).catch(function(err){
 		res.status(err.status).json(err.json);
 		reject(new response(400, 'Logout', 1));

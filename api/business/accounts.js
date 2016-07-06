@@ -18,19 +18,22 @@ var accounts = {};
  */
 accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
-		else if (name.isAlpha(account.name, 'pt-PT')) reject(new response (400, 'name', 1));
-		else if (name.isAlpha(account.surname, 'pt-PT')) reject(new response (400, 'name', 1));
-		else {
-			account.hash = values.confirmationUID = uid.sync(100);
+		//if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
+		//else if (name.isAlpha(profile.name, 'pt-PT')) reject(new response (400, 'name', 1));
+		//else if (name.isAlpha(profile.surname, 'pt-PT')) reject(new response (400, 'surname', 1));
+		//else {
+			account.hash = uid.sync(100);
+			console.log("Call DAO");
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
-				mail.sendUserConfirmation(newUser.email, {hash: account.hash});
+				console.log("Call resolve on BO");
+				//mail.sendUserConfirmation(newUser.email, {hash: account.hash});
 				resolve(newUser.id);
 			}).catch(function(err) {
+				console.log("Err BO" + err.message);
 				reject(err);
 			});
-		}
+		//}
 	});
 }
 

@@ -30,7 +30,8 @@ router.post('/:description', function(req, res, next) {
 			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, req.body.token)
 			.then(function(activity){
 				res.status(response.status).json(response.json);
-				resolve(response);
+				res.send(activity);
+				resolve(activity);
 			}).catch(function(err) {
 				res.status(error.status).json(error.json);
 				var data = err.message + " Problem creating activities"
@@ -38,19 +39,19 @@ router.post('/:description', function(req, res, next) {
 			});
 		}
 	});
-}); //TODO: faltou um parenteses aqui, lembra de sempre dar um `node bin/www` pra ver se não tem erro de sintaxe no codigo
+});
 
 /**
 * @description Add activity to class
 */
-router.post("/:activity/classes/:class", function(req, res) {
+router.post("/:activity/classes/:class_id", function(req, res) {
 	//TODO: To adotando o seguinte padrao: quando um parametro de modelo é obrigatório eu boto ele na rota :)
 	//TODO: ve no server antigo, eu usava o numberValidate pra validar se é número, ve como eu usava :)
 	return new Promise(function(){
 		if (req.body.school === undefined) reject(errors.missingParameter('School'));
 		else if (req.params.activity === undefined) reject(errors.missingParameter('Activity ID'));
 		else if (req.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.params.class === undefined ) reject(errors.missingParameter('description'));
+		else if (req.params.class_id === undefined ) reject(errors.missingParameter('class_id'));
 
 		else {
 			return activitiesBO.addActivityToClass(req.body.school, req.params.class, req.params.activity, req.body.token)
