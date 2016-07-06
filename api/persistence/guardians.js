@@ -3,7 +3,7 @@
 var models = require('../models');
 var errors = require('../mechanisms/error');
 var validator = require('validator');
-var studentsDAO = {};
+var guardiansDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
@@ -13,7 +13,7 @@ var pool = require('../mechanisms/database.js').pool;
  * @param profile {Profile}
  */
 
-studentsDAO.create = function(profile, school, room) {
+guardiansDAO.create = function(profile, student) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -34,14 +34,25 @@ studentsDAO.create = function(profile, school, room) {
 						}
 					});
 				});
-			}).then(function(response) { //Create Student
+			}).then(function(response) { //Create Guardian
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO students (profile, school, room) VALUES ($1, $2, $3) RETURNING id', [response.profile.id, school.id, room.id], function(err, result) {
+					client.query('INSERT INTO guardians (profile) VALUES ($1) RETURNING id', [response.profile.id], function(err, result) {
 						if (err) rej (err);
 						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
-							response.student = result.rows[0];
+							response.guardian = result.rows[0]; //Sets profile to response
+							res(response); //Sends account and profile in response dictionary
+						}
+					});
+				});
+			}).then(function(response) { //Create Guardian to Student
+				return new Promise(function(res, rej) {
+					client.query('INSERT INTO guardians_students (guardian, student) VALUES ($1, $2)', [response.guardian.id, student.id], function(err, result) {
+						if (err) rej (err);
+						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
 							res(response); //Sends account and profile in response dictionary
 						}
 					});
@@ -70,4 +81,4 @@ studentsDAO.create = function(profile, school, room) {
 }
 
 
-module.exports = studentsDAO;
+module.exports = guardiansDAO;

@@ -11,6 +11,7 @@ var _class = require ('../persistence/classes.js');
 var room = require ('../persistence/rooms.js');
 var employee = require ('../persistence/employees.js');
 var student = require('../persistence/students.js');
+var guardian = require('../persistence/guardians.js');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
@@ -20,7 +21,10 @@ var schl;
 var clss;
 var rm;
 
+
 var dctr;
+var stdnt;
+var grdn;
 
 suite('Account Profile and Credential Persistence', function () {
 
@@ -154,7 +158,7 @@ suite('Account Profile and Credential Persistence', function () {
 		};		
 		return employee.createEducator(eduacc, eduprof, schl)
 		.then(function(done) {
-			dctr = done.room;
+			dctr = done.employee;
 			console.log(done);
 			return(done);
 		}).catch(function(err) {
@@ -172,7 +176,25 @@ suite('Account Profile and Credential Persistence', function () {
 		};		
 		return student.create(stuprof, schl, rm)
 		.then(function(done) {
-			dctr = done.room;
+			stdnt = done.student;
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});	
+
+	test('Should Create Guardian to student', function() {
+		var guardprof = {
+			name: "Alfredo",
+			surname: "Cavalcante",
+			birthdate: new Date(),
+			gender: 0
+		};
+		return guardian.create(guardprof, stdnt)
+		.then(function(done) {
+			grdn = done.guardian;
 			console.log(done);
 			return(done);
 		}).catch(function(err) {
