@@ -32,18 +32,34 @@ var schoolServices = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res,rej) {
+						var response = {}
 						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[profile.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
 							else if (result.rowCount == 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
-							else res(result);	//Proceed to commit transaction
+							else {
+								response.school = result.rows[0];
+								res(response);	//Proceed to commit transaction
+							}
 						});
 					});
-				}).then(function(result) {
+				}).then(function(response) {
+					return new Promise(function(res,rej) {
+						client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id',[profile.id, response.school.id], function(err, result) {
+							if (err) rej(err); //Error, reject to BO
+							else if (result.rowCount == 0) rej(result); //Reject here - will stop transaction
+							else if (result.name == "error") rej(result); //Some error occured : rejects
+							else {
+								response.employee = result.rows[0];
+								res(response);	//Proceed to commit transaction
+							} 
+						});
+					});
+				}).then(function(response) {
 					return transaction.commit(client)
 					.then(function() {
 						done();
-						resolve({school:result.rows[0]}); //Resolves created to BO
+						resolve(response); //Resolves created to BO
 					}).catch(function(err) {
 						done(err);
 						reject(err);
