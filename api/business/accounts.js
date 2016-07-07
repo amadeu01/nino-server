@@ -46,7 +46,7 @@ accounts.confirmAccount = function(confirmationHash, origin, password) {
 		return accountsDAO.confirmAccount(confirmationHash, password)
 		.then(function(userInfo) {
 			// TODO: check Ipad ?
-			if (!(userInfo.credentials.device === origin)) reject(new response(500, "Wrong device", 1));
+			if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
 			resolve(userInfo);
 		}).catch(function(err){
 			var data = "Confirm account error " + err.message;

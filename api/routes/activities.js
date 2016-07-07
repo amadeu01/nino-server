@@ -29,15 +29,15 @@ router.post('/:description', function(req, res, next) {
 		else if (req.params.description === undefined ) reject(errors.missingParameter('description'));
 		else {
 			var device = req.useragent.Platform + " " + req.useragent.OS;
-			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.body.token)
+			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.rawToken)
 			.then(function(activity){
 				res.status(200);
 				res.send(activity);
 				resolve(activity);
 			}).catch(function(err) {
 				res.status(err.code);
-				var data = err.message + " Problem creating activities"
-				reject(new response(400, data, 1));
+				res.send(err);
+				reject(err);
 			});
 		}
 	});
@@ -50,20 +50,21 @@ router.post("/:activity/classes/:class_id", function(req, res) {
 	//TODO: To adotando o seguinte padrao: quando um parametro de modelo é obrigatório eu boto ele na rota :)
 	//TODO: ve no server antigo, eu usava o numberValidate pra validar se é número, ve como eu usava :)
 	return new Promise(function(){
-		if (req.body.school === undefined) reject(errors.missingParameter('School'));
-		else if (req.params.activity === undefined) reject(errors.missingParameter('Activity ID'));
+		if (req.body.school === undefined) reject(errors.missingParameter('school_id'));
+		else if (req.params.activity === undefined) reject(errors.missingParameter('activity_id'));
 		else if (req.token === undefined) reject(errors.missingParameter('token'));
 		else if (req.params.class_id === undefined ) reject(errors.missingParameter('class_id'));
-
 		else {
-			return activitiesBO.addActivityToClass(req.body.school, req.params.class, req.params.activity, req.body.token)
+			var device = req.useragent.Platform + " " + req.useragent.OS;
+			return activitiesBO.addActivityToClass(req.body.school, req.params.class_id, req.params.activity, device, req.rawToken)
 			.then(function(activity){
-				res.status(response.status).json(response.json);
-				resolve(response);
+				res.status(200);
+				res.send(activity);
+				resolve(activity);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating Class"
-				reject(new response(400, data, 1));
+				res.status(err.code);
+				res.send(err);
+				reject(err);
 			});
 		}
 	})
@@ -76,14 +77,15 @@ router.get("/:school", function(req, res) {
 		if (req.params.school === undefined) reject(errors.missingParameter('School'));
 		else if (req.token === undefined) reject(errors.missingParameter('token'));
 		else {
-			return activitiesBO.getActivitiesForSchool(req.body.school, req.body.token)
-			.then(function(activity){
-				res.status(response.status).json(response.json);
-				resolve(response);
+			return activitiesBO.getActivitiesForSchool(req.body.school, req.rawToken)
+			.then(function(activities){
+				res.status(200);
+				res.send(activities);
+				resolve(activities);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating Class"
-				reject(new response(400, data, 1));
+				res.status(err.code);
+				res.send(err);
+				reject(err);
 			});
 		}
 	})
@@ -94,17 +96,18 @@ router.get("/:school", function(req, res) {
 */
 router.get("/:class", function(req, res) {
 	return new Promise(function(){
-		if (req.params.class === undefined) reject(errors.missingParameter('School'));
+		if (req.params.class === undefined) reject(errors.missingParameter('Class'));
 		else if (req.token === undefined) reject(errors.missingParameter('token'));
 		else {
-			return activitiesBO.getActivitiesForClass(req.body.class, req.body.token)
+			return activitiesBO.getActivitiesForClass(req.body.class, req.rawToken)
 			.then(function(activity){
-				res.status(response.status).json(response.json);
-				resolve(response);
+				res.status(200);
+				res.send(activity);
+				resolve(activity);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating Class"
-				reject(new response(400, data, 1));
+				res.status(err.code);
+				res.send(err);
+				reject(err);
 			});
 		}
 	})

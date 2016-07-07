@@ -16,16 +16,17 @@ var activities = {};
 */
 activities.createActivityToSchool = function(school, description, device, token ) {
   return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
+		if (!validator.isAlphanumeric(description, 'pt-PT')) reject(new response(400,'extraneous description', 1));
 		return credentialDAO.read(token)
 		.then (function (credential) {
-      if (!(credential === token)) reject(new response(400, 'Create activity'))
+      if (!(credential.device === device )) reject(new response(400, 'extraneous device', 1));
+      //else if (!(credential.account === school)) reject (new response(400, 'extraneous account', 1));
 			return activitiesDAO.createActivityToSchool(school, description)
 			.then(function(response) {
 				resolve(response);
 			}).catch(function(err) {
-        var data = "Create activity to school" + err.message;
-				reject(err);
+        var data = "Problem creating activities " + err.message;
+				reject(new response(400, data, 1));
 			});
 		});
 	});
@@ -37,13 +38,19 @@ activities.createActivityToSchool = function(school, description, device, token 
 * @param Class {id}
 * @param activity {Activity} parameters filled with information about activity
 */
-activities.addActivityToClass = function(school, activity, class_id, token) {
+activities.addActivityToClass = function(school, class_id, activity, token) {
   return new Promise(function(resolve, reject) {
-    return activitiesDAO.addActivityToClass(school, class_id, activity);
-  }).then(function(response){
-    resolve(response);
-  }).catch(function(err) {
-    reject(err);
+    return credentialDAO.read(token)
+    .then(function(credential){
+      if (!(credential.device === device)) reject(new response(400, 'extraneous device', 1));
+      return activitiesDAO.addActivityToClass(school, class_id, activity)
+      .then(function(response){
+        resolve(response);
+      }).catch(function(err) {
+        var data = "Problem adding Class " + err.message;
+        reject(new response(400, data, 1));
+      });
+    });
   });
 }
 
@@ -52,13 +59,19 @@ activities.addActivityToClass = function(school, activity, class_id, token) {
 * @param School {id}
 * @return activity {Array} it returns an array of activities
 */
-activities.getActivityForSchool = function(school) {
+activities.getActivityForSchool = function(school, token) {
   return new Promise(function(resolve, reject) {
-    return activitiesDAO.getActivityForSchool(school);
-  }).then(function(activities){
-    resolve(activities);
-  }).catch(function(err) {
-    reject(err);
+    return credentialDAO.read(token)
+    .then(function(credential){
+      if (!(credential.device === device)) reject(new response(400, 'extraneous device', 1));
+      return activitiesDAO.readActivitiesForSchool(school)
+      .then(function(activities){
+        resolve(activities);
+      }).catch(function(err) {
+        var data = "Problem getting activities for Schools " + err.message;
+        reject(new response(400, data, 1));
+      });
+    })
   });
 }
 
@@ -67,12 +80,18 @@ activities.getActivityForSchool = function(school) {
 * @param Class {id}
 * @return activity {Array} it returns an array of activities
 */
-activities.getActivityForClass = function(class_id) {
+activities.getActivityForClass = function(school) {
   return new Promise(function(resolve, reject) {
-    return activitiesDAO.getActivityForClass(class_id);
-  }).then(function(activities){
-    resolve(activities);
-  }).catch(function(err) {
-    reject(err);
+    return credentialDAO.read(token)
+    .then(function(credential){
+      if (!(credential.device === device)) reject(new response(400, 'extraneous device', 1));
+      return activitiesDAO.readActivitiesForClass(Class)
+      .then(function(activities){
+        resolve(activities);
+      }).catch(function(err) {
+        var data = "Problem getting activities for Class " + err.message;
+        reject(new response(400, data, 1));
+      });
+    })
   });
 }

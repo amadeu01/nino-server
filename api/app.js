@@ -59,6 +59,7 @@ app.use(function(req, res, next) {
   // decode token
   if (token) {
     // verifies secret and checks exp - Gets params and proceed! <-TODO
+		req.rawToken = token;
 		mechanisms.jwt.validate(token)
 		.then(function(decoded) {
 			// console.log(decoded);

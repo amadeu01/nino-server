@@ -1,4 +1,4 @@
-/** @module persistence */
+/** @module persistence/classes */
 
 
 var models = require('../models');
@@ -14,7 +14,7 @@ var pool = require('../mechanisms/database.js').pool;
 * @class
 */
 var classServices = {
-	/** 
+	/**
 	 * @method create
 	 * @description Adds a new Classroom with provided _class to the School school.id
 	 * @param school {School}
