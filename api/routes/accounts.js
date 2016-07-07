@@ -41,16 +41,13 @@ var numberValidate = function(req, res, next, id) {
  * 						404 									- When there is no such school
  */
 router.post('/', function(req, res, next) {
-	console.log("Start Router");
-	//Check if needed params exists
 	return new Promise(function(resolve, reject) {
-		console.log("Start Promise");
-		//if (req.body.email === undefined) reject(errors.missingParameter('email'));
-		// else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
-		//else if (req.body.name === undefined) reject(errors.missingParameter('name'));
-		//else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
-		//else if (req.body.birthdate === undefined) reject(errors.missingParameter('birthdate'));
-		//else if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.body.email === undefined) reject(errors.missingParameter('email'));
+		else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
+		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
+		else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
+		else if (req.body.birthdate === undefined) reject(errors.missingParameter('birthdate'));
+		else if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {
@@ -64,21 +61,15 @@ router.post('/', function(req, res, next) {
 			birthdate: req.body.birthdate,
 			gender: req.body.gender
 		};
-		console.log("Call BO");
 		return accountsBO.createNewUser(account, profile)
 		.then(function(response) {
-			console.log(response);
-			//res.status(response.status).json(response.json);
-			console.log("Send response: ");
+			res.status(200)
 			res.send(response);
-			//console.log(response.message);
 			resolve(response);
 		}).catch(function(err) {
-			console.log(err.message);
-			//res.status(err.status).json(err.json);
-			var data = err.message + " Problem creating account"
+			res.status(err.code);
 			res.send(err);
-			reject(new response(400, data, 1));
+			reject(err);
 		});
 	});
 });
@@ -93,20 +84,21 @@ router.post('/confirmation/:hash', function(req, res, next) {
 		var hashConfirmation = req.params.hash;
 		var password = req.body.password;
 
-		return accountsBO.confirmAccount(hashConfirmation, origin, password);
-	})
-	.then(function(response){
-		res.status(response.status).json(response.json);
-		res.send(response);
-		resolve(response);
-	}).catch(function(err) {
-		res.status(err.status).json(err.json);
-		reject(new response(400), 'confirmAccount');
-	})
+		return accountsBO.confirmAccount(hashConfirmation, origin, password)
+		.then(function(response){
+			res.status(200);
+			res.send(response);
+			resolve(response);
+		}).catch(function(err) {
+			res.status(err.code);
+			res.send(err);
+			reject(err);
+		})
+	});
 });
 
 /**
-* @description login
+* @description login. <tt>email</tt> is used to identify the user.
 */
 router.post('/authentication/:user', function(req, res) {
 	return new Promise(function (resolve, reject) {
@@ -115,15 +107,16 @@ router.post('/authentication/:user', function(req, res) {
 		var password = req.body.password;
 		var populate = req.query.populate;
 
-		return accountsBO.login(email, password, device, populate);
-	})
-	.then(function(response) {
-		res.status(response.status).json(response.json);
-		res.send(response);
-		resolve(response)
-	}).catch(function(err){
-		res.status(err.status).json(err.json);
-		reject(new response(400, 'Login', 1));
+		return accountsBO.login(email, password, device, populate)
+		.then(function(response) {
+			res.status(200);
+			res.send(response);
+			resolve(response);
+		}).catch(function(err){
+			res.status(err.code);
+			res.send(err);
+			reject(err);
+		});
 	});
 });
 
@@ -134,15 +127,16 @@ router.delete('/authentication/:user', function(req, res){
 	return new Promise (function (resolve, reject){
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
-		accountsBO.logout(email, device);
-	})
-	.then(function(response){
-		res.status(response.status).json(response.json);
-		res.send(response);
-		resolve(response);
-	}).catch(function(err){
-		res.status(err.status).json(err.json);
-		reject(new response(400, 'Logout', 1));
+		return accountsBO.logout(email, device)
+		.then(function(response){
+			res.status(200);
+			res.send(response);
+			resolve(response);
+		}).catch(function(err){
+			res.status(err.code);
+			res.send(err);
+			reject(err);
+		});
 	});
 });
 

@@ -1,4 +1,4 @@
-/*
+/** router/activities
 *
 * Last to modify: Amadeu Cavalcante
 */
@@ -8,6 +8,7 @@ var router = express.Router();
 var errors = require('../mechanisms/error');
 var validator = require('validator');
 var activitiesBO = require('../business/activities.js');
+var useragent = require('express-useragent');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -27,13 +28,14 @@ router.post('/:description', function(req, res, next) {
 		else if (req.token === undefined) reject(errors.missingParameter('token'));
 		else if (req.params.description === undefined ) reject(errors.missingParameter('description'));
 		else {
-			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, req.body.token)
+			var device = req.useragent.Platform + " " + req.useragent.OS;
+			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.body.token)
 			.then(function(activity){
-				res.status(response.status).json(response.json);
+				res.status(200);
 				res.send(activity);
 				resolve(activity);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
+				res.status(err.code);
 				var data = err.message + " Problem creating activities"
 				reject(new response(400, data, 1));
 			});

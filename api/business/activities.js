@@ -3,31 +3,34 @@
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var activitiesDAO = require('../persistence/activities.js');
+var credentialDAO = require('../persistence/credentials.js');
 var jwt = require('../mechanisms/jwt.js')
 var activities = {};
 
 /**
-* @description
+* @description Create activity to a given <tt>School</tt> if it has autorized to do so, by token authentication.
 * @param School {id}
 * @param Description {string}
 * @param token {string} token decoded
 * @return activity {id}
 */
-activities.createActivityToSchool = function(school, description, token ) {
+activities.createActivityToSchool = function(school, description, device, token ) {
   return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(new response(400),'email',1);
-		return (jwt.validate(token, school))
-		.then (function (decoded) {
+		if (!validator.isEmail(account.email)) reject(new response(400,'email',1));
+		return credentialDAO.read(token)
+		.then (function (credential) {
+      if (!(credential === token)) reject(new response(400, 'Create activity'))
 			return activitiesDAO.createActivityToSchool(school, description)
 			.then(function(response) {
 				resolve(response);
 			}).catch(function(err) {
+        var data = "Create activity to school" + err.message;
 				reject(err);
 			});
-		}); //TODO: faltou parenteses de novo hahaha lembra de testar cara :)
+		});
 	});
 }
-//02-154-980
+
 /**
 * @description Add activity to the current class in process after validates the <tt>Token</tt>
 * @param School {id}

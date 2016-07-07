@@ -49,6 +49,7 @@ var MailgunServices = {
     return promise;
 	},
   /**
+  * @description subscribe email to maillist 
   * @param email
   * @param name
   * @param vars

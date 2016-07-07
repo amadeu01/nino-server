@@ -60,7 +60,7 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		})
 	});
-	
+
 	test('Should confirm Account email', function() {
 		return account.confirmAccount("mysupersecrethash", "mydupernewpassword")
 		.then(function (res) {
@@ -71,7 +71,7 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		})
 	});
-	
+
 	test('Should return logIn select', function() {
 		return account.logIn("carloseduardomillani@gmail.com")
 		.then(function(done) {
@@ -93,7 +93,7 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
-	
+
 	test('Should Create School', function() {
 		var schoolMod = {
 			notificationGroup: "mydupergroup",
@@ -112,11 +112,11 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
-	
+
 	test('Should Create Class to School', function() {
 		var myClass = {
 			name: "Prezinho",
-		} 
+		}
 		return _class.create(myClass, schl)
 		.then(function(done) {
 			clss = done.class;
@@ -127,12 +127,12 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
-	
+
 	test('Should Create Room to Class', function() {
 		var myRoom = {
 			name: "Um",
 			notificationGroup: "thisroomgroup"
-		} 
+		}
 		return room.create(myRoom, clss)
 		.then(function(done) {
 			rm = done.room;
@@ -142,8 +142,8 @@ suite('Account Profile and Credential Persistence', function () {
 			console.log(err);
 			throw(err);
 		});
-	});	
-	
+	});
+
 	test('Should Create Educator to School', function() {
 		var eduacc = {
 			email: "danilobecke@gmail.com",
@@ -155,7 +155,7 @@ suite('Account Profile and Credential Persistence', function () {
 			surname: "Becke",
 			birthdate: new Date(),
 			gender: 0
-		};		
+		};
 		return employee.createEducator(eduacc, eduprof, schl)
 		.then(function(done) {
 			dctr = done.employee;
@@ -165,15 +165,15 @@ suite('Account Profile and Credential Persistence', function () {
 			console.log(err);
 			throw(err);
 		});
-	});	
-	
+	});
+
 	test('Should Create Student to School in Class', function() {
 		var stuprof = {
 			name: "Amadeu",
 			surname: "Cavalcante",
 			birthdate: new Date(),
 			gender: 0
-		};		
+		};
 		return student.create(stuprof, schl, rm)
 		.then(function(done) {
 			stdnt = done.student;
@@ -183,7 +183,7 @@ suite('Account Profile and Credential Persistence', function () {
 			console.log(err);
 			throw(err);
 		});
-	});	
+	});
 
 	test('Should Create Guardian to student', function() {
 		var guardprof = {
@@ -201,7 +201,7 @@ suite('Account Profile and Credential Persistence', function () {
 			console.log(err);
 			throw(err);
 		});
-	});	
-	
-	
+	});
+
+
 });
