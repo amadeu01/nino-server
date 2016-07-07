@@ -60,6 +60,18 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		})
 	});
+	
+	test('Should check if Confirmed Account - Before', function () {
+		return account.findWithHash("mysupersecrethash")
+		.then(function(res) {
+			console.log(res);
+			if (res.confirmed == false) return (res);
+			else throw(res);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		})
+	});
 
 	test('Should confirm Account email', function() {
 		return account.confirmAccount("mysupersecrethash", "mydupernewpassword")
@@ -67,6 +79,18 @@ suite('Account Profile and Credential Persistence', function () {
 			console.log(res);
 			return(res);
 		}).catch(function (err) {
+			console.log(err);
+			throw(err);
+		})
+	});
+	
+	test('Should check if Confirmed Account - After', function () {
+		return account.findWithHash("mysupersecrethash")
+		.then(function(res) {
+			console.log(res);
+			if (res.confirmed == true) return (res);
+			else throw(res);
+		}).catch(function(err) {
 			console.log(err);
 			throw(err);
 		})

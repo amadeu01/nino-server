@@ -134,8 +134,8 @@ accountsDAO.findWithHash = function(confirmationHash) {
 			}
 			client.query('SELECT confirmed FROM accounts WHERE hash = $1', [confirmationHash], function(err, result) {
 				if (err) reject(err); //Error: rejects to BO
-				else if (result.rowCount == 0) rej(result); //Nothing found, sends error
-				else if (result.name == "error") rej(result); //Some error occured : rejects
+				else if (result.rowCount == 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
 				else resolve(result.rows[0]); //Executed correctly
 			});
 		});
