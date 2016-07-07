@@ -13,7 +13,7 @@ var pool = require('../mechanisms/database.js').pool;
 * @class
 */
 var schoolServices = {
-	/** 
+	/**
 	 * @method create
 	 * @description Creates a new school with profile.id as owner
 	 * @param school {School}
@@ -59,7 +59,7 @@ var schoolServices = {
 					});
 				});
 			});
-		});	
+		});
 	},
 	/* Create a school with a standard class and room void. */
 	createWithClassAndRoom: function(parameters) {
