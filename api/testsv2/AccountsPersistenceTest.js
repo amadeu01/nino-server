@@ -123,7 +123,7 @@ suite('Account Profile and Credential Persistence', function () {
 			notificationGroup: "mydupergroup",
 			address: "righthererightnow",
 			cnpj: "mycnpj",
-			email: "myemail@schoolX.com",
+			email: "myemail@schoolX.com",
 			name: "School X"
 		}
 		return school.create(schoolMod, prfl)
@@ -229,6 +229,17 @@ suite('Account Profile and Credential Persistence', function () {
 
 	test('Should Read School', function() {
 		return school.findWithId(schl.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+
+	test('Should Read Classes for School', function() {
+		return _class.findWithSchoolId(schl.id)
 		.then(function(done) {
 			console.log(done);
 			return(done);
