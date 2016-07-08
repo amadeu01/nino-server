@@ -123,8 +123,8 @@ suite('Account Profile and Credential Persistence', function () {
 			notificationGroup: "mydupergroup",
 			address: "righthererightnow",
 			cnpj: "mycnpj",
-			email: "myemail@email.com",
-			name: "My Name"
+			email: "myemail@schoolX.com",
+			name: "School X"
 		}
 		return school.create(schoolMod, prfl)
 		.then(function(done) {
@@ -216,7 +216,12 @@ suite('Account Profile and Credential Persistence', function () {
 			birthdate: new Date(),
 			gender: 0
 		};
-		return guardian.create(guardprof, stdnt)
+		var guardAcc = {
+			email: "alfredo.cnt@gmail.com",
+			cellphone: "+5519912345678",
+			hash: "thirdhashsuchsecretwowmuchwow"
+		}
+		return guardian.create(guardprof, stdnt, guardAcc)
 		.then(function(done) {
 			grdn = done.guardian;
 			console.log(done);
@@ -227,5 +232,48 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 
+	test('Should Read School', function() {
+		return school.findWithId(schl.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+
+	test('Should Read Classes for School', function() {
+		return _class.findWithSchoolId(schl.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Read Rooms for Class', function() {
+		return room.findWithClassId(clss.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Read Students for Room', function() {
+		return student.findWithRoomId(rm.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
 
 });

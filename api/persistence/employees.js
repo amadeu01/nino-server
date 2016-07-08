@@ -1,4 +1,4 @@
-/** @module persistence/accounts */
+/** @module persistence/employees */
 
 var models = require('../models');
 var errors = require('../mechanisms/error');
@@ -7,10 +7,12 @@ var employeesDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/** @method createNewUser
- * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
+/** @method createEducator
+ * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Creates a new <tt>Employee</tt> for specified school and link them,
  * @param account {Account}
  * @param profile {Profile}
+ * @param school {School}
+ * @return created items {Account.id, Profile.id, Employee.id}
  */
 
 employeesDAO.createEducator = function(account, profile, school) {

@@ -1,4 +1,4 @@
-/** @module persistence/accounts */
+/** @module persistence/students */
 
 var models = require('../models');
 var errors = require('../mechanisms/error');
@@ -7,10 +7,11 @@ var studentsDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/** @method createNewUser
- * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
- * @param account {Account}
+/** @method create
+ * @description Create a new <tt>Profile</tt> with a <tt>Student</tt> and links them to a school and room
  * @param profile {Profile}
+ * @param school {School}
+ * @param room {Room}
  */
 
 studentsDAO.create = function(profile, school, room) {
@@ -64,6 +65,29 @@ studentsDAO.create = function(profile, school, room) {
 					done(err2);
 					reject(err2); // Reject another error to BO
 				});
+			});
+		});
+	});
+}
+
+/** @method findWithRoomId
+ * @description Finds all students of a room
+ * @param roomID {Int}
+ * @return List of rooms {[Room]}
+ */
+
+studentsDAO.findWithRoomId = function(roomID) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Connection error, aborts already
+				return;
+			}
+			client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender FROM profiles p, students s WHERE s.room = $1 AND s.profile = p.id', [roomID], function(err, result) {
+				if (err) reject(err); //Error: rejects to BO
+				else if (result.rowCount == 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows); //Executed correctly
 			});
 		});
 	});
