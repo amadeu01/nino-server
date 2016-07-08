@@ -1,4 +1,4 @@
-/** @module persistence/accounts */
+/** @module persistence/guardians */
 
 var models = require('../models');
 var errors = require('../mechanisms/error');
@@ -8,9 +8,11 @@ var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
 /** @method create
- * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
- * @param account {Account}
+ * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt> and new <tt>Guardian</tt>, linking it to an existing <tt>Student</tt>
  * @param profile {Profile}
+ * @param student {Student}
+ * @param account {Account}
+ * @return created IDs {Account: id, Profile:id, Guardian:id}
  */
 
 guardiansDAO.create = function(profile, student, account) {

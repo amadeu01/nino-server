@@ -1,4 +1,4 @@
-/** @module persistence/accounts */
+/** @module persistence/employees */
 
 var models = require('../models');
 var errors = require('../mechanisms/error');

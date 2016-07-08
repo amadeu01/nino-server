@@ -1,4 +1,4 @@
-/** @module persistence */
+/** @module persistence/rooms */
 
 
 var models = require('../models');
@@ -12,7 +12,7 @@ var pool = require('../mechanisms/database.js').pool;
 
 /** @method create
  * @param email {string}
- * @return Promise {Promise}
+ * @return Promise {Promise} resolves Room with ID
  */
 var roomServices = {
 	create: function(room, _class) {
@@ -54,6 +54,11 @@ var roomServices = {
 			});
 		});
 	},
+ /** @method findWithClassId
+  * @description Find all rooms for a class
+  * @param classID {int}
+  * @return class array {[Class]}
+  */
 	findWithClassId: function(classID) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {

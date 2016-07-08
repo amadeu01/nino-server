@@ -1,4 +1,4 @@
-/** @module persistence */
+/** @module persistence/credentials */
 
 var models = require('../models');
 var errors = require('../mechanisms/error');

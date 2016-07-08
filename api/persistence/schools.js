@@ -1,4 +1,4 @@
-/** @module persistence */
+/** @module persistence/schools */
 
 //var models = require('../models');
 
@@ -18,10 +18,9 @@ var schoolServices = {
 	 * @description Creates a new school with profile.id as owner
 	 * @param school {School}
 	 * @param profile {Profile}
-	 * @return promise {Promise}
+	 * @return promise {Promise} resolves to new School
 	 */
 	create: function(school, profile) {
-		//TODO: aqui eu vou criar a escola
 		//TODO; preciso botar campo de active das coisas do DB :O
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -77,6 +76,11 @@ var schoolServices = {
 			});
 		});
 	},
+ /** @method findWithId
+  * @description Finds a school with detemined ID
+  * @param id {int}
+  * @return name, email, telephone from school {School}
+  */
 	findWithId: function(id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
