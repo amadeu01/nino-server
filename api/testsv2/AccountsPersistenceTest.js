@@ -260,5 +260,15 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 	
+	test('Should Read Students for Room', function() {
+		return student.findWithRoomId(rm.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
 
 });

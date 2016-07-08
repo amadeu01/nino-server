@@ -69,5 +69,22 @@ studentsDAO.create = function(profile, school, room) {
 	});
 }
 
+studentsDAO.findWithRoomId = function(roomID) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Connection error, aborts already
+				return;
+			}
+			client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender FROM profiles p, students s WHERE s.room = $1 AND s.profile = p.id', [roomID], function(err, result) {
+				if (err) reject(err); //Error: rejects to BO
+				else if (result.rowCount == 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows); //Executed correctly
+			});
+		});
+	});
+}
+
 
 module.exports = studentsDAO;
