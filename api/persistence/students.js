@@ -7,7 +7,7 @@ var studentsDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/** @method createNewUser
+/** @method create
  * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
  * @param account {Account}
  * @param profile {Profile}

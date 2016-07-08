@@ -60,9 +60,10 @@ var classServices = {
 			});
 		});
 	},
-	/**
-	* Read
-	*/
+/** @method findWithSchoolId
+ * @param schoolID {int}
+ * @return Promise {Promise} Resolves to class with id name and menu.id(?)
+ */
 	findWithSchoolId: function(schoolID){
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {

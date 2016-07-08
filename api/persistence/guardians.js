@@ -7,13 +7,13 @@ var guardiansDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/** @method createNewUser
+/** @method create
  * @description Create a new <tt>Profile</tt> and links it to a new <tt>Account</tt>. Initiates transaction and creates new entities, linking them
  * @param account {Account}
  * @param profile {Profile}
  */
 
-guardiansDAO.create = function(profile, student) {
+guardiansDAO.create = function(profile, student, account) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -31,6 +31,18 @@ guardiansDAO.create = function(profile, student) {
 						else {
 							response.profile = result.rows[0]; //Sets profile to response
 							res(response);
+						}
+					});
+				});
+			}).then(function(response) { //Creates Account
+				return new Promise(function(res, rej) {
+					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [response.profile.id, account.email, account.cellphone, account.hash], function(err, result) {
+						if (err) rej (err);
+						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
+							response.account = result.rows[0]; //Sets account to response
+							res(response); //Sends account and profile in response dictionary
 						}
 					});
 				});

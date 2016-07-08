@@ -216,7 +216,12 @@ suite('Account Profile and Credential Persistence', function () {
 			birthdate: new Date(),
 			gender: 0
 		};
-		return guardian.create(guardprof, stdnt)
+		var guardAcc = {
+			email: "alfredo.cnt@gmail.com",
+			cellphone: "+5519912345678",
+			hash: "thirdhashsuchsecretwowmuchwow"
+		}
+		return guardian.create(guardprof, stdnt, guardAcc)
 		.then(function(done) {
 			grdn = done.guardian;
 			console.log(done);

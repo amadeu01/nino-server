@@ -10,9 +10,10 @@ var validator = require('validator');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/**
-* @class
-*/
+/** @method create
+ * @param email {string}
+ * @return Promise {Promise}
+ */
 var roomServices = {
 	create: function(room, _class) {
 		return new Promise(function (resolve, reject) {
