@@ -249,5 +249,16 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 	
+	test('Should Read Rooms for Class', function() {
+		return room.findWithClassId(clss.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
 
 });

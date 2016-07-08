@@ -70,7 +70,7 @@ var classServices = {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT name, menu FROM classes WHERE school = $1', [schoolID], function(err, result) {
+				client.query('SELECT id, name, menu FROM classes WHERE school = $1', [schoolID], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
 					else if (result.rowCount == 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
