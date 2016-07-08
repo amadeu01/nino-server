@@ -1,6 +1,7 @@
 /** @module business/accounts */
 
 var validator = require('validator');
+var errors = require('../mechanisms/error.js')
 var response = require('../mechanisms/response.js') ;
 var accountsDAO = require('../persistence/accounts.js');
 var credentialDAO = require('../persistence/credentials.js');
@@ -27,10 +28,10 @@ accounts.createNewUser = function(account, profile) {
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
 				mail.sendUserConfirmation(account.email, {hash: account.hash});
-				resolve(newUser);
+				resolve(new response(200, newUser, null));
 			}).catch(function(err) {
-				var data = err.message + " Create User error";
-				reject(new response(400, data, 1));
+				//var data = err.message + " Create User error";
+				reject(errors.internalError(err));
 			});
 		}
 	});
@@ -45,13 +46,17 @@ accounts.confirmAccount = function(confirmationHash, origin, password) {
 	return new Promise(function(resolve, reject){
 		return accountsDAO.confirmAccount(confirmationHash, password)
 		.then(function(userInfo) {
+			console.log(userInfo);
 			// TODO: check Ipad ?
 			if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
-			resolve(userInfo);
+			resolve(new response(200, userInfo, null));
 		}).catch(function(err){
-			var data = "Confirm account error " + err.message;
-			reject(new response(400, data, 1));
+			console.log(err);
+			//var data = "Confirm account error " + err.message;
+			reject(error.internalError(err));
 		});
+	}).catch(function(err){
+		console.log(err);
 	});
 }
 
@@ -82,8 +87,8 @@ accounts.login = function(email, password, device, populate) {
 				});
 			});
 		}).catch(function(err){
-			var data = "Login error " + err.message;
-			reject(new response(400, data, 1));
+			//var data = "Login error " + err.message;
+			reject(error.internalError(err));
 		});
 	}
 });
@@ -100,8 +105,8 @@ accounts.logout = function(device, token) {
 		.then(function(response){
 			resolve(response)
 		}).catch(function(err){
-			var data = "Logout error " + err.message;
-			reject(new response(400, data, 1));
+			//var data = "Logout error " + err.message;
+			reject(error.internalError(err));
 		});
 	});
 }

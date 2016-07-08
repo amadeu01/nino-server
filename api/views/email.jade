@@ -3,6 +3,6 @@ html(lang="pt-br")
     head
         title = "Confirmação de email"
     body
-        -var baseLink = "/accounts/confirmation/"
+        -var baseLink = "/accounts/confirmation?hash="
         -var link = baseLink + hash
         a(href=link) Clique aqui para confirmar seu email

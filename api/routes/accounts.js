@@ -2,7 +2,8 @@
 
 var express = require('express');
 var router = express.Router();
-var errors = require('../mechanisms/error');
+var errors = require('../mechanisms/error.js');
+var response = require('../mechanisms/response.js');
 var useragent = require('express-useragent');
 var accountsBO = require('../business/accounts.js');
 
@@ -42,11 +43,11 @@ var numberValidate = function(req, res, next, id) {
  */
 router.post('/', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.body.email === undefined) reject(errors.missingParameter('email'));
-		else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
-		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
-		else if (req.body.surname === undefined) reject(errors.missingParameter('surname'));
-		else if (req.body.birthdate === undefined) reject(errors.missingParameter('birthdate'));
+		if (req.body.email === undefined) reject(errors.missingParameters('email'));
+		//else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
+		else if (req.body.name === undefined) reject(errors.missingParameters('name'));
+		else if (req.body.surname === undefined) reject(errors.missingParameters('surname'));
+		else if (req.body.birthdate === undefined) reject(errors.missingParameters('birthdate'));
 		else if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
 		//Provided that all the needed parameters are there, we call business to validate them
@@ -63,12 +64,41 @@ router.post('/', function(req, res, next) {
 		};
 		return accountsBO.createNewUser(account, profile)
 		.then(function(response) {
-			res.status(200)
-			res.send(response);
+			res.status(200).json(response.json);
 			resolve(response);
 		}).catch(function(err) {
-			res.status(err.code);
-			res.send(err);
+			res.status(err.code).json(err.json);
+			reject(err);
+		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+		reject(err);
+	});
+});
+
+/**
+* @description confirmAccount
+*/
+router.post('/authentication/:hash', function(req, res, next) {
+	console.log("confirmation");
+	return new Promise(function(resolve, reject){
+		console.log("aqui!");
+		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		console.log("não é bot");
+		var origin = req.useragent.Platform + " " + req.useragent.OS;
+		var hashConfirmation = req.params.hash;
+		var password = req.body.password;
+		console.log(password);
+		console.log(hashConfirmation);
+
+		return accountsBO.confirmAccount(hashConfirmation, origin, password)
+		.then(function(response){
+			console.log("deu bom!");
+			res.status(200).json(response.json);
+			resolve(response);
+		}).catch(function(err) {
+			console.log("deu merda");
+			res.status(err.code).json(err.json);
 			reject(err);
 		});
 	});
@@ -77,23 +107,28 @@ router.post('/', function(req, res, next) {
 /**
 * @description confirmAccount
 */
-router.post('/confirmation/:hash', function(req, res, next) {
+router.get('/authentication/:hash', function(req, res, next) {
+	console.log("confirmation");
 	return new Promise(function(resolve, reject){
+		console.log("aqui!");
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		console.log("não é bot");
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
 		var password = req.body.password;
+		console.log(password);
+		console.log(hashConfirmation);
 
 		return accountsBO.confirmAccount(hashConfirmation, origin, password)
 		.then(function(response){
-			res.status(200);
-			res.send(response);
+			console.log("deu bom!");
+			res.status(200).json(response.json);
 			resolve(response);
 		}).catch(function(err) {
-			res.status(err.code);
-			res.send(err);
+			console.log("deu merda");
+			res.status(err.code).json(err.json);
 			reject(err);
-		})
+		});
 	});
 });
 
@@ -102,6 +137,8 @@ router.post('/confirmation/:hash', function(req, res, next) {
 */
 router.post('/authentication/:user', function(req, res) {
 	return new Promise(function (resolve, reject) {
+		if (req.params.user === undefined) reject(errors.missingParameters('email'));
+		else if (req.body.password === undefined) reject(errors.missingParameters('password'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
 		var password = req.body.password;
@@ -109,14 +146,15 @@ router.post('/authentication/:user', function(req, res) {
 
 		return accountsBO.login(email, password, device, populate)
 		.then(function(response) {
-			res.status(200);
-			res.send(response);
+			res.status(200).json(response.json);
 			resolve(response);
 		}).catch(function(err){
-			res.status(err.code);
-			res.send(err);
+			res.status(err.code).json(err.json);
 			reject(err);
 		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+		reject(err);
 	});
 });
 
@@ -125,18 +163,21 @@ router.post('/authentication/:user', function(req, res) {
 */
 router.delete('/authentication/:user', function(req, res){
 	return new Promise (function (resolve, reject){
+		if (req.params.user === undefined) reject(errors.missingParameters('email'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.params.user;
 		return accountsBO.logout(email, device)
 		.then(function(response){
-			res.status(200);
-			res.send(response);
+			es.status(200).json(response.json);
 			resolve(response);
 		}).catch(function(err){
-			res.status(err.code);
-			res.send(err);
+			res.status(err.code).json(err.json);
 			reject(err);
 		});
+	}).catch(function(err){
+		es.status(err.code).json(err.json);
+		reject(err);
 	});
 });
 
