@@ -1,9 +1,11 @@
+/** router/classes */
+
 var express = require('express');
 var router = express.Router();
 var useragent = require('express-useragent');
 var errors = require('../mechanisms/error');
 var validator = require('validator');
-var classesBO = require('../business/classes.js')
+var classesBO = require('../business/classes.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -18,21 +20,26 @@ var numberValidate = function(req, res, next, id) {
 // router.param('class_id', numberValidate);
 
 /**
- * @description Get all classes for a school
+ * @description Get all classes for a given school
+ * @param:
+* School
+* Token
+
+* @return:
+Array<Class>
 */
-router.get('/schools/:school_id', function(req, res, next) {
+router.get('/school/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.body.school === undefined) reject(errors.missingParameter('School'));
+		if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		else if (req.params.school_id === undefined) reject(errors.missingParameters('School'));
 		else {
-			return classesBO.getClassesForSchool(school, token)
-			.then(function(classes){
-				res.status(200);
-				res.send(classes);
+			return classesBO.getClassesForSchool(req.params.school_id, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
 				resolve(classes);
 			}).catch(function(err){
-				res.status(err.code);
-				res.send(err);
+				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
@@ -41,47 +48,67 @@ router.get('/schools/:school_id', function(req, res, next) {
 
 /**
 * @description Create a class for a school
+@param:
+* Class
+* School
+* Token
+
+@return:
+* ClassID
 */
 router.post('/school/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.token === undefined) reject(errors.missingParameter('Token'));
-		else if(req.body.class_name === undefined) reject (errors.missingParameter('Class_name'));
+		if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		else if(req.body.class_name === undefined) reject (errors.missingParameters('Class_name'));
 		else {
 			var device = req.useragent.Platform + " " + req.useragent.OS;
-			return classesBO.createClassForSchool(class_name, school, device, token)
-			.then(function(class_id){
-				res.status(200);
-				res.send(class_id);
-				resolve(class_id);
+			return classesBO.createClassForSchool(req.body.class_name, req.params.school_id, device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(response);
 			}).catch(function(err){
-				res.status(err.code);
-				res.send(err);
+				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
 	});
 });
 
-/* Update a class information */
+/** @description Update a class information */
 router.put('/:class_id', function(req, res, next) {
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else {
-		//Should now call business
-
-		//End response
-		res.send('WIP');
-	}
+	return new Promise(function(resolve, reject){
+		if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		else if (req.body.school_id === undefined) reject(errors.missingParameters('school_id'));
+		else if (req.params.class_id === undefined) reject(errors.missingParameters('class_id'));
+		else {
+			return classesBO.update(req.body.school_id, req.params.class_id, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+			}).catch(function(err){
+				res.status(err.code).json(code.json);
+			});
+		}
+	});
 });
 
-/* Mark a Class for deletion */
+/** @description Mark a Class for deletion */
 router.delete('/:class_id', function(req, res, next) {
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else {
-		//Should now call business
-
-		//End response
-		res.send('WIP');
-	}
+	return new Promise(function(resolve, reject){
+		if (req.token === undefined) reject(errors.missingParameter('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameter('rawToken'));
+		else if (req.body.school_id === undefined) reject(errors.missingParameters('school_id'));
+		else if (req.params.class_id === undefined) reject(errors.missingParameters('class_id'));
+		else {
+			return classesBO.delete(req.body.school_id, req.params.class_id, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+			}).catch(function(err){
+				res.status(err.code).json(code.json);
+			});
+		}
+	});
 });
 
 

@@ -20,24 +20,28 @@ var numberValidate = function(req, res, next, id) {
 
 /**
 * @description Create activity to school
+* Parameters:
+* School
+* Description
+* Name
+* Token
+* Return:
+* {activity: id}
 */
 router.post('/:description', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.body.school === undefined) reject(errors.missingParameter('School'));
-		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
-		else if (req.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.params.description === undefined ) reject(errors.missingParameter('description'));
+		if (req.body.school === undefined) reject(errors.missingParameters('school'));
+		else if (req.body.name === undefined) reject(errors.missingParameters('name'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameter('rawToken'));
+		else if (req.params.description === undefined ) reject(errors.missingParameters('description'));
 		else {
 			var device = req.useragent.Platform + " " + req.useragent.OS;
-			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.rawToken)
-			.then(function(activity){
-				res.status(200);
-				res.send(activity);
-				resolve(activity);
+			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
 			}).catch(function(err) {
-				res.status(err.code);
-				res.send(err);
-				reject(err);
+				res.status(err.code).json(err.json);
 			});
 		}
 	});
@@ -50,20 +54,18 @@ router.post("/:activity/classes/:class_id", function(req, res) {
 	//TODO: To adotando o seguinte padrao: quando um parametro de modelo é obrigatório eu boto ele na rota :)
 	//TODO: ve no server antigo, eu usava o numberValidate pra validar se é número, ve como eu usava :)
 	return new Promise(function(){
-		if (req.body.school === undefined) reject(errors.missingParameter('school_id'));
-		else if (req.params.activity === undefined) reject(errors.missingParameter('activity_id'));
-		else if (req.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.params.class_id === undefined ) reject(errors.missingParameter('class_id'));
+		if (req.body.school === undefined) reject(errors.missingParameters('school_id'));
+		else if (req.params.activity === undefined) reject(errors.missingParameters('activity_id'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.params.class_id === undefined ) reject(errors.missingParameters('class_id'));
 		else {
 			var device = req.useragent.Platform + " " + req.useragent.OS;
-			return activitiesBO.addActivityToClass(req.body.school, req.params.class_id, req.params.activity, device, req.rawToken)
-			.then(function(activity){
-				res.status(200);
-				res.send(activity);
-				resolve(activity);
+			return activitiesBO.addActivityToClass(req.body.school, req.params.class_id, req.params.activity, device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(response);
 			}).catch(function(err) {
-				res.status(err.code);
-				res.send(err);
+				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
@@ -72,19 +74,18 @@ router.post("/:activity/classes/:class_id", function(req, res) {
 /**
 * @description get activities for School
 */
-router.get("/:school", function(req, res) {
+router.get("/schools/:school", function(req, res) {
 	return new Promise(function(){
-		if (req.params.school === undefined) reject(errors.missingParameter('School'));
-		else if (req.token === undefined) reject(errors.missingParameter('token'));
+		if (req.params.school === undefined) reject(errors.missingParameters('School'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
 		else {
-			return activitiesBO.getActivitiesForSchool(req.body.school, req.rawToken)
-			.then(function(activities){
-				res.status(200);
-				res.send(activities);
-				resolve(activities);
+			return activitiesBO.getActivities("forSchool", req.body.school, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(response);
 			}).catch(function(err) {
-				res.status(err.code);
-				res.send(err);
+				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
@@ -94,19 +95,18 @@ router.get("/:school", function(req, res) {
 /**
 * @description get activities for Class
 */
-router.get("/:class", function(req, res) {
+router.get("/classes/:class", function(req, res) {
 	return new Promise(function(){
-		if (req.params.class === undefined) reject(errors.missingParameter('Class'));
-		else if (req.token === undefined) reject(errors.missingParameter('token'));
+		if (req.params.class === undefined) reject(errors.missingParameters('Class'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.token === undefined) reject(errors.missingParameters('rawToken'));
 		else {
-			return activitiesBO.getActivitiesForClass(req.body.class, req.rawToken)
-			.then(function(activity){
-				res.status(200);
-				res.send(activity);
-				resolve(activity);
+			return activitiesBO.getActivities("forClass", req.body.class, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(response);
 			}).catch(function(err) {
-				res.status(err.code);
-				res.send(err);
+				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}

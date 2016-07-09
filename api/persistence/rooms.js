@@ -57,7 +57,7 @@ var roomServices = {
  /** @method findWithClassId
   * @description Find all rooms for a class
   * @param classID {int}
-  * @return class array {[Class]}
+  * @return class array {Array<Class>}
   */
 	findWithClassId: function(classID) {
 		return new Promise(function (resolve, reject) {

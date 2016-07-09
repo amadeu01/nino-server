@@ -64,15 +64,12 @@ router.post('/', function(req, res, next) {
 		};
 		return accountsBO.createNewUser(account, profile)
 		.then(function(response) {
-			res.status(200).json(response.json);
+			res.status(response.code).json(response.json);
 			resolve(response);
 		}).catch(function(err) {
 			res.status(err.code).json(err.json);
 			reject(err);
 		});
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
-		reject(err);
 	});
 });
 
@@ -82,22 +79,16 @@ router.post('/', function(req, res, next) {
 router.post('/authentication/:hash', function(req, res, next) {
 	console.log("confirmation");
 	return new Promise(function(resolve, reject){
-		console.log("aqui!");
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
-		console.log("não é bot");
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
 		var password = req.body.password;
-		console.log(password);
-		console.log(hashConfirmation);
 
 		return accountsBO.confirmAccount(hashConfirmation, origin, password)
 		.then(function(response){
-			console.log("deu bom!");
-			res.status(200).json(response.json);
+			res.status(response.code).json(response.json);
 			resolve(response);
 		}).catch(function(err) {
-			console.log("deu merda");
 			res.status(err.code).json(err.json);
 			reject(err);
 		});
@@ -106,26 +97,21 @@ router.post('/authentication/:hash', function(req, res, next) {
 
 /**
 * @description confirmAccount
+* @return if it is authenticated already
 */
 router.get('/authentication/:hash', function(req, res, next) {
 	console.log("confirmation");
 	return new Promise(function(resolve, reject){
-		console.log("aqui!");
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
-		console.log("não é bot");
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
 		var password = req.body.password;
-		console.log(password);
-		console.log(hashConfirmation);
 
 		return accountsBO.confirmAccount(hashConfirmation, origin, password)
 		.then(function(response){
-			console.log("deu bom!");
-			res.status(200).json(response.json);
+			res.status(response.code).json(response.json);
 			resolve(response);
 		}).catch(function(err) {
-			console.log("deu merda");
 			res.status(err.code).json(err.json);
 			reject(err);
 		});
@@ -146,7 +132,7 @@ router.post('/authentication/:user', function(req, res) {
 
 		return accountsBO.login(email, password, device, populate)
 		.then(function(response) {
-			res.status(200).json(response.json);
+			res.status(response.code).json(response.json);
 			resolve(response);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
@@ -164,20 +150,17 @@ router.post('/authentication/:user', function(req, res) {
 router.delete('/authentication/:user', function(req, res){
 	return new Promise (function (resolve, reject){
 		if (req.params.user === undefined) reject(errors.missingParameters('email'));
-		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
-		var email = req.params.user;
-		return accountsBO.logout(email, device)
+
+		return accountsBO.logout(device, req.rawToken)
 		.then(function(response){
-			es.status(200).json(response.json);
+			es.status(response.code).json(response.json);
 			resolve(response);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);
 		});
-	}).catch(function(err){
-		es.status(err.code).json(err.json);
-		reject(err);
 	});
 });
 

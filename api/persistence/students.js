@@ -73,7 +73,7 @@ studentsDAO.create = function(profile, school, room) {
 /** @method findWithRoomId
  * @description Finds all students of a room
  * @param roomID {Int}
- * @return List of rooms {[Room]}
+ * @return List of rooms {Array<Room>}
  */
 
 studentsDAO.findWithRoomId = function(roomID) {

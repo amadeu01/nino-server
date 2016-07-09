@@ -12,9 +12,8 @@ var pool = require('../mechanisms/database.js').pool;
  * @param profile {Profile}
  * @param student {Student}
  * @param account {Account}
- * @return created IDs {Account: id, Profile:id, Guardian:id}
+ * @return created IDs {id}
  */
-
 guardiansDAO.create = function(profile, student, account) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {

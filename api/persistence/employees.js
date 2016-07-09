@@ -12,9 +12,8 @@ var pool = require('../mechanisms/database.js').pool;
  * @param account {Account}
  * @param profile {Profile}
  * @param school {School}
- * @return created items {Account.id, Profile.id, Employee.id}
+ * @return created items {id}
  */
-
 employeesDAO.createEducator = function(account, profile, school) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
