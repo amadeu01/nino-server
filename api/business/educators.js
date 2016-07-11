@@ -18,8 +18,8 @@ var educators = {};
 educators.addEducatorToSchool = function(school_id, profile_id, rawToken, token) {
   new Promise(function(resolve, reject){
 
-  })
-}
+  });
+};
 
 /** @method getEducatorForSchool
  * @description
@@ -30,7 +30,7 @@ educators.addEducatorToSchool = function(school_id, profile_id, rawToken, token)
  */
 educators.getEducatorForSchool = function(school_id, rawToken, token) {
 
-}
+};
 
 /** @method getEducatorForRoom
  * @description
@@ -43,7 +43,7 @@ educators.getEducatorForSchool = function(school_id, rawToken, token) {
  */
 educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, token) {
 
-}
+};
 
 /** @method removeEducatorFromSchool
  * @description
@@ -55,4 +55,4 @@ educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, 
  */
 educators.removeEducatorFromSchool = function(school_id, profile_id, rawToken, token) {
 
-}
+};

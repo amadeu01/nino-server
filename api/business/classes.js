@@ -20,7 +20,7 @@ classes.createClassForSchool = function(class_name, school, device, rawToken, to
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			if (!(credential.device === device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
 			else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id"));
 			else if (!validator.isAlphanumeric(class_name, 'pt-PT')) reject(errors.invalidParameters("class_name"));
 			//TODO: can create class ? no, so reject
@@ -38,7 +38,7 @@ classes.createClassForSchool = function(class_name, school, device, rawToken, to
 			}
     });
   });
-}
+};
 /** @method getClassesForSchool
 * @description Get all classes linked to that given school
 * @param school {id} school id
@@ -60,7 +60,7 @@ classes.getClassesForSchool = function(school, rawToken, token) {
 			});
 		});
 	});
-}
+};
 
 /** @method delete
 * @description delete
@@ -71,7 +71,7 @@ classes.getClassesForSchool = function(school, rawToken, token) {
 */
 classes.delete = function (school_id, class_id, rawToken, token) {
 
-}
+};
 
 /** @method update
 * @description update
@@ -82,6 +82,6 @@ classes.delete = function (school_id, class_id, rawToken, token) {
 */
 classes.update = function (school_id, class_id, rawToken, token) {
 
-}
+};
 
 module.exports = classes;

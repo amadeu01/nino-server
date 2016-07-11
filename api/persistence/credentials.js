@@ -34,15 +34,15 @@ var credentialServices = {
 					});
 				}).then(function(result) {
 				   return new Promise(function (res, rej) {
-					   if (result.rowCount == 0) { //No row was updated, meaning that we need to create one
+					   if (result.rowCount === 0) { //No row was updated, meaning that we need to create one
 						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account.id, device, token], function(err, result) {
 							   if (err) rej(err);
-		 						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+		 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 		 						else if (result.name == "error") rej(result); //Some error occured : rejects
 							   else res(result);
 						   });
 					   } else res(result); // A row was updated, credential is up to date!
-				   })
+				   });
 				}).then(function(result) {
 					return transaction.commit(client)
 					.then(function() {
@@ -88,7 +88,7 @@ var credentialServices = {
 					return new Promise(function(res, rej) {
 						client.query('SELECT device, token FROM credentials WHERE token = $1 ', [token], function(err, result) {
 							if (err) rej(err);
-							else res(result)
+							else res(result);
 						});
 					});
 				}).then(function(result) {
@@ -109,7 +109,7 @@ var credentialServices = {
 						done(err2);
 						reject(err);
 					});
-				})
+				});
 			});
 		});
 	},
@@ -139,7 +139,7 @@ var credentialServices = {
 					});
 				});
 			}
-		})
+		});
 	}
 };
 

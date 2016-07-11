@@ -33,7 +33,7 @@ var classServices = {
 					return new Promise(function(res,rej) {
 						client.query('INSERT INTO classes (name, school, menu) VALUES ($1, $2, $3) RETURNING id',[_class.name, school.id, _class.menu], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
-							else if (result.rowCount == 0) rej(result); //Nothing inserted, rejects so BO can handle
+							else if (result.rowCount === 0) rej(result); //Nothing inserted, rejects so BO can handle
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);	//Proceed to commit transaction
 						});
@@ -73,7 +73,7 @@ var classServices = {
 				}
 				client.query('SELECT id, name, menu FROM classes WHERE school = $1', [schoolID], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
-					else if (result.rowCount == 0) reject(result); //Nothing found, sends error
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Executed correctly
 				});

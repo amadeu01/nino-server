@@ -24,18 +24,18 @@ accountsDAO.createNewUser = function(account, profile) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else res(result);
 					});
 				});
 			}).then(function(result) {
 				return new Promise(function(res, rej) {
-					var response = {}
+					var response = {};
 					response.profile = result.rows[0]; //Sets profile to response
 					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [result.rows[0].id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount == 0) rej (result); //Reject here - will stop transaction
+						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							response.account = result.rows[0]; //Sets account to response
@@ -64,7 +64,7 @@ accountsDAO.createNewUser = function(account, profile) {
 			});
 		});
 	});
-}
+};
 /** @method confirmAccount
 * @description find account with hash and applied true to <tt>account.confirmed</tt>.
 * @param confirmationHash {string} hash when the model is created on the data.
@@ -82,7 +82,7 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 				return new Promise(function(res, rej) {
 					client.query('UPDATE accounts SET (confirmed, password) = ($1, $2) WHERE hash = $3',[true, password, confirmationHash], function(err, result) {
 						if (err) rej(err);
-						else if (result.rowCount == 0) rej(result); //Reject here - will stop transaction
+						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else res(); //Updated one row, user confirmed! - proceed
 					});
@@ -95,7 +95,7 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 				}).catch(function(err) {
 					done(err);
 					reject(err); //Error on transaction, reject to BO
-				})
+				});
 			}).catch(function(err) {
 				return transaction.abort(client)
 				.then(function() {
@@ -108,7 +108,7 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 			});
 		});
 	});
-}
+};
 /** @method recoverAccount
 * @param email {string}
 * @return Promise {Promise}
@@ -119,7 +119,7 @@ accountsDAO.recoverAccount = function(email) {
  //	 transaction.commit();
  //	 resolve(new response(200)); //success
  //});
-}
+};
 
 /** @method findWithHash
  * @param confirmationHash {string}
@@ -134,13 +134,13 @@ accountsDAO.findWithHash = function(confirmationHash) {
 			}
 			client.query('SELECT confirmed FROM accounts WHERE hash = $1', [confirmationHash], function(err, result) {
 				if (err) reject(err); //Error: rejects to BO
-				else if (result.rowCount == 0) reject(result); //Nothing found, sends error
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
 				else resolve(result.rows[0]); //Executed correctly
 			});
 		});
 	});
-}
+};
 
 /** @method logIn - A.K.A find validated with email
  * @param email {string}
@@ -155,13 +155,13 @@ accountsDAO.logIn = function(email) {
 			}
 			client.query('SELECT a.email, a.password, a.cellphone, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p WHERE a.profile = p.id AND a.email = $1 AND a.confirmed = $2', [email, true], function(err, result) {
 				if (err) reject(err);
-				else if (result.rowCount == 0) rej(result); //Nothing found, sends error
+				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
 				else if (result.name == "error") rej(result); //Some error occured : rejects
 				else resolve(result.rows[0]); //Returns what was found
 			});
 		});
 	});
-}
+};
 
 /** @method logOut
 * @param device {Device}
@@ -172,7 +172,7 @@ accountsDAO.logOut = function(device, token) {
 	return new Promise( function(resolve, reject) {
 
 	});
-}
+};
 
 /** @method logOut
 * @param token {string}
@@ -182,7 +182,7 @@ accountsDAO.getAccountDevices = function(token) {
 	return new Promise( function(resolve, reject) {
 		//i dont know
 	});
-}
+};
 
 accountsDAO.findOne = function (criteria) {
 	//return new Promise (function(resolve, reject){
@@ -198,6 +198,6 @@ accountsDAO.findOne = function (criteria) {
 	//		reject(err);
 	//	});
 	//});
-}
+};
 
 module.exports = accountsDAO;

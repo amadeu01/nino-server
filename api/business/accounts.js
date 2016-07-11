@@ -7,7 +7,7 @@ var accountsDAO = require('../persistence/accounts.js');
 var credentialDAO = require('../persistence/credentials.js');
 var jwt = require('../mechanisms/jwt.js');
 var uid = require('uid-safe');
-var mail = require('../mechanisms/mail.js')
+var mail = require('../mechanisms/mail.js');
 var accounts = {};
 
 
@@ -35,7 +35,7 @@ accounts.createNewUser = function(account, profile) {
 			});
 		}
 	});
-}
+};
 
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
@@ -55,7 +55,7 @@ accounts.confirmAccount = function(confirmationHash, origin, password) {
 			reject(errors.internalError(err));
 		});
 	});
-}
+};
 
 /** @method login
 * @param email {string}
@@ -89,7 +89,7 @@ accounts.login = function(email, password, device, populate) {
 			});
 		}
 	});
-}
+};
 
 /** @method logout
 * @param device {string}
