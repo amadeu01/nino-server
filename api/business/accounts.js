@@ -28,7 +28,7 @@ accounts.createNewUser = function(account, profile) {
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
 				mail.sendUserConfirmation(account.email, {hash: account.hash});
-				resolve(newUser);
+				resolve(new response(200, newUser, null));
 			}).catch(function(err) {
 				//var data = err.message + " Create User error";
 				reject(errors.internalError(err));
@@ -42,14 +42,49 @@ accounts.createNewUser = function(account, profile) {
  * @param confirmationHash {string}
  * @param origin {string} it defines from which plataform and os the request come from
  */
-accounts.confirmAccount = function(confirmationHash, origin, password) {
+accounts.confirmAccount = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
 		return accountsDAO.confirmAccount(confirmationHash, password)
 		.then(function(userInfo) {
-			console.log(userInfo);
 			// TODO: check Ipad ?
 			// TODO: if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
-			resolve(new response(200, "Confirmed", null));
+			var account = userInfo.account;
+			var tokenData = {
+				profile: userInfo.profile,
+				device: device,
+				account: account.id
+			};
+			return jwt.create(tokenData)
+			.then(function(token) {
+				return credentialDAO.logIn(device, token, account)
+				.then(function(result) {
+					var response = {token: token};
+					resolve(new response(200, response, null));
+				}).catch(function(err) {
+					reject(errors.internalError(err));
+				});
+			}).catch(function(err){
+				reject(errors.internalError(err));
+			});
+		}).catch(function(err){
+			//var data = "Confirm account error " + err.message;
+			reject(errors.internalError(err));
+		});
+	});
+};
+
+/** @method findWithHash
+ * @description Check if it's already confirmed
+ * @param confirmationHash {string}
+ * @param origin {string} it defines from which plataform and os the request come from
+ */
+accounts.findWithHash = function(confirmationHash) {
+	return new Promise(function(resolve, reject){
+		return accountsDAO.findWithHash(confirmationHash)
+		.then(function(userInfo) {
+			// TODO: check Ipad ?
+			// TODO: if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
+			resolve(new response(200, userInfo, null));
 		}).catch(function(err){
 			//var data = "Confirm account error " + err.message;
 			reject(errors.internalError(err));
@@ -70,12 +105,13 @@ accounts.login = function(email, password, device, populate) {
 		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
 		else {
 			var tokenData = {
-				email: email,
 				device: device
 			};
 
 			return accountsDAO.login(email)
 			.then(function(account) {
+				tokenData.account = account.id;
+				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
 					return credentialDAO.logIn(device, token, account)
@@ -106,6 +142,6 @@ accounts.logout = function(device, token) {
 			reject(errors.internalError(err));
 		});
 	});
-}
+};
 
 module.exports = accounts;

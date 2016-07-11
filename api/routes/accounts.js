@@ -43,13 +43,15 @@ var numberValidate = function(req, res, next, id) {
  */
 router.post('/', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.body.email === undefined) reject(errors.missingParameters('email'));
+		var missingParameters = [];
+		if (req.body.email === undefined) missingParameters.push("email");
 		//else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
-		else if (req.body.name === undefined) reject(errors.missingParameters('name'));
-		else if (req.body.surname === undefined) reject(errors.missingParameters('surname'));
-		else if (req.body.birthdate === undefined) reject(errors.missingParameters('birthdate'));
-		else if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.body.name === undefined) missingParameters.push("name");
+		if (req.body.surname === undefined) missingParameters.push("surname");
+		if (req.body.birthdate === undefined) missingParameters.push("birthdate");
+		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		//Provided that all the needed parameters are there, we call business to validate them
 		var account = {
 			email: req.body.email,
@@ -67,9 +69,10 @@ router.post('/', function(req, res, next) {
 			res.status(response.code).json(response.json);
 			resolve(response);
 		}).catch(function(err) {
-			res.status(err.code).json(err.json);
 			reject(err);
 		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
 	});
 });
 
@@ -77,15 +80,14 @@ router.post('/', function(req, res, next) {
 * @description confirmAccount
 */
 router.post('/authentication/:hash', function(req, res, next) {
-	console.log("confirmation");
 	return new Promise(function(resolve, reject){
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 		else if (req.body.password === undefined) reject(errors.missingParameters("password"));
-		var origin = req.useragent.Platform + " " + req.useragent.OS;
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
 		var password = req.body.password;
 
-		return accountsBO.confirmAccount(hashConfirmation, origin, password)
+		return accountsBO.confirmAccount(hashConfirmation, device, password)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -108,7 +110,7 @@ router.get('/authentication/:hash', function(req, res, next) {
 		var hashConfirmation = req.params.hash;
 
 
-		return accountsBO.confirmAccount(hashConfirmation, origin, password)
+		return accountsBO.findWithHash(hashConfirmation)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);

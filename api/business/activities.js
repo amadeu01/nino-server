@@ -21,7 +21,7 @@ activities.createActivityToSchool = function(school, description, device, rawTok
 		if (!validator.isAlphanumeric(description, 'pt-PT')) reject(errors.invalidParameters("description"));
 		return credentialDAO.read(rawToken)
 		.then (function (credential) {
-      if (!(credential.device === device )) reject(errors.invalidCredential("extraneous device"));
+      if (credential.device !== device ) reject(errors.invalidCredential("extraneous device"));
       //else if (!(credential.account === school)) reject (new response(400, 'extraneous account', 1));
 			return activitiesDAO.createActivityToSchool(school, description)
 			.then(function(response) {
@@ -33,7 +33,7 @@ activities.createActivityToSchool = function(school, description, device, rawTok
 			});
 		});
 	});
-}
+};
 
 /**
 * @description Add activity to the current class in process after validates the <tt>Token</tt>
@@ -48,7 +48,7 @@ activities.addActivityToClass = function(school, class_id, activity, rawToken, t
   return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      if (!(credential.device === device)) reject(errors.invalidCredential("extraneous device"));
+      if (credential.device !== device) reject(errors.invalidCredential("extraneous device"));
       return activitiesDAO.addActivityToClass(school, class_id, activity)
       .then(function(response){
         //should say if it was successful
@@ -59,7 +59,7 @@ activities.addActivityToClass = function(school, class_id, activity, rawToken, t
       });
     });
   });
-}
+};
 
 /**
 * @description get activities for a given <tt>School</tt> after validates the <tt>Token</tt>
@@ -73,7 +73,7 @@ activities.getActivity = function(who, school_class, rawToken, token) {
   return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      if (!(credential.device === device)) reject(errors.invalidCredential("extraneous device"));
+      if (credential.device !== device) reject(errors.invalidCredential("extraneous device"));
       if (who === "forSchool") {
         return activitiesDAO.readActivitiesForSchool(school_class)
         .then(function(activities){
@@ -93,4 +93,4 @@ activities.getActivity = function(who, school_class, rawToken, token) {
       }
     });
   });
-}
+};

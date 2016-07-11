@@ -8,7 +8,7 @@ var errors = require('../mechanisms/error');
 var educators = {};
 
 /** @method addEducatorToSchool
- * @description
+ * @description something
  * @param school_id {id}
  * @param profile_id {id}
  * @param rawToken {string} helps find user credential
@@ -22,7 +22,7 @@ educators.addEducatorToSchool = function(school_id, profile_id, rawToken, token)
 };
 
 /** @method getEducatorForSchool
- * @description
+ * @description something
  * @param school_id {id}
  * @param rawToken {string} helps find user credential
  * @param token {JSON} all information decoded
@@ -33,7 +33,7 @@ educators.getEducatorForSchool = function(school_id, rawToken, token) {
 };
 
 /** @method getEducatorForRoom
- * @description
+ * @description something
  * @param school_id {id}
  * @param class_id {id}
  * @param room_id {id}
@@ -46,7 +46,7 @@ educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, 
 };
 
 /** @method removeEducatorFromSchool
- * @description
+ * @description Remove <tt>Educator</tt> from school
  * @param school_id {id}
  * @param profile_id {id} educators profile
  * @param rawToken {string} helps find user credential

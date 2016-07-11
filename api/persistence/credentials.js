@@ -41,7 +41,9 @@ var credentialServices = {
 		 						else if (result.name == "error") rej(result); //Some error occured : rejects
 							   else res(result);
 						   });
-					   } else res(result); // A row was updated, credential is up to date!
+					   } else {
+							 res(result);
+						 } // A row was updated, credential is up to date!
 				   });
 				}).then(function(result) {
 					return transaction.commit(client)

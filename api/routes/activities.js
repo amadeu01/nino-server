@@ -69,7 +69,7 @@ router.post("/:activity/classes/:class_id", function(req, res) {
 				reject(err);
 			});
 		}
-	})
+	});
 });
 /**
 * @description get activities for School
@@ -89,7 +89,7 @@ router.get("/schools/:school", function(req, res) {
 				reject(err);
 			});
 		}
-	})
+	});
 });
 
 /**
@@ -110,7 +110,7 @@ router.get("/classes/:class", function(req, res) {
 				reject(err);
 			});
 		}
-	})
+	});
 });
 
 

@@ -39,7 +39,7 @@ db.createTables()
 
 db.pool.on('error', function(err, client) {
 	console.log('idle client error', err.message, err.stack);
-})
+});
 
 /**
  * Normalize a port into a number, string, or false.
