@@ -4,7 +4,7 @@ var app = require('../app');
 var errors = require('../mechanisms/error');
 var response = require('../mechanisms/response.js');
 var useragent = require('express-useragent');
-var schoolBO = require('../business/school.js');
+var schoolBO = require('../business/schools.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -40,7 +40,7 @@ router.get('/:school_id', function(req, res, next) {
 	});
 });
 
-/* Update a School */
+/** @description Update a School */
 router.put('/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
@@ -147,7 +147,7 @@ router.post('/', function(req, res, next) {
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		//Should now call business
-
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 		school = {
 			name: req.body.name,
 			email: req.body.email,
@@ -158,7 +158,7 @@ router.post('/', function(req, res, next) {
 			cnpj: req.body.cnpj
 		};
 
-		return schoolBO.create(school, rawToken, token)
+		return schoolBO.create(school, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -182,8 +182,8 @@ router.put('/:school_id/logotype', function(req, res, next) {
 		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-
-		return schoolBO.updateLogo(req.body.image, req.rawToken, req.token)
+		var device = req.useragent.Platform + " " + req.useragent.OS;
+		return schoolBO.updateLogo(req.body.image, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 		}).catch(function(err){
@@ -194,7 +194,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 	});
 });
 
-/* Reads school logotype */
+/** @description Reads school logotype */
 router.get('/:school_id/logotype', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
@@ -204,8 +204,8 @@ router.get('/:school_id/logotype', function(req, res, next) {
 		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-
-		return schoolBO.readLogo(req.body.image, req.rawToken, req.token)
+		var device = req.useragent.Platform + " " + req.useragent.OS;
+		return schoolBO.readLogo(req.body.image, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 		}).catch(function(err){
