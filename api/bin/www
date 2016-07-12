@@ -8,6 +8,35 @@ var app = require('../app');
 var debug = require('debug')('api:server');
 var http = require('http');
 var db = require('../mechanisms/database.js');
+var https = require('https');
+var fs = require('fs');
+
+var options = {
+	key: fs.readFileSync('domain.key'),
+	cert: fs.readFileSync('cd441587be7e460c.crt'),
+	ca: [fs.readFileSync('bundle1.crt'), fs.readFileSync('bundle2.crt'), fs.readFileSync('bundle3.crt')],
+	ciphers: [
+		"ECDHE-RSA-AES256-SHA384",
+		"DHE-RSA-AES256-SHA384",
+		"ECDHE-RSA-AES256-SHA256",
+		"DHE-RSA-AES256-SHA256",
+		"ECDHE-RSA-AES128-SHA256",
+		"DHE-RSA-AES128-SHA256",
+		"HIGH",
+		"!aNULL",
+		"!eNULL",
+		"!EXPORT",
+		"!DES",
+		"!RC4",
+		"!MD5",
+		"!PSK",
+		"!SRP",
+		"!CAMELLIA"
+	].join(':'),
+	honorCipherOrder: true
+};
+
+var HTTPSserver = https.createServer(options, app);
 
 /**
  * Get port from environment and store in Express.
@@ -30,7 +59,7 @@ var server = http.createServer(app);
 db.createTables()
 .then(function(success) {
 	console.log("Server Starting");
-	server.listen(port);
+	HTTPSserver.listen(5000);
 	server.on('error', onError);
 	server.on('listening', onListening);
 }).catch(function(err) {
