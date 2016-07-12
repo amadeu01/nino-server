@@ -29,7 +29,7 @@ var MailgunServices = {
   */
 	sendUserConfirmation: function(userMail, parameters) {
 		var promise = new Promise( function(resolve, reject) {
-			app.render('confirmation', parameters, function(error, html) {
+			app.render('email', parameters, function(error, html) {
 				if (error) reject(error);
 				var message = {
 				  from: 'Nino <naoresponda@ninoapp.com.br>',
@@ -49,6 +49,7 @@ var MailgunServices = {
     return promise;
 	},
   /**
+  * @description subscribe email to maillist 
   * @param email
   * @param name
   * @param vars

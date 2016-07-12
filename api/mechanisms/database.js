@@ -15,7 +15,8 @@ var createAccounts = function(pool) {
 					 'email	VARCHAR UNIQUE NOT NULL,' +
 					 'password	VARCHAR,' + 
 					 'cellphone	VARCHAR,' +
-					 'hash	VARCHAR UNIQUE,' +
+					 'hash	VARCHAR UNIQUE NOT NULL,' +
+					 'passwordHash	VARCHAR UNIQUE,' +
 					 'confirmed	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'lost BOOLEAN NOT NULL DEFAULT false)'
 			, function(err, result) {
@@ -82,7 +83,7 @@ var createSchools = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS schools' +
 				'(id	SERIAL PRIMARY KEY,' +
-				 'owner	INTEGER REFERENCES accounts (id) ON DELETE RESTRICT,' +
+				 'owner	INTEGER REFERENCES profiles (id) ON DELETE RESTRICT NOT NULL,' +
 				 'notificationGroup	VARCHAR,' +
 				 'address	VARCHAR,' +
 				 'cnpj	VARCHAR,' +
@@ -109,7 +110,7 @@ var createClasses = function(pool) {
 			client.query('CREATE TABLE IF NOT EXISTS classes' +
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
-				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
+				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE NOT NULL,' +
 				 'menu	INTEGER REFERENCES menus (id) ON DELETE SET NULL)'
 			, function(err, result) {
 				done();
@@ -130,7 +131,7 @@ var createRooms = function(pool) {
 			client.query('CREATE TABLE IF NOT EXISTS rooms' +
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
-				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
+				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE NOT NULL,' +
 				 'notificationGroup	VARCHAR)'
 			, function(err, result) {
 				done();
@@ -150,7 +151,7 @@ var createStudents = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS students' +
 				'(id	SERIAL PRIMARY KEY,' +
-				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
+				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE NOT NULL,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE SET NULL)'
 			, function(err, result) {

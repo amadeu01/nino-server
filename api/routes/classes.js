@@ -1,7 +1,11 @@
+/** router/classes */
+
 var express = require('express');
 var router = express.Router();
+var useragent = require('express-useragent');
 var errors = require('../mechanisms/error');
 var validator = require('validator');
+var classesBO = require('../business/classes.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -11,52 +15,100 @@ var numberValidate = function(req, res, next, id) {
 	}
 };
 
-//Always check all path parameters for NaN error
-router.param('school_id', numberValidate);
-router.param('class_id', numberValidate);
+// //Always check all path parameters for NaN error
+// router.param('school_id', numberValidate);
+// router.param('class_id', numberValidate);
 
-/* Get all classes for a school */
-router.get('/schools/:school_id', function(req, res, next) {
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else {
-		//Should now call business
-	
-		//End response
-		res.send('WIP');
-	}
+/**
+ * @description Get all classes for a given school
+ * @param:
+* School
+* Token
+
+* @return:
+Array<Class>
+*/
+router.get('/school/:school_id', function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		else if (req.params.school_id === undefined) reject(errors.missingParameters('School'));
+		else {
+			return classesBO.getClassesForSchool(req.params.school_id, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(classes);
+			}).catch(function(err){
+				res.status(err.code).json(err.json);
+				reject(err);
+			});
+		}
+	});
 });
 
-/* Create a class for a school */
-router.post('/schools/:school_id', function(req, res, next) {
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else {
-		//Should now call business
-	
-		//End response
-		res.send('WIP');
-	}
+/**
+* @description Create a class for a school
+@param:
+* Class
+* School
+* Token
+
+@return:
+* ClassID
+*/
+router.post('/school/:school_id', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		else if(req.body.class_name === undefined) reject (errors.missingParameters('Class_name'));
+		else {
+			var device = req.useragent.Platform + " " + req.useragent.OS;
+			return classesBO.createClassForSchool(req.body.class_name, req.params.school_id, device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(response);
+			}).catch(function(err){
+				res.status(err.code).json(err.json);
+				reject(err);
+			});
+		}
+	});
 });
 
-/* Update a class information */
+/** @description Update a class information */
 router.put('/:class_id', function(req, res, next) {
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else {
-		//Should now call business
-	
-		//End response
-		res.send('WIP');
-	}
+	return new Promise(function(resolve, reject){
+		if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		else if (req.body.school_id === undefined) reject(errors.missingParameters('school_id'));
+		else if (req.params.class_id === undefined) reject(errors.missingParameters('class_id'));
+		else {
+			return classesBO.update(req.body.school_id, req.params.class_id, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+			}).catch(function(err){
+				res.status(err.code).json(code.json);
+			});
+		}
+	});
 });
 
-/* Mark a Class for deletion */
+/** @description Mark a Class for deletion */
 router.delete('/:class_id', function(req, res, next) {
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token"));
-	else {
-		//Should now call business
-	
-		//End response
-		res.send('WIP');
-	}
+	return new Promise(function(resolve, reject){
+		if (req.token === undefined) reject(errors.missingParameter('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameter('rawToken'));
+		else if (req.body.school_id === undefined) reject(errors.missingParameters('school_id'));
+		else if (req.params.class_id === undefined) reject(errors.missingParameters('class_id'));
+		else {
+			return classesBO.delete(req.body.school_id, req.params.class_id, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+			}).catch(function(err){
+				res.status(err.code).json(code.json);
+			});
+		}
+	});
 });
 
 

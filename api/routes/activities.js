@@ -1,4 +1,4 @@
-/*
+/** router/activities
 *
 * Last to modify: Amadeu Cavalcante
 */
@@ -8,6 +8,7 @@ var router = express.Router();
 var errors = require('../mechanisms/error');
 var validator = require('validator');
 var activitiesBO = require('../business/activities.js');
+var useragent = require('express-useragent');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -19,89 +20,97 @@ var numberValidate = function(req, res, next, id) {
 
 /**
 * @description Create activity to school
+* Parameters:
+* School
+* Description
+* Name
+* Token
+* Return:
+* {activity: id}
 */
 router.post('/:description', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.body.school === undefined) reject(errors.missingParameter('School'));
-		else if (req.body.name === undefined) reject(errors.missingParameter('name'));
-		else if (req.body.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.params.description === undefined ) reject(errors.missingParameter('description'));
+		if (req.body.school === undefined) reject(errors.missingParameters('school'));
+		else if (req.body.name === undefined) reject(errors.missingParameters('name'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameter('rawToken'));
+		else if (req.params.description === undefined ) reject(errors.missingParameters('description'));
 		else {
-			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, req.body.token)
-			.then(function(activity){
-				res.status(response.status).json(response.json);
-				resolve(response);
+			var device = req.useragent.Platform + " " + req.useragent.OS;
+			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating activities"
-				reject(new response(400, data, 1));
+				res.status(err.code).json(err.json);
 			});
 		}
 	});
-}
+});
 
 /**
 * @description Add activity to class
 */
-router.post("/add/:activity", function(req, res) {
+router.post("/:activity/classes/:class_id", function(req, res) {
+	//TODO: To adotando o seguinte padrao: quando um parametro de modelo é obrigatório eu boto ele na rota :)
+	//TODO: ve no server antigo, eu usava o numberValidate pra validar se é número, ve como eu usava :)
 	return new Promise(function(){
-		if (req.body.school === undefined) reject(errors.missingParameter('School'));
-		else if (req.params.activity === undefined) reject(errors.missingParameter('Activity ID'));
-		else if (req.body.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.body.class === undefined ) reject(errors.missingParameter('description'));
+		if (req.body.school === undefined) reject(errors.missingParameters('school_id'));
+		else if (req.params.activity === undefined) reject(errors.missingParameters('activity_id'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.params.class_id === undefined ) reject(errors.missingParameters('class_id'));
 		else {
-			return activitiesBO.addActivityToClass(req.body.school, req.params.activity, req.params.class, req.body.token)
-			.then(function(activity){
-				res.status(response.status).json(response.json);
+			var device = req.useragent.Platform + " " + req.useragent.OS;
+			return activitiesBO.addActivityToClass(req.body.school, req.params.class_id, req.params.activity, device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
 				resolve(response);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating Class"
-				reject(new response(400, data, 1));
+				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	})
+	});
 });
 /**
 * @description get activities for School
 */
-router.get("/:school", function(req, res) {
+router.get("/schools/:school", function(req, res) {
 	return new Promise(function(){
-		if (req.params.school === undefined) reject(errors.missingParameter('School'));
-		else if (req.body.token === undefined) reject(errors.missingParameter('token'));
+		if (req.params.school === undefined) reject(errors.missingParameters('School'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
 		else {
-			return activitiesBO.getActivitiesForSchool(req.body.school, req.body.token)
-			.then(function(activity){
-				res.status(response.status).json(response.json);
+			return activitiesBO.getActivities("forSchool", req.body.school, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
 				resolve(response);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating Class"
-				reject(new response(400, data, 1));
+				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	})
+	});
 });
 
 /**
 * @description get activities for Class
 */
-router.get("/:class", function(req, res) {
+router.get("/classes/:class", function(req, res) {
 	return new Promise(function(){
-		if (req.params.class === undefined) reject(errors.missingParameter('School'));
-		else if (req.body.token === undefined) reject(errors.missingParameter('token'));
+		if (req.params.class === undefined) reject(errors.missingParameters('Class'));
+		else if (req.token === undefined) reject(errors.missingParameters('token'));
+		else if (req.token === undefined) reject(errors.missingParameters('rawToken'));
 		else {
-			return activitiesBO.getActivitiesForClass(req.body.class, req.body.token)
-			.then(function(activity){
-				res.status(response.status).json(response.json);
+			return activitiesBO.getActivities("forClass", req.body.class, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
 				resolve(response);
 			}).catch(function(err) {
-				res.status(error.status).json(error.json);
-				var data = err.message + " Problem creating Class"
-				reject(new response(400, data, 1));
+				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	})
+	});
 });
 
 

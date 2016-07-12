@@ -1,4 +1,4 @@
-/** @module persistence */
+/** @module persistence/credentials */
 
 var models = require('../models');
 var errors = require('../mechanisms/error');
@@ -28,18 +28,71 @@ var credentialServices = {
 					return new Promise(function(res, rej) {
 						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account.id, device], function(err, result) {
 							if (err) rej(err);
+							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);
 						});
 					});
 				}).then(function(result) {
 				   return new Promise(function (res, rej) {
-					   if (result.rowCount == 0) { //No row was updated, meaning that we need to create one
+					   if (result.rowCount === 0) { //No row was updated, meaning that we need to create one
 						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account.id, device, token], function(err, result) {
 							   if (err) rej(err);
+		 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+		 						else if (result.name == "error") rej(result); //Some error occured : rejects
 							   else res(result);
 						   });
-					   } else res(result);
-				   })
+					   } else {
+							 res(result);
+						 } // A row was updated, credential is up to date!
+				   });
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve();
+					}).catch(function(err) {
+						done(err);
+						reject(err);
+					});
+				}).catch(function(err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err);
+					}).catch(function(err2) {
+						done(err2);
+						reject(err2);
+					});
+				});
+			});
+		});
+	},
+	delete: function(token) {
+		return models.waterline.collections.credential.destroy({token: token});
+	},
+	update: function(token, newToken) {
+		return models.waterline.collections.credential.update({token: token}, {token: newToken});
+	},
+	/** @method read
+	 *	@description Read a <tt>Credential</tt> provided a <tt>Token</tt>
+	 *	@param token <Token>
+	 *	@return credential <Credential>
+	 */
+	read: function(token) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, dont) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('SELECT device, token FROM credentials WHERE token = $1 ', [token], function(err, result) {
+							if (err) rej(err);
+							else res(result);
+						});
+					});
 				}).then(function(result) {
 					return transaction.commit(client)
 					.then(function() {
@@ -61,15 +114,6 @@ var credentialServices = {
 				});
 			});
 		});
-	},
-	delete: function(token) {
-		return models.waterline.collections.credential.destroy({token: token});
-	},
-	update: function(token, newToken) {
-		return models.waterline.collections.credential.update({token: token}, {token: newToken});
-	},
-	read: function(token) {
-		return models.waterline.collections.credential.findOne({token: token}).populate('device');
 	},
 	loginEducator: function(email, password, device) {
 		return models.waterline.collections.user.findOne({email: email}).populate('roles', {
@@ -97,7 +141,7 @@ var credentialServices = {
 					});
 				});
 			}
-		})
+		});
 	}
 };
 
