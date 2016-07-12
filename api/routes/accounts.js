@@ -48,7 +48,7 @@ router.post('/', function(req, res, next) {
 		//else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
 		if (req.body.name === undefined) missingParameters.push("name");
 		if (req.body.surname === undefined) missingParameters.push("surname");
-		if (req.body.birthdate === undefined) missingParameters.push("birthdate");
+		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
