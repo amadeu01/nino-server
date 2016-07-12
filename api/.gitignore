@@ -1,5 +1,8 @@
 node_modules
 .tmp
 nino-doc
+*.key
+*.csr
+*.crt
 clear_db.sh
 dbclean.txt
