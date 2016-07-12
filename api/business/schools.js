@@ -94,3 +94,5 @@ schools.delete = function(school_id, rawToken, token) {
     });
   });
 };
+
+module.exports = schools;

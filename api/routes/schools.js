@@ -26,8 +26,9 @@ router.get('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return schoolBO.read(req.params.school_id, req.rawToken, req.token)
+		return schoolBO.read(req.params.school_id, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -49,8 +50,9 @@ router.put('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return schoolBO.update(req.params.school_id, req.rawToken, req.token)
+		return schoolBO.update(req.params.school_id, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -72,8 +74,9 @@ router.delete('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return schoolBO.delete(req.params.school_id, req.rawToken, req.token)
+		return schoolBO.delete(req.params.school_id, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -97,6 +100,7 @@ router.post('/:school_id/notifications/guardians', function(req, res, next) {
 		if (req.body.data === undefined) missingParameters.push("data");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -114,6 +118,7 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 		if (req.body.data === undefined) missingParameters.push("data");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		var device = req.useragent.Platform + " " + req.useragent.OS;
 
 	}).catch(function(err){
 		res.status(err.code).json(err.json);

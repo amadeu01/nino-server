@@ -6,3 +6,6 @@ var roomsDAO = require('../persistence/rooms.js');
 var credentialDAO = require('../persistence/credentials.js');
 var errors = require('../mechanisms/error');
 var rooms = {};
+
+
+module.exports = rooms;
