@@ -94,3 +94,5 @@ activities.getActivity = function(who, school_class, rawToken, token) {
     });
   });
 };
+
+module.exports = activities;

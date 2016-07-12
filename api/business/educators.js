@@ -106,3 +106,4 @@ educators.removeEducatorFromSchool = function(school_id, profile_id, rawToken, t
     });
   });
 };
+module.exports = educators;
