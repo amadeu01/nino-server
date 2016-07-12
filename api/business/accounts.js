@@ -58,8 +58,8 @@ accounts.confirmAccount = function(confirmationHash, device, password) {
 			.then(function(token) {
 				return credentialDAO.logIn(device, token, account)
 				.then(function(result) {
-					var response = {token: token};
-					resolve(new response(200, response, null));
+					var resp = {token: token};
+					resolve(new response(200, resp, null));
 				}).catch(function(err) {
 					reject(errors.internalError(err));
 				});

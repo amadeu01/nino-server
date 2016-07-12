@@ -124,12 +124,12 @@ router.get('/authentication/:hash', function(req, res, next) {
 /**
 * @description login. <tt>email</tt> is used to identify the user.
 */
-router.post('/authentication/:user', function(req, res) {
+router.post('/authentication', function(req, res) {
 	return new Promise(function (resolve, reject) {
-		if (req.params.user === undefined) reject(errors.missingParameters('email'));
+		if (req.body.user === undefined) reject(errors.missingParameters('email'));
 		else if (req.body.password === undefined) reject(errors.missingParameters('password'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
-		var email = req.params.user;
+		var email = req.body.user;
 		var password = req.body.password;
 		var populate = req.query.populate;
 
@@ -150,9 +150,10 @@ router.post('/authentication/:user', function(req, res) {
 /**
 * @description logout
 */
-router.delete('/authentication/:user', function(req, res){
+router.delete('/authentication', function(req, res){
 	return new Promise (function (resolve, reject){
-		if (req.params.user === undefined) reject(errors.missingParameters('email'));
+		//TODO: receber device como parametro para poder deslogar a distancia! e o email nao ta sendo usado pra nada, nao tem pq ta aqui :)
+		if (req.body.user === undefined) reject(errors.missingParameters('email'));
 		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 

@@ -49,7 +49,7 @@ var credentialServices = {
 					return transaction.commit(client)
 					.then(function() {
 						done();
-						resolve();
+						resolve({token: token});
 					}).catch(function(err) {
 						done(err);
 						reject(err);
