@@ -17,7 +17,21 @@ var educators = {};
  */
 educators.addEducatorToSchool = function(school_id, profile_id, rawToken, token) {
   new Promise(function(resolve, reject){
-
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      //TODO: validate token information
+      return employeesDAO.read(profile_id)
+      .then(function(educator){
+        return employeesDAO.addEducatorToSchool(school_id, profile_id)
+        .then(function(result){
+          resolve(new response(200, result, null));
+        }).catch(function(err){
+          reject(errors.internalError(err));
+        });
+      });
+    }).catch(function(err){
+      reject(errors.internalError(err));
+    });
   });
 };
 
@@ -29,7 +43,19 @@ educators.addEducatorToSchool = function(school_id, profile_id, rawToken, token)
  * @return response {Promise}
  */
 educators.getEducatorForSchool = function(school_id, rawToken, token) {
-
+  new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      //TODO: validate token information
+      //TODO: there is permition ?
+      return employeesDAO.readFromSchool(school_id)
+      .then(function(educators) {
+        resolve(new response(200, educators, null));
+      }).catch(function(err){
+        reject(errors.internalError(err));
+      });
+    });
+  });
 };
 
 /** @method getEducatorForRoom
@@ -42,7 +68,19 @@ educators.getEducatorForSchool = function(school_id, rawToken, token) {
  * @return response {Promise}
  */
 educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, token) {
-
+  new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      //TODO: validate token information
+      //TODO: there is permition ?
+      return employeesDAO.readFromRoom(school_id, class_id, room_id)
+      .then(function(educators) {
+        resolve(new response(200, educators, null));
+      }).catch(function(err){
+        reject(errors.internalError(err));
+      });
+    });
+  });
 };
 
 /** @method removeEducatorFromSchool
@@ -54,5 +92,17 @@ educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, 
  * @return response {Promise}
  */
 educators.removeEducatorFromSchool = function(school_id, profile_id, rawToken, token) {
-
+  new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      //TODO: validate token information
+      //TODO: there is permition ?
+      return employeesDAO.removeEducator(school_id, profile_id)
+      .then(function(educator) {
+        resolve(new response(200, educator, null));
+      }).catch(function(err){
+        reject(errors.internalError(err));
+      });
+    });
+  });
 };
