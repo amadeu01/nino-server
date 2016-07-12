@@ -2,12 +2,15 @@ var express = require('express');
 var router = express.Router();
 var app = require('../app');
 var errors = require('../mechanisms/error');
+var response = require('../mechanisms/response.js');
+var useragent = require('express-useragent');
+var schoolBO = require('../business/school.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).json(errors.invalidParameters("path_isNaN").clean);
+		res.status(400).json(errors.missingParameters("path_isNaN").clean);
 	}
 };
 
@@ -16,153 +19,202 @@ router.param('school_id', numberValidate);
 
 /* Get School's info. */
 router.get('/:school_id', function(req, res, next) {
-	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+		return schoolBO.read(req.params.school_id, req.rawToken, req.token)
+		.then(function(response){
+			res.status(response.code).json(response.json);
+			resolve(response);
+		}).catch(function(err){
+			res.status(err.code).json(err.json);
+			reject(err);
+		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
 });
 
 /* Update a School */
 router.put('/:school_id', function(req, res, next) {
-	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else if (req.body.name === undefined) {
-		if (req.body.addr === undefined) {
-			if (req.body.cnpj === undefined || !validator.isNumeric(req.body.cnpj)) {
-				if (req.body.telephone === undefined || !validator.isNumeric(req.body.telephone)) {
-					if (req.body.email === undefined || !validator.isEmail(req.body.email)) {
-						if (req.body.owner === undefined || !validator.isNumeric(req.body.owner)){
-							//Every parameter for the update is null, req is empty
-							res.status(400).json(errors.invalidParameters("empty").clean);
-						}
-					}
-				}
-			}
-		}
-	}
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+		return schoolBO.update(req.params.school_id, req.rawToken, req.token)
+		.then(function(response){
+			res.status(response.code).json(response.json);
+			resolve(response);
+		}).catch(function(err){
+			res.status(err.code).json(err.json);
+			reject(err);
+		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
 });
 
-/* Delete a School */
+/** @description Delete a School */
 router.delete('/:school_id', function(req, res, next) {
-	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+		return schoolBO.delete(req.params.school_id, req.rawToken, req.token)
+		.then(function(response){
+			res.status(response.code).json(response.json);
+			resolve(response);
+		}).catch(function(err){
+			res.status(err.code).json(err.json);
+			reject(err);
+		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
 });
 
-/* Send push notification to all school guardians */
+/** @description Send push notification to all school guardians */
 router.post('/:school_id/notifications/guardians', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data").clean);
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
+		if (req.body.data === undefined) missingParameters.push("data");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
 });
 
-/* Send push notification to all school educators */
+/** @description Send push notification to all school educators */
 router.post('/:school_id/notifications/educators', function(req, res, next) {
 	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else if (req.body.data === undefined) res.status(400).json(errors.invalidParameters("data").clean);
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
+		if (req.body.data === undefined) missingParameters.push("data");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
 });
 
-/* Create new school */
+/** @description Create new school
+* @param Owner {id}
+* @param Addr {string}
+* @param Cnpj {int}
+* @param Logo {link}
+* @param Telephone {int}
+* @param Name {string}
+* @param Email {string}
+* @return School {id}
+*/
 router.post('/', function(req, res, next) {
 	//TODO: amadeu, da uma checada nesse daqui :) acredito que eh o melhor pra fazer depois do login e do cadastro
 	//Check parameters
-	if (req.body.school === undefined) res.status(400).json(errors.invalidParameters("school").clean);
-	else if (req.body.school.name === undefined) res.status(400).json(errors.invalidParameters("school.name").clean);
-	else if (req.body.school.email === undefined || !validator.isEmail(req.body.school.email)) res.status(400).json(errors.invalidParameters("school.email").clean);
-	else if (req.body.owner === undefined) res.status(400).json(errors.invalidParameters("owner").clean);
-	else if (req.body.owner.name === undefined) res.status(400).json(errors.invalidParameters=== undefined("owner.name").clean);
-	else if (req.body.owner.surname === undefined) res.status(400).json(errors.invalidParameters("owner.surname").clean);
-	else if (req.body.owner.password === undefined) res.status(400).json(errors.invalidParameters("owner.password").clean);
-	else if (req.body.owner.email === undefined || !validator.isEmail(req.body.owner.email)) res.status(400).json(errors.invalidParameters("owner.email").clean);
-	else if (req.body.owner.cel === undefined || !validator.isNumeric(req.body.owner.cel)) res.status(400).json(errors.invalidParameters("owner.cel").clean);
-	else {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.body.owner === undefined) missingParameters.push("school");
+		if (req.body.addr === undefined) missingParameters.push("addr");
+		if (req.body.cnpj === undefined) missingParameters.push("CNPJ");
+		//if (req.body.logo === undefined) missingParameters.push("logo");
+		if (req.body.name === undefined) missingParameters.push("name");
+		if (req.body.telephone === undefined) missingParameters.push("telephone");
+		if (req.body.email === undefined ) missingParameters.push("email");
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		//Should now call business
-		parameters = {
-			owner: {
-				name: req.body.owner.name,
-				surname: req.body.owner.surname,
-				password: req.body.owner.password,
-				email: req.body.owner.email,
-				cel: req.body.owner.cel
-			},
-			school: {
-				name: req.body.school.name,
-				email: req.body.school.email
-			},
+
+		school = {
+			name: req.body.name,
+			email: req.body.email,
+			owner: req.body.owner,
+			addr: req.body.addr,
+			logo: req.body.logo,
+			telephone: req.body.telephone,
+			cnpj: req.body.cnpj
 		};
-		if (req.body.school.telephone !== undefined && validator.isNumeric(req.body.school.telephone)) {
-			parameters.school.telephone = req.body.school.telephone;
-		}
-		if (req.body.school.addr !== undefined) {
-			parameters.school.addr = req.body.school.addr;
-		}
-		if (req.body.school.cnpj !== undefined && validator.isNumeric(req.body.school.cnpj)) {
-			parameters.school.cnpj = req.body.school.cnpj;
-		}
 
-
-		services.schools.create(parameters)
-		.then(function(success) {
-			res.json(success);
-		})
-		.catch(function(error) {
-			res.status(error.httpCode).json(error.clean);
+		return schoolBO.create(school, rawToken, token)
+		.then(function(response){
+			res.status(response.code).json(response.json);
+			resolve(response);
+		}).catch(function(err){
+			res.status(err.code).json(err.json);
+			reject(err);
 		});
-		//End response
-	}
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
+
 });
 
 /* Updates school logotype */
 router.put('/:school_id/logotype', function(req, res, next) {
-	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else if (req.body.image === undefined) res.status(400).json(errors.invalidParameters("image").clean);
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		//Check parameters
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+		return schoolBO.updateLogo(req.body.image, req.rawToken, req.token)
+		.then(function(response){
+			res.status(response.code).json(response.json);
+		}).catch(function(err){
+			res.status(err.code).json(err.json);
+		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
 });
 
 /* Reads school logotype */
 router.get('/:school_id/logotype', function(req, res, next) {
-	//Check parameters
-	if (req.token === undefined) res.status(400).json(errors.invalidParameters("token").clean);
-	else {
-		//Should now call business
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		//Check parameters
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
-		//End response
-		res.send('WIP');
-	}
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+
+		return schoolBO.readLogo(req.body.image, req.rawToken, req.token)
+		.then(function(response){
+			res.status(response.code).json(response.json);
+		}).catch(function(err){
+			res.status(err.code).json(err.json);
+		});
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
+
 });
 
 module.exports = router;
