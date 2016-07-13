@@ -18,7 +18,7 @@ awsMec.uploadProfile = function(file) {
 		};
 		s3.putObject(params, function(err, data) {
 		  if (err) reject(err);
-		  else     result(data);
+		  else     resolve(data);
 		});
 	});
 }
