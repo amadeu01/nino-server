@@ -80,7 +80,7 @@ var credentialServices = {
 	 */
 	read: function(token) {
 		return new Promise(function(resolve, reject) {
-			pool.connect(function(err, client, dont) {
+			pool.connect(function(err, client, done) {
 				if (err) {
 					reject(err);
 					return;
@@ -90,7 +90,9 @@ var credentialServices = {
 					return new Promise(function(res, rej) {
 						client.query('SELECT device, token FROM credentials WHERE token = $1 ', [token], function(err, result) {
 							if (err) rej(err);
-							else res(result);
+							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+							else if (result.name == "error") rej(result); //Some error occured : rejects
+							else res(result.rows[0]);
 						});
 					});
 				}).then(function(result) {
