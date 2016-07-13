@@ -140,9 +140,9 @@ router.post('/', function(req, res, next) {
 	//Check parameters
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
-		if (req.body.owner === undefined) missingParameters.push("school");
+		//if (req.body.owner === undefined) missingParameters.push("school"); TODO: owner vem peo token, e nao entendi o pq do push com nome school pra parametro faltante haha
 		if (req.body.addr === undefined) missingParameters.push("addr");
-		if (req.body.cnpj === undefined) missingParameters.push("CNPJ");
+		//if (req.body.cnpj === undefined) missingParameters.push("CNPJ"); TODO: nao precisamos ainda :)
 		//if (req.body.logo === undefined) missingParameters.push("logo");
 		if (req.body.name === undefined) missingParameters.push("name");
 		if (req.body.telephone === undefined) missingParameters.push("telephone");
