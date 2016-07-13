@@ -15,7 +15,7 @@ module.exports = {
 	*/
 	create: function(tokenData) {
 		var token = jwt.sign(tokenData, jwtSecret, {
-      expiresIn: 1440 // expires in 24 hours
+      expiresIn: 14400 // expires in 24 hours
     });
 		return new Promise(function(resolve, reject) {resolve(token);});
 	},
@@ -33,7 +33,7 @@ module.exports = {
 					delete decoded.iat;
 					delete decoded.exp;
 					var newToken = jwt.sign(decoded, jwtSecret, {
-			      expiresIn: 1440 // expires in 24 hours
+			      expiresIn: 14400 // expires in 24 hours
 			    });
 					resolve(newToken);
 	      }

@@ -26,7 +26,7 @@ router.get('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
+		var device = req.useragent.platform + " " + req.useragent.os;
 
 		return schoolBO.read(req.params.school_id, device, req.rawToken, req.token)
 		.then(function(response){
@@ -152,7 +152,7 @@ router.post('/', function(req, res, next) {
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		//Should now call business
-		var device = req.useragent.Platform + " " + req.useragent.OS;
+		var device = req.useragent.platform + " " + req.useragent.os; //TODO: eh minusculo o platform e os, tava dando erro
 		school = {
 			name: req.body.name,
 			email: req.body.email,
@@ -162,7 +162,6 @@ router.post('/', function(req, res, next) {
 			telephone: req.body.telephone,
 			cnpj: req.body.cnpj
 		};
-
 		return schoolBO.create(school, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);

@@ -83,7 +83,7 @@ router.post('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 		else if (req.body.password === undefined) reject(errors.missingParameters("password"));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
+		var device = req.useragent.platform + " " + req.useragent.os;
 		var hashConfirmation = req.params.hash;
 		var password = req.body.password;
 

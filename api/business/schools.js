@@ -12,24 +12,25 @@ var schools = {};
 
 *@return School {id}
 */
-schools.createSchool = function(school, rawToken, token) {
+schools.create = function(school, device, rawToken, token) {
 	//TODO: func do BO que vai validar as coisas e mandar o DAO criar. O route ta fazendo boa parte da validação, separa isso depois de modo que lá só verifique se existe e aqui valide :)
+	console.log("In BO");
 	return new Promise(function(resolve, reject) {
-    return credentialDAO.read(rawToken)
-    .then(function(credential){
+	    return credentialDAO.read(rawToken)
+   		.then(function(credential){
 			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id"));
-			//TODO: can read school ? no, so reject
+			//else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); //TODO: aqui nao temos o school_id :v
 			else {
-
-				return schoolDAO.create(school)
+				return schoolDAO.create(school, token.profile)
 				.then(function(school_id){
 					resolve(new response(200, school_id, null));
 				}).catch(function(err){
 					reject(errors.internalError(err));
 				});
 			}
-    });
+    	}).catch(function(err) {
+			reject(errors.internalError(err));//TODO: Amadeu, esse catch nao existia, sepa por isso que nao retornas as vezes
+		});
   });
 };
 

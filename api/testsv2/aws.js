@@ -11,7 +11,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 	
 	test('Should upload txt to S3', function() {
-		awss3.uploadProfile("hahahahaha")
+		return awss3.uploadProfile("hahahahaha")
 		// return awss3.uploadProfile(new Buffer.from('Testhehe'))
 		.then(function(done) {
 			console.log(done);

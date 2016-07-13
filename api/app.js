@@ -60,14 +60,14 @@ app.use(function(req, res, next) {
   if (token) {
     // verifies secret and checks exp - Gets params and proceed! <-TODO
 		req.rawToken = token;
-		mechanisms.jwt.validate(token)
+		jwt.validate(token)
 		.then(function(decoded) {
-			// console.log(decoded);
+			//console.log(decoded);
 			req.token = decoded;
 	    next();
 		})
 		.catch(function(error) {
-			// console.log(error);
+			//console.log(error);
 			next();
 		});
   } else {
