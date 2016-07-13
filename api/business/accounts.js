@@ -38,11 +38,11 @@ accounts.createNewUser = function(account, profile) {
 };
 
 /** @method createNewUserTest
- * @description Create a new Profile and links it to a new Account. Validates required parameters and returns a promisse, calling the DAO to write to the DB
+ * @description Create a new Profile and links it to a new Account. Validates required parameters and returns a promisse, calling the DAO to write to the DB. <p> This only for mocha test.
  * @param account
  * @param profile
  * @param device {string} it defines from which plataform and os the request come from
- * @return promise {Promise} if it works it returns JSON with profile id and account id
+ * @return promise {Promise} if it works it returns JSON with profile id and account id, also returns hash
  */
 accounts.createNewUserTest = function(account, profile) {
 	return new Promise(function(resolve, reject) {
@@ -87,8 +87,8 @@ accounts.confirmAccount = function(confirmationHash, device, password) {
 			.then(function(token) {
 				return credentialDAO.logIn(device, token, account)
 				.then(function(result) {
-					var resp = {token: token};
-					resolve(new response(200, resp, null));
+					var res = {token: token};
+					resolve(new response(200, res, null));
 				}).catch(function(err) {
 					reject(errors.internalError(err));
 				});
@@ -121,7 +121,7 @@ accounts.findWithHash = function(confirmationHash) {
 	});
 };
 
-/** @method login
+/** @method logIn
 * @param email {string}
 * @param password {string}
 * @param device
@@ -129,7 +129,7 @@ accounts.findWithHash = function(confirmationHash) {
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
-accounts.login = function(email, password, device) {
+accounts.logIn = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(email)) reject(errors.invalidParameters("email"));
 		else {
@@ -139,15 +139,18 @@ accounts.login = function(email, password, device) {
 
 			return accountsDAO.logIn(email)
 			.then(function(account) {
-				console.log("AccountsBO will print:");
-				console.log(account);
+				// console.log("AccountsBO will print:");
+				// console.log(account);
 				tokenData.account = account.id;
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
 					return credentialDAO.logIn(device, token, account)
 					.then(function(result) {
-						resolve(new response(200, result, null));
+						//console.log("CredentialDAO Login res");
+						//console.log(result);
+						var res = {token: token};
+						resolve(new response(200, res, null));
 					});
 				});
 			}).catch(function(err){

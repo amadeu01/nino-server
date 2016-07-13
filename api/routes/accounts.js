@@ -120,7 +120,7 @@ router.get('/authentication/:hash', function(req, res, next) {
 });
 
 /**
-* @description login. <tt>email</tt> is used to identify the user.
+* @description logIn. <tt>email</tt> is used to identify the user.
 */
 router.post('/authentication', function(req, res) {
 	return new Promise(function (resolve, reject) {
@@ -131,7 +131,7 @@ router.post('/authentication', function(req, res) {
 		var password = req.body.password;
 		var populate = req.query.populate;
 
-		return accountsBO.login(email, password, device, populate)
+		return accountsBO.logIn(email, password, device, populate)
 		.then(function(res) {
 			res.status(res.code).json(res.json);
 			resolve(res);

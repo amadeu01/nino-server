@@ -72,7 +72,7 @@ suite('Account Profile and Credential BO', function () {
 	});
 
 	test('Should Check whether the user is confirmed or not', function() {
-		console.log(confirmationHash);
+		//console.log(confirmationHash);
 
 		return accountsBO.findWithHash(confirmationHash)
 		.then(function(res){
@@ -118,7 +118,7 @@ suite('Account Profile and Credential BO', function () {
 
 	test('Should Login in the server', function() {
 
-		return accountsBO.login(email, password, device)
+		return accountsBO.logIn(email, password, device)
 		.then(function(res) {
 			console.log("Entrou");
 			var data = "Code: " + JSON.stringify(res.code) + "\n";
