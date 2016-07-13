@@ -65,9 +65,9 @@ router.post('/', function(req, res, next) {
 			gender: req.body.gender
 		};
 		return accountsBO.createNewUser(account, profile)
-		.then(function(response) {
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(res) {
+			res.status(res.code).json(res.json);
+			resolve(res);
 		}).catch(function(err) {
 			reject(err);
 		});
@@ -88,9 +88,9 @@ router.post('/authentication/:hash', function(req, res, next) {
 		var password = req.body.password;
 
 		return accountsBO.confirmAccount(hashConfirmation, device, password)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(res){
+			res.status(res.code).json(res.json);
+			resolve(res);
 		}).catch(function(err) {
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -111,9 +111,9 @@ router.get('/authentication/:hash', function(req, res, next) {
 
 
 		return accountsBO.findWithHash(hashConfirmation)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(res){
+			res.status(res.code).json(res.json);
+			resolve(res);
 		}).catch(function(err) {
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -134,9 +134,9 @@ router.post('/authentication', function(req, res) {
 		var populate = req.query.populate;
 
 		return accountsBO.login(email, password, device, populate)
-		.then(function(response) {
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(res) {
+			res.status(res.code).json(res.json);
+			resolve(res);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -157,10 +157,10 @@ router.delete('/authentication', function(req, res){
 		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return accountsBO.logout(device, req.rawToken)
-		.then(function(response){
-			es.status(response.code).json(response.json);
-			resolve(response);
+		return accountsBO.logout(device, req.rawToken, req.token)
+		.then(function(res){
+			es.status(res.code).json(res.json);
+			resolve(res);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);

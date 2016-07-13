@@ -58,19 +58,19 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
-	
+
 	test('Should check if Confirmed Account - Before', function () {
 		return account.findWithHash("mysupersecrethash")
 		.then(function(res) {
 			console.log(res);
-			if (res.confirmed == false) return (res);
+			if (res.confirmed === false) return (res);
 			else throw(res);
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
 
 	test('Should confirm Account email', function() {
@@ -81,19 +81,19 @@ suite('Account Profile and Credential Persistence', function () {
 		}).catch(function (err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
-	
+
 	test('Should check if Confirmed Account - After', function () {
 		return account.findWithHash("mysupersecrethash")
 		.then(function(res) {
 			console.log(res);
-			if (res.confirmed == true) return (res);
+			if (res.confirmed === true) return (res);
 			else throw(res);
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
-		})
+		});
 	});
 
 	test('Should return logIn select', function() {
@@ -123,9 +123,9 @@ suite('Account Profile and Credential Persistence', function () {
 			notificationGroup: "mydupergroup",
 			address: "righthererightnow",
 			cnpj: "mycnpj",
-			email: "myemail@schoolX.com",
+			email: "myemail@schoolX.com",
 			name: "School X"
-		}
+		};
 		return school.create(schoolMod, prfl)
 		.then(function(done) {
 			schl = done.school;
@@ -140,7 +140,7 @@ suite('Account Profile and Credential Persistence', function () {
 	test('Should Create Class to School', function() {
 		var myClass = {
 			name: "Prezinho",
-		}
+		};
 		return _class.create(myClass, schl)
 		.then(function(done) {
 			clss = done.class;
@@ -156,7 +156,7 @@ suite('Account Profile and Credential Persistence', function () {
 		var myRoom = {
 			name: "Um",
 			notificationGroup: "thisroomgroup"
-		}
+		};
 		return room.create(myRoom, clss)
 		.then(function(done) {
 			rm = done.room;
@@ -220,7 +220,7 @@ suite('Account Profile and Credential Persistence', function () {
 			email: "alfredo.cnt@gmail.com",
 			cellphone: "+5519912345678",
 			hash: "thirdhashsuchsecretwowmuchwow"
-		}
+		};
 		return guardian.create(guardprof, stdnt, guardAcc)
 		.then(function(done) {
 			grdn = done.guardian;
@@ -253,7 +253,7 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
-	
+
 	test('Should Read Rooms for Class', function() {
 		return room.findWithClassId(clss.id)
 		.then(function(done) {
@@ -264,7 +264,7 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
-	
+
 	test('Should Read Students for Room', function() {
 		return student.findWithRoomId(rm.id)
 		.then(function(done) {
