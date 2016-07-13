@@ -72,7 +72,7 @@ suite('School Services', function () {
 			throw error;
 		});
   });
-	
+
   test('Update School', function () {
 		var school = require('../services/schools.js');
 		return school.update({email: 'email@mail.com'}, {name: 'Escola Danilo'})
@@ -83,7 +83,7 @@ suite('School Services', function () {
 			assert.strictEqual(read.name, 'Escola Danilo', 'Data not coherent - name');
 		});
 	});
-	
+
   test('Delete School', function () {
 		var school = require('../services/schools.js');
 		var educator = require('../services/educators');

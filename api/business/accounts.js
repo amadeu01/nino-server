@@ -37,6 +37,35 @@ accounts.createNewUser = function(account, profile) {
 	});
 };
 
+/** @method createNewUserTest
+ * @description Create a new Profile and links it to a new Account. Validates required parameters and returns a promisse, calling the DAO to write to the DB
+ * @param account
+ * @param profile
+ * @param device {string} it defines from which plataform and os the request come from
+ * @return promise {Promise} if it works it returns JSON with profile id and account id
+ */
+accounts.createNewUserTest = function(account, profile) {
+	return new Promise(function(resolve, reject) {
+		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
+		else if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
+		else if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
+		else {
+			account.hash = uid.sync(100);
+			var hash = account.hash;
+			return accountsDAO.createNewUser(account, profile)
+			.then(function(newUser) {
+				//console.log(hash);
+				newUser.hash = hash;
+				//mail.sendUserConfirmation(account.email, {hash: account.hash});
+				resolve(new response(200, newUser, null));
+			}).catch(function(err) {
+				//var data = err.message + " Create User error";
+				reject(errors.internalError(err));
+			});
+		}
+	});
+};
+
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param confirmationHash {string}
@@ -100,16 +129,18 @@ accounts.findWithHash = function(confirmationHash) {
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
-accounts.login = function(email, password, device, populate) {
+accounts.login = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
+		if (!validator.isEmail(email)) reject(errors.invalidParameters("email"));
 		else {
 			var tokenData = {
 				device: device
 			};
 
-			return accountsDAO.login(email)
+			return accountsDAO.logIn(email)
 			.then(function(account) {
+				console.log("AccountsBO will print:");
+				console.log(account);
 				tokenData.account = account.id;
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)

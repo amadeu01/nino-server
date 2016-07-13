@@ -103,12 +103,10 @@ router.post('/authentication/:hash', function(req, res, next) {
 * @return if it is authenticated already
 */
 router.get('/authentication/:hash', function(req, res, next) {
-	console.log("confirmation");
 	return new Promise(function(resolve, reject){
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
-
 
 		return accountsBO.findWithHash(hashConfirmation)
 		.then(function(res){
