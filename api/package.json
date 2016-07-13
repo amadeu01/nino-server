@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "aws-sdk": "~2.2.45",
+    "aws-sdk": "^2.2.48",
     "bcrypt": "^0.8.5",
     "body-parser": "~1.15.2",
     "chai": "~3.5.0",
