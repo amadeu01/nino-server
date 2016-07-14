@@ -15,7 +15,7 @@ var pool = require('../mechanisms/database.js').pool;
  * @return Promise {Promise} resolves Room with ID
  */
 var roomServices = {
-	create: function(room, _class) {
+	create: function(room, _class_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
@@ -25,7 +25,7 @@ var roomServices = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res,rej) {
-						client.query('INSERT INTO rooms (name, class, notificationGroup) VALUES ($1, $2, $3) RETURNING id',[room.name, _class.id, room.notificationGroup], function(err, result) {
+						client.query('INSERT INTO rooms (name, class, notificationGroup) VALUES ($1, $2, $3) RETURNING id',[room.name, _class_id, room.notificationGroup], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
 							else if (result.rowCount == 0) rej(result); //Nothing inserted, rejects so BO can handle
 							else if (result.name == "error") rej(result); //Some error occured : rejects
