@@ -229,7 +229,7 @@ accounts.logInTest = function(email, password, device) {
 					.then(function(result) {
 						//console.log("CredentialDAO Login res");
 						//console.log(result);
-						console.log(tokenData);
+						//console.log(tokenData);
 						var res = {
 							rawToken: token,
 							token: tokenData

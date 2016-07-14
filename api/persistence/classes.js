@@ -66,6 +66,7 @@ var classServices = {
  */
 	findWithSchoolId: function(school_id){
 		return new Promise(function (resolve, reject) {
+			//console.log("findWithSchoolId");
 			pool.connect(function(err, client, done) {
 				if (err) {
 					reject(err); //Connection error, aborts already
