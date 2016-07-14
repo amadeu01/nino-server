@@ -32,7 +32,7 @@ classes.createClassForSchool = function(class_name, school_id, device, rawToken,
 				};
 				return classesDAO.create(_class, school_id)
 				.then(function(class_id) {
-					console.log(class_id);
+					//console.log(class_id);
 					resolve(new response(200, class_id, null));
 				}).catch(function(err){
 					//var data = err.message + " Create class for school";
@@ -49,14 +49,17 @@ classes.createClassForSchool = function(class_name, school_id, device, rawToken,
 * @param token {JSON} all information decoded
 * @return response {Promise} resolving the array of classes. If succeful, returns Array<Class> with <p> id <p> menu.id <p> name
 */
-classes.getClassesForSchool = function(school, rawToken, token) {
+classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 	new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id"));
+			if (credential.device !== device) reject(errors.invalidParameters("device"));
+			//if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); //Validates only string
 			//it can getting all classes ? token info ?
-			return classesDAO.findWithSchoolId(school)
+			console.log(classesDAO);
+			return classesDAO.findWithSchoolId(school_id)
 			.then(function(result){
+				console.log(result);
 				resolve(new response(200, result, null));
 			}).catch(function(err){
 				reject(errors.internalError(err));
@@ -72,18 +75,18 @@ classes.getClassesForSchool = function(school, rawToken, token) {
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-classes.delete = function (school_id, class_id, rawToken, token) {
+classes.delete = function (school_id, class_id, device, rawToken, token) {
 
 };
 
 /** @method update
 * @description update
 * @param school_id {id}
-* @param class_id {id}
+* @param classInfo {JSON}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-classes.update = function (school_id, class_id, rawToken, token) {
+classes.update = function (school_id, classInfo, device, rawToken, token) {
 
 };
 
