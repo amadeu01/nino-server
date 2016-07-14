@@ -18,7 +18,6 @@ profiles.uploadProfilePicture = function(profileID, rawToken, device, part) {
 					}).catch(function(err) {
 						reject(errors.internalError(err));
 					});
-				});
 			}
 		})
 		.catch(function(err) {
