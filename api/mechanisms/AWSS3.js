@@ -30,4 +30,18 @@ awsMec.upload = function(file, name, bucket, size) {
 	});
 }
 
+awsMec.downloadProfilePic = function(name) {
+	return awsMec.download(name, profilePicBucket);
+}
+
+awsMec.download = function(name, bucket) {
+	return new Promise(function(resolve, reject) {
+		imgStream = s3.getObject({
+			Bucket: bucket,
+			Key: name
+		}).createReadStream();
+		resolve(imgStream);
+	});
+}
+
 module.exports = awsMec;
