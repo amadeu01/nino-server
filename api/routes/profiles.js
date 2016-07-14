@@ -14,7 +14,7 @@ var numberValidate = function(req, res, next, id) {
 };
 
 
-router.post("/me/picture", function(req, res, next) {
+router.put("/me/picture", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");

@@ -9,9 +9,14 @@ var s3 = new aws.S3();
 var awsMec = {};
 
 var profilePicBucket = 'ninoapp-profiles-files-01';
+var logotypeBucket = 'ninoapp-logotype-files-01';
 
 awsMec.uploadProfilePic = function(file, name, size) {
 	return awsMec.upload(file, name, profilePicBucket, size);
+}
+
+awsMec.uploadLogotype = function(file, name, size) {
+	return awsMec.upload(file, name, logotypeBucket, size);
 }
 
 awsMec.upload = function(file, name, bucket, size) {
