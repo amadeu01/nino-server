@@ -6,6 +6,7 @@ var schoolDAO = require('../persistence/schools.js');
 var credentialDAO = require('../persistence/credentials.js');
 var errors = require('../mechanisms/error');
 var schools = {};
+var awss3 = require('../mechanisms/AWSS3.js');
 
 
 /** @method create

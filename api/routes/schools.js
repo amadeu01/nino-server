@@ -5,6 +5,7 @@ var errors = require('../mechanisms/error');
 var response = require('../mechanisms/response.js');
 var useragent = require('express-useragent');
 var schoolBO = require('../business/schools.js');
+var multiparty = require('multiparty');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -192,6 +193,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
+			var gotImage = false;
 			var form = new multiparty.Form();
 			form.on('error', function(err) {
 				reject(errors.internalError(err));
@@ -202,7 +204,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 					return;
 				}
 				gotImage = true;
-				schoolBO.setLogo(req.params.school_id, rawToken, req.device, part)
+				schoolBO.setLogo(req.params.school_id, req.rawToken, req.device, part)
 				.then(function(result) {
 					res.status(result.code).json(result.json);
 					resolve(result);
