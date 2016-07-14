@@ -98,8 +98,24 @@ schools.update = function(school, device, rawToken, token) {
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-schools.setLogo = function() {
-
+schools.setLogo = function(school_id, rawToken, device, part) {
+	return new Promise(function(resolve, reject) {
+		credentialDAO.read(rawToken)
+		.then(function(credential){
+			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			else {
+					awss3.uploadLogotype(part, "logo_" + school_id + ".png", part.byteCount)
+					.then(function(success) {
+						resolve( new response(200, success, null));
+					}).catch(function(err) {
+						reject(errors.internalError(err));
+					});
+			}
+		})
+		.catch(function(err) {
+			return(errors.internalError(err));
+		});
+	});
 };
 /** @method delete
 * @param schoolInfo {JSON} what will be updated
