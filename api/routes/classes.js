@@ -21,18 +21,17 @@ var numberValidate = function(req, res, next, id) {
 
 /**
  * @description Get all classes for a given school
- * @param:
-* School
-* Token
-
-* @return:
-Array<Class>
+ * @param School
+ * @param Token
+ * @return Classes {Array<Class>}
 */
 router.get('/school/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.token === undefined) reject(errors.missingParameters('token'));
-		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
-		else if (req.params.school_id === undefined) reject(errors.missingParameters('School'));
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
 			return classesBO.getClassesForSchool(req.params.school_id, req.rawToken, req.token)
 			.then(function(response){

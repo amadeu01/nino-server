@@ -6,3 +6,4 @@ nino-doc
 *.crt
 clear_db.sh
 dbclean.txt
+results

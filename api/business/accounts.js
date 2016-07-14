@@ -37,6 +37,35 @@ accounts.createNewUser = function(account, profile) {
 	});
 };
 
+/** @method createNewUserTest
+ * @description Create a new Profile and links it to a new Account. Validates required parameters and returns a promisse, calling the DAO to write to the DB. <p> This only for mocha test.
+ * @param account
+ * @param profile
+ * @param device {string} it defines from which plataform and os the request come from
+ * @return promise {Promise} if it works it returns JSON with profile id and account id, also returns hash
+ */
+accounts.createNewUserTest = function(account, profile) {
+	return new Promise(function(resolve, reject) {
+		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
+		else if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
+		else if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
+		else {
+			account.hash = uid.sync(100);
+			var hash = account.hash;
+			return accountsDAO.createNewUser(account, profile)
+			.then(function(newUser) {
+				//console.log(hash);
+				newUser.hash = hash;
+				//mail.sendUserConfirmation(account.email, {hash: account.hash});
+				resolve(new response(200, newUser, null));
+			}).catch(function(err) {
+				//var data = err.message + " Create User error";
+				reject(errors.internalError(err));
+			});
+		}
+	});
+};
+
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param confirmationHash {string}
@@ -58,8 +87,47 @@ accounts.confirmAccount = function(confirmationHash, device, password) {
 			.then(function(token) {
 				return credentialDAO.logIn(device, token, account)
 				.then(function(result) {
-					var resp = {token: token};
-					resolve(new response(200, resp, null));
+					var res = {token: token};
+					resolve(new response(200, res, null));
+				}).catch(function(err) {
+					reject(errors.internalError(err));
+				});
+			}).catch(function(err){
+				reject(errors.internalError(err));
+			});
+		}).catch(function(err){
+			//var data = "Confirm account error " + err.message;
+			reject(errors.internalError(err));
+		});
+	});
+};
+
+/** @method confirmAccountTest
+ * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
+ * @param confirmationHash {string}
+ * @param origin {string} it defines from which plataform and os the request come from
+ */
+accounts.confirmAccountTest = function(confirmationHash, device, password) {
+	return new Promise(function(resolve, reject){
+		return accountsDAO.confirmAccount(confirmationHash, password)
+		.then(function(userInfo) {
+			// TODO: check Ipad ?
+			// TODO: if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
+			var account = userInfo.account;
+			var tokenData = {
+				profile: userInfo.profile,
+				device: device,
+				account: account.id
+			};
+			return jwt.create(tokenData)
+			.then(function(token) {
+				return credentialDAO.logIn(device, token, account)
+				.then(function(result) {
+					var res = {
+						rawToken: token,
+						token: tokenData
+					};
+					resolve(new response(200, res, null));
 				}).catch(function(err) {
 					reject(errors.internalError(err));
 				});
@@ -92,7 +160,7 @@ accounts.findWithHash = function(confirmationHash) {
 	});
 };
 
-/** @method login
+/** @method logIn
 * @param email {string}
 * @param password {string}
 * @param device
@@ -100,23 +168,73 @@ accounts.findWithHash = function(confirmationHash) {
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
-accounts.login = function(email, password, device, populate) {
+accounts.logIn = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
+		if (!validator.isEmail(email)) reject(errors.invalidParameters("email"));
 		else {
 			var tokenData = {
 				device: device
 			};
 
-			return accountsDAO.login(email)
+			return accountsDAO.logIn(email)
 			.then(function(account) {
+				// console.log("AccountsBO will print:");
+				// console.log(account);
 				tokenData.account = account.id;
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
 					return credentialDAO.logIn(device, token, account)
 					.then(function(result) {
-						resolve(new response(200, result, null));
+						//console.log("CredentialDAO Login res");
+						//console.log(result);
+						var res = {token: token};
+						resolve(new response(200, res, null));
+					});
+				});
+			}).catch(function(err){
+				//var data = "Login error " + err.message;
+				reject(errors.internalError(err));
+			});
+		}
+	});
+};
+
+/** @method logIn
+* @description Only for test sake
+* @param email {string}
+* @param password {string}
+* @param device
+* @param populate {Array} tells which list must be populated
+* @return Token {string}
+* @return response {Promise} If successful, returns user id insede data
+*/
+accounts.logInTest = function(email, password, device) {
+	return new Promise(function(resolve, reject) {
+		if (!validator.isEmail(email)) reject(errors.invalidParameters("email"));
+		else {
+			var tokenData = {
+				device: device
+			};
+
+			return accountsDAO.logIn(email)
+			.then(function(account) {
+				// console.log("AccountsBO will print:");
+				//console.log(account);
+				tokenData.account = account.id;
+				tokenData.profile = account.profile;
+				return jwt.create(tokenData)
+				.then(function(token) {
+					return credentialDAO.logIn(device, token, account)
+					.then(function(result) {
+						//console.log("CredentialDAO Login res");
+						//console.log(result);
+						console.log(tokenData);
+						var res = {
+							rawToken: token,
+							token: tokenData
+						};
+						resolve(new response(200, res, null));
 					});
 				});
 			}).catch(function(err){
@@ -131,7 +249,7 @@ accounts.login = function(email, password, device, populate) {
 * @param device {string}
 * @param rawToken {string}
 */
-accounts.logout = function(device, token) {
+accounts.logout = function(device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		//TODO: if (jwt.validate(token, device) === )
 		return credentialDAO.logout(device, token)

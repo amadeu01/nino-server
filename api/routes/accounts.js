@@ -65,13 +65,14 @@ router.post('/', function(req, res, next) {
 			gender: req.body.gender
 		};
 		return accountsBO.createNewUser(account, profile)
-		.then(function(response) {
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp) {
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err) {
 			reject(err);
 		});
 	}).catch(function(err){
+		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
@@ -88,11 +89,11 @@ router.post('/authentication/:hash', function(req, res, next) {
 		var password = req.body.password;
 
 		return accountsBO.confirmAccount(hashConfirmation, device, password)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err) {
-			res.status(err.code).json(err.json);
+			resp.status(err.code).json(err.json);
 			reject(err);
 		});
 	});
@@ -103,17 +104,15 @@ router.post('/authentication/:hash', function(req, res, next) {
 * @return if it is authenticated already
 */
 router.get('/authentication/:hash', function(req, res, next) {
-	console.log("confirmation");
 	return new Promise(function(resolve, reject){
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
 
-
 		return accountsBO.findWithHash(hashConfirmation)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err) {
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -122,7 +121,7 @@ router.get('/authentication/:hash', function(req, res, next) {
 });
 
 /**
-* @description login. <tt>email</tt> is used to identify the user.
+* @description logIn. <tt>email</tt> is used to identify the user.
 */
 router.post('/authentication', function(req, res) {
 	return new Promise(function (resolve, reject) {
@@ -133,10 +132,10 @@ router.post('/authentication', function(req, res) {
 		var password = req.body.password;
 		var populate = req.query.populate;
 
-		return accountsBO.login(email, password, device, populate)
-		.then(function(response) {
-			res.status(response.code).json(response.json);
-			resolve(response);
+		return accountsBO.logIn(email, password, device, populate)
+		.then(function(resp) {
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -152,15 +151,16 @@ router.post('/authentication', function(req, res) {
 */
 router.delete('/authentication', function(req, res){
 	return new Promise (function (resolve, reject){
-		//TODO: receber device como parametro para poder deslogar a distancia! e o email nao ta sendo usado pra nada, nao tem pq ta aqui :)
-		if (req.body.user === undefined) reject(errors.missingParameters('email'));
-		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+
+		//if (req.body.user === undefined) reject(errors.missingParameters('email'));
+		if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		if (req.token === undefined) reject(errors.missingParameters('token'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return accountsBO.logout(device, req.rawToken)
-		.then(function(response){
-			es.status(response.code).json(response.json);
-			resolve(response);
+		return accountsBO.logout(device, req.rawToken, req.token)
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);

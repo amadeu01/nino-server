@@ -12,8 +12,8 @@ var activities = {};
 * @description Create activity to a given <tt>School</tt> if it has autorized to do so, by token authentication.
 * @param School {id}
 * @param Description {string}
-* @param rawToken {JSON} token decoded
-* @param token {string} hash token saved.
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 * @return response {Promise} if successful, it returns response with successful boolean data set true.
 */
 activities.createActivityToSchool = function(school, description, device, rawToken, token) {
@@ -39,8 +39,8 @@ activities.createActivityToSchool = function(school, description, device, rawTok
 * @description Add activity to the current class in process after validates the <tt>Token</tt>
 * @param School {id}
 * @param Class {id}
-* @param rawToken {string}
-* @param token {JSON}
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 * @param activity {Activity} parameters filled with information about activity
 * @return response {Promise} if successful, it returns response with successful boolean data set true.
 */
@@ -64,8 +64,8 @@ activities.addActivityToClass = function(school, class_id, activity, rawToken, t
 /**
 * @description get activities for a given <tt>School</tt> after validates the <tt>Token</tt>
 * @param school_class {id} school_id or class_id
-* @param rawToken {string}
-* @param token {JSON}
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 * @return response {Promise} if successful, it returns an array of activities (<b>Array<activities></b>) inside response data.
 */
 activities.getActivity = function(who, school_class, rawToken, token) {

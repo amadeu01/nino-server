@@ -41,7 +41,7 @@ router.get('/schools/:school_id/*', function(req, res, next){
 		else if (req.params.school_id === undefined) reject(errors.missingParameters('school_id'));
 		else {
 			if (req.query.room === undefined) {
-				return educators.getEducatorForSchool(school, rawToken, token)
+				return educators.getEducatorForSchool(school, req.rawToken, req.token)
 				.then(function(response){
 					res.status(response.code).json(response.json);
 					resolve(classes);
