@@ -6,13 +6,19 @@
 var aws = require('aws-sdk');
 var s3 = new aws.S3();
 
-var awsMec = {}
+var awsMec = {};
 
-awsMec.uploadProfile = function(file) {
+var profilePicBucket = 'ninoapp-profiles-files-01';
+
+awsMec.uploadProfilePic = function(file, name) {
+	awsMec.upload(file, name, profilePicBucket);
+}
+
+awsMec.upload = function(file, name, bucket) {
 	return new Promise(function(resolve, reject) {
 		var params = {
-		  Bucket: 'ninoapp-profiles-files-01', /* required */
-		  Key: 'mynewfile.txt', /* required */
+		  Bucket: bucket, /* required */
+		  Key: name, /* required */
 		  ACL: 'private',
 		  Body: file
 		};
