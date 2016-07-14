@@ -22,6 +22,7 @@ router.put("/me/picture", function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
+			var gotImage = false;
 			var form = new multiparty.Form();
 			form.on('error', function(err) {
 				reject(errors.internalError(err));
