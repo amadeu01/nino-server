@@ -8,6 +8,7 @@ var assert = require('assert');
 var accountsBO = require('../business/accounts.js');
 var schoolsBO = require('../business/schools.js');
 var classesBO = require('../business/classes.js');
+var roomsBO = require('../business/rooms.js');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
@@ -16,6 +17,7 @@ var password = "superpassword";
 var email = "amadeu@ninoapp.com.br";
 var cellphone = "+5585981501028";
 var class_name = "Classe teste";
+var room_name = "Sala teste";
 var school = {
 	name: "Escola Feliz",
 	email: "escolafeliz@escolafeliz.com.br",
@@ -24,11 +26,14 @@ var school = {
 	telephone: "+558534768162",
 	cnpj: "08123939412"
 };
+
 var token;
 var rawToken;
 var confirmationHash = "";
 var school_id;
 var class_id;
+var room_id;
+
 
 suite('Account Profile and Credential BO', function () {
 
@@ -96,8 +101,6 @@ suite('Account Profile and Credential BO', function () {
 	});
 
 	test('Should confirm account and ', function() {
-
-
 		return accountsBO.confirmAccountTest(confirmationHash, device, password)
 		.then(function(res){
 			var data = "Code: " + JSON.stringify(res.code) + "\n";
@@ -173,7 +176,7 @@ suite('Account Profile and Credential BO', function () {
 
 		test('Should Read school', function() {
 			//this.timeout(5000); //timeout
-			console.log(school_id);
+			//console.log(school_id);
 			return schoolsBO.read(school_id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
@@ -216,7 +219,76 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		// test('Should Create Guardian to student', function() {
-		//
+		// test('Should Read Class For school', function() {
+		// 	console.log(classesBO);
+		// 	return classesBO.getClassesForSchool(school_id, device, rawToken, token)
+		// 	.then(function(res){
+		// 		console.log("classesTest");
+		// 		console.log(res);
+		// 		var data = "Code: " + JSON.stringify(res.code) + "\n";
+		// 		data += "##########################\n";
+		// 		data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+		// 		data += "##########################\n";
+		// 		data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+		// 		return fs.writeFile("./results/Results_for_ReadClassFrom.txt", data, 'utf8', function(err) {
+		// 			if(err) {
+		// 				return console.log(err);
+		// 			}
+		// 			console.log("The file results was saved!");
+		// 		});
+		// 	}).catch(function(err){
+		// 		console.log("Deu Erro Criando Classe hue hue hue");
+		// 		console.log(err);
+		// 	});
 		// });
+
+		//Romm
+
+		test('Should Create Room For Class', function() {
+			var room = {
+				name: room_name
+			};
+			return roomsBO.createToClass(room, class_id, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				room_id = res.json.data.room.id;
+				return fs.writeFile("./results/Results_for_CreateRoom.txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log(err);
+			});
+		});
+
+
+		test('Should Read Room From Class', function() {
+
+			return roomsBO.getRoomFromClass(class_id, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+
+				return fs.writeFile("./results/Results_for_ReadRoomFromClass.txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log(err);
+			});
+		});
+
 });

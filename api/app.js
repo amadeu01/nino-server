@@ -53,6 +53,10 @@ app.use(function(req, res, next) {
 
 // Gets user
 app.use(function(req, res, next) {
+	var device = req.useragent.platform + " " + req.useragent.os;
+	if (device) {
+		req.device = device;
+	} // TODO: should throw error, cause there is no device ?!
 	//console.log(req.useragent);
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];

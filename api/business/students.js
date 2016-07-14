@@ -9,6 +9,8 @@ var students = {};
 
 /** @method
 * @description something
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 */
 students.readForRoom = function(room_id, device, rawToken, token ) {
   return new Promise(function(resolve, reject){
@@ -28,6 +30,8 @@ students.readForRoom = function(room_id, device, rawToken, token ) {
 
 /** @method
 * @description something
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 */
 students.readForGuardian = function(student, guardian, device, rawToken, token) {
   return new Promise(function(resolve, reject){
@@ -41,6 +45,8 @@ students.readForGuardian = function(student, guardian, device, rawToken, token) 
 };
 /** @method
 * @description something
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 */
 students.addForGuardian = function(student, guardian, device, rawToken, token ) {
   return new Promise(function(resolve, reject){
@@ -54,6 +60,8 @@ students.addForGuardian = function(student, guardian, device, rawToken, token ) 
 };
 /** @method
 * @description something
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
 */
 students.removeFromGuardian = function(student, guardian, device, rawToken, token ) {
   return new Promise(function(resolve, reject){

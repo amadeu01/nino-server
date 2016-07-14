@@ -9,23 +9,43 @@ var s3 = new aws.S3();
 var awsMec = {};
 
 var profilePicBucket = 'ninoapp-profiles-files-01';
+var logotypeBucket = 'ninoapp-logotype-files-01';
 
-awsMec.uploadProfilePic = function(file, name) {
-	awsMec.upload(file, name, profilePicBucket);
+awsMec.uploadProfilePic = function(file, name, size) {
+	return awsMec.upload(file, name, profilePicBucket, size);
 }
 
-awsMec.upload = function(file, name, bucket) {
+awsMec.uploadLogotype = function(file, name, size) {
+	return awsMec.upload(file, name, logotypeBucket, size);
+}
+
+awsMec.upload = function(file, name, bucket, size) {
 	return new Promise(function(resolve, reject) {
 		var params = {
-		  Bucket: bucket, /* required */
-		  Key: name, /* required */
-		  ACL: 'private',
-		  Body: file
+			Bucket: bucket, /* required */
+			Key: name, /* required */
+			ACL: 'private',
+			Body: file,
+			ContentLength: size
 		};
 		s3.putObject(params, function(err, data) {
-		  if (err) reject(err);
-		  else     resolve(data);
+			if (err) reject(err);
+			else     resolve(data);
 		});
+	});
+}
+
+awsMec.downloadProfilePic = function(name) {
+	return awsMec.download(name, profilePicBucket);
+}
+
+awsMec.download = function(name, bucket) {
+	return new Promise(function(resolve, reject) {
+		imgStream = s3.getObject({
+			Bucket: bucket,
+			Key: name
+		}).createReadStream();
+		resolve(imgStream);
 	});
 }
 
