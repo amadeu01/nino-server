@@ -17,10 +17,10 @@ var schoolServices = {
 	 * @method create
 	 * @description Creates a new school with profile.id as owner
 	 * @param school {School}
-	 * @param profile {Profile}
-	 * @return promise {Promise} resolves to new School
+	 * @param profile {id}
+	 * @return promise {Promise} resolves to new School and employee <p><b>Model</b> ``` {"school":{"id":1},"employee":{"id":1}}```
 	 */
-	create: function(school, profile) {
+	create: function(school, profile_id) {
 		//TODO; preciso botar campo de active das coisas do DB :O
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -32,7 +32,7 @@ var schoolServices = {
 				.then(function() {
 					return new Promise(function(res,rej) {
 						var response = {};
-						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[profile.id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
+						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[profile_id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
 							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -44,7 +44,7 @@ var schoolServices = {
 					});
 				}).then(function(response) {
 					return new Promise(function(res,rej) {
-						client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id',[profile.id, response.school.id], function(err, result) {
+						client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id',[profile_id, response.school.id], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
 							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects

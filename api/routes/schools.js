@@ -17,7 +17,7 @@ var numberValidate = function(req, res, next, id) {
 //Always check all path parameters for NaN error
 router.param('school_id', numberValidate);
 
-/* Get School's info. */
+/** @description Get School's info. */
 router.get('/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
@@ -42,6 +42,7 @@ router.get('/:school_id', function(req, res, next) {
 });
 
 /** @description Update a School */
+//TODO: what will be updated ?
 router.put('/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
@@ -52,7 +53,16 @@ router.put('/:school_id', function(req, res, next) {
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return schoolBO.update(req.params.school_id, device, req.rawToken, req.token)
+		school = { //it could be undefined, must be check what will be updated
+			name: req.body.name,
+			email: req.body.email,
+			owner: req.body.owner,
+			addr: req.body.addr,
+			telephone: req.body.telephone,
+			cnpj: req.body.cnpj
+		};
+
+		return schoolBO.update(school, device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -140,7 +150,6 @@ router.post('/', function(req, res, next) {
 	//Check parameters
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
-		//if (req.body.owner === undefined) missingParameters.push("school"); TODO: owner vem peo token, e nao entendi o pq do push com nome school pra parametro faltante haha
 		if (req.body.addr === undefined) missingParameters.push("addr");
 		//if (req.body.cnpj === undefined) missingParameters.push("CNPJ"); TODO: nao precisamos ainda :)
 		//if (req.body.logo === undefined) missingParameters.push("logo");
@@ -151,21 +160,19 @@ router.post('/', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		//Should now call business
 		var device = req.useragent.platform + " " + req.useragent.os; //TODO: eh minusculo o platform e os, tava dando erro
 		school = {
 			name: req.body.name,
 			email: req.body.email,
-			owner: req.body.owner,
-			addr: req.body.addr,
+			address: req.body.addr,
 			logo: req.body.logo,
 			telephone: req.body.telephone,
 			cnpj: req.body.cnpj
 		};
 		return schoolBO.create(school, device, req.rawToken, req.token)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -188,8 +195,8 @@ router.put('/:school_id/logotype', function(req, res, next) {
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		return schoolBO.updateLogo(req.body.image, device, req.rawToken, req.token)
-		.then(function(response){
-			res.status(response.code).json(response.json);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 		});
@@ -210,8 +217,8 @@ router.get('/:school_id/logotype', function(req, res, next) {
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 		return schoolBO.readLogo(req.body.image, device, req.rawToken, req.token)
-		.then(function(response){
-			res.status(response.code).json(response.json);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 		});

@@ -65,13 +65,14 @@ router.post('/', function(req, res, next) {
 			gender: req.body.gender
 		};
 		return accountsBO.createNewUser(account, profile)
-		.then(function(res) {
-			res.status(res.code).json(res.json);
-			resolve(res);
+		.then(function(resp) {
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err) {
 			reject(err);
 		});
 	}).catch(function(err){
+		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
@@ -88,11 +89,11 @@ router.post('/authentication/:hash', function(req, res, next) {
 		var password = req.body.password;
 
 		return accountsBO.confirmAccount(hashConfirmation, device, password)
-		.then(function(res){
-			res.status(res.code).json(res.json);
-			resolve(res);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err) {
-			res.status(err.code).json(err.json);
+			resp.status(err.code).json(err.json);
 			reject(err);
 		});
 	});
@@ -109,9 +110,9 @@ router.get('/authentication/:hash', function(req, res, next) {
 		var hashConfirmation = req.params.hash;
 
 		return accountsBO.findWithHash(hashConfirmation)
-		.then(function(res){
-			res.status(res.code).json(res.json);
-			resolve(res);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err) {
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -132,9 +133,9 @@ router.post('/authentication', function(req, res) {
 		var populate = req.query.populate;
 
 		return accountsBO.logIn(email, password, device, populate)
-		.then(function(res) {
-			res.status(res.code).json(res.json);
-			resolve(res);
+		.then(function(resp) {
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);
@@ -150,15 +151,16 @@ router.post('/authentication', function(req, res) {
 */
 router.delete('/authentication', function(req, res){
 	return new Promise (function (resolve, reject){
-		//TODO: receber device como parametro para poder deslogar a distancia! e o email nao ta sendo usado pra nada, nao tem pq ta aqui :)
-		if (req.body.user === undefined) reject(errors.missingParameters('email'));
-		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+
+		//if (req.body.user === undefined) reject(errors.missingParameters('email'));
+		if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
+		if (req.token === undefined) reject(errors.missingParameters('token'));
 		var device = req.useragent.Platform + " " + req.useragent.OS;
 
 		return accountsBO.logout(device, req.rawToken, req.token)
-		.then(function(res){
-			es.status(res.code).json(res.json);
-			resolve(res);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
 			reject(err);

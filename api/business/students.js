@@ -10,11 +10,11 @@ var students = {};
 /** @method
 * @description something
 */
-students.readForRoom = function(room, device, rawToken, token ) {
+students.readForRoom = function(room_id, device, rawToken, token ) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return studentsDAO.findWithRoomId
+      return studentsDAO.findWithRoomId(room_id)
       .then(function(students){
         resolve(new response(200, students, null));
       }).catch(function(err){

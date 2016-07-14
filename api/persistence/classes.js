@@ -17,11 +17,11 @@ var classServices = {
 	/**
 	 * @method create
 	 * @description Adds a new Classroom with provided _class to the School school.id
-	 * @param school {School}
+	 * @param school {id}
 	 * @param _class {Class}
 	 * @return id {Int}
 	 */
-	create: function(_class, school) {
+	create: function(_class, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
@@ -31,7 +31,7 @@ var classServices = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res,rej) {
-						client.query('INSERT INTO classes (name, school, menu) VALUES ($1, $2, $3) RETURNING id',[_class.name, school.id, _class.menu], function(err, result) {
+						client.query('INSERT INTO classes (name, school, menu) VALUES ($1, $2, $3) RETURNING id',[_class.name, school_id, _class.menu], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
 							else if (result.rowCount === 0) rej(result); //Nothing inserted, rejects so BO can handle
 							else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -61,17 +61,17 @@ var classServices = {
 		});
 	},
 /** @method findWithSchoolId
- * @param schoolID {int}
+ * @param school_id {id}
  * @return Promise {Promise} Resolves to class with id name and menu.id(?)
  */
-	findWithSchoolId: function(schoolID){
+	findWithSchoolId: function(school_id){
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT id, name, menu FROM classes WHERE school = $1', [schoolID], function(err, result) {
+				client.query('SELECT id, name, menu FROM classes WHERE school = $1', [school_id], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects

@@ -16,20 +16,23 @@ var classes = {};
  * @param token {JSON} all information decoded
  * @return response {Promise} resolving a response with result in data, if succeful, class_id
  */
-classes.createClassForSchool = function(class_name, school, device, rawToken, token) {
+classes.createClassForSchool = function(class_name, school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id"));
-			else if (!validator.isAlphanumeric(class_name, 'pt-PT')) reject(errors.invalidParameters("class_name"));
+			var invalidParameters = [];
+			if ((credential.device !== device)) invalidParameters.push("device");
+			//if (!validator.isNumeric(school)) invalidParameters.push("school_id");
+			//if (!validator.isAlphanumeric(class_name, 'pt-PT')) invalidParameters.push("class_name");
+			if (invalidParameters.length > 0) reject(errors.invalidParameters(invalidParameters));
 			//TODO: can create class ? no, so reject
 			else {
 				var _class = {
 					name: class_name
 				};
-				return classesDAO.create(_class, school)
-				.then(function(class_id){
+				return classesDAO.create(_class, school_id)
+				.then(function(class_id) {
+					console.log(class_id);
 					resolve(new response(200, class_id, null));
 				}).catch(function(err){
 					//var data = err.message + " Create class for school";
