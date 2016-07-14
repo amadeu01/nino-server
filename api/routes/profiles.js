@@ -13,7 +13,7 @@ var numberValidate = function(req, res, next, id) {
 };
 
 
-router.post("/:profile/picture", function(req, res, next) {
+router.post("/me/picture", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
@@ -22,7 +22,7 @@ router.post("/:profile/picture", function(req, res, next) {
 		if (req.body.picture === undefined) missingParameters.push("picture");
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
-			profileBO.uploadProfilePicture(token.profile, picture, req.rawToken, req.device)
+			profileBO.uploadProfilePicture(token.profile, rawToken, req.device, req)
 			.then(function(result) {
 				res.status(result.code).json(result.json);
 				resolve(result);
