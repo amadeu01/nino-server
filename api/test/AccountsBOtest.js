@@ -219,28 +219,28 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		// test('Should Read Class For school', function() {
-		// 	console.log(classesBO);
-		// 	return classesBO.getClassesForSchool(school_id, device, rawToken, token)
-		// 	.then(function(res){
-		// 		console.log("classesTest");
-		// 		console.log(res);
-		// 		var data = "Code: " + JSON.stringify(res.code) + "\n";
-		// 		data += "##########################\n";
-		// 		data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
-		// 		data += "##########################\n";
-		// 		data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-		// 		return fs.writeFile("./results/Results_for_ReadClassFrom.txt", data, 'utf8', function(err) {
-		// 			if(err) {
-		// 				return console.log(err);
-		// 			}
-		// 			console.log("The file results was saved!");
-		// 		});
-		// 	}).catch(function(err){
-		// 		console.log("Deu Erro Criando Classe hue hue hue");
-		// 		console.log(err);
-		// 	});
-		// });
+		test('Should Read Class For school', function() {
+			// console.log(classesBO);
+			// console.log(classesBO.getClassesForSchool);
+			return classesBO.getClassesForSchool(school_id, device, rawToken, token).then(function(res){
+				// console.log("classesTest");
+				// console.log(res);
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				return fs.writeFile("./results/Results_for_ReadClassFrom.txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log(err);
+			});
+		});
 
 		//Romm
 
