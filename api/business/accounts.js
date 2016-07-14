@@ -180,6 +180,10 @@ accounts.logIn = function(email, password, device) {
 			.then(function(account) {
 				// console.log("AccountsBO will print:");
 				// console.log(account);
+				if (password !== account.password) {
+					reject(errors.inexistentRegister())
+					return;
+				}
 				tokenData.account = account.id;
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
