@@ -34,7 +34,7 @@ router.get('/:school_id', function(req, res, next) {
 			resolve(response);
 		}).catch(function(err){
 			res.status(err.code).json(err.json);
-			reject(err);
+			resolve(err);
 		});
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
