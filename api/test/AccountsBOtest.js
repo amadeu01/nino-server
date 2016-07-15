@@ -94,13 +94,13 @@ suite('Account Profile and Credential BO', function () {
 			data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 			data += "##########################\n";
 			data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-			//console.log(res);
+			//console.log(res.json.data.account);
 		}).catch(function(err){
 			console.log(err);
 		});
 	});
 
-	test('Should confirm account and ', function() {
+	test('Should confirm account ', function() {
 		return accountsBO.confirmAccountTest(confirmationHash, device, password)
 		.then(function(res){
 			var data = "Code: " + JSON.stringify(res.code) + "\n";
