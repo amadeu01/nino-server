@@ -5,6 +5,7 @@ var errors = require('../mechanisms/error');
 var response = require('../mechanisms/response.js');
 var useragent = require('express-useragent');
 var schoolBO = require('../business/schools.js');
+var multiparty = require('multiparty');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -187,19 +188,39 @@ router.post('/', function(req, res, next) {
 router.put('/:school_id/logotype', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
-		//Check parameters
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		//if (req.body.image === undefined) missingParameters.push("image - logo");
-
+		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
-		return schoolBO.updateLogo(req.body.image, device, req.rawToken, req.token)
-		.then(function(resp){
-			res.status(resp.code).json(resp.json);
-		}).catch(function(err){
-			res.status(err.code).json(err.json);
-		});
+		else {
+			var gotImage = false;
+			var form = new multiparty.Form();
+			form.on('error', function(err) {
+				reject(errors.internalError(err));
+			});
+			form.on('part', function(part) {
+				if (part.name !== "picture") {
+					part.resume();
+					return;
+				}
+				gotImage = true;
+				schoolBO.setLogo(req.params.school_id, req.rawToken, req.device, part)
+				.then(function(result) {
+					res.status(result.code).json(result.json);
+					resolve(result);
+				})
+				.catch(function(err) {
+					res.status(err.code).json(err.json);
+					resolve(err);
+				});
+			});
+			form.on('close', function() {
+				if (!gotImage) {
+					reject(errors.missingParameters("picture"));
+				}
+			});
+			form.parse(req);
+		}
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
 	});

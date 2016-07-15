@@ -3,6 +3,7 @@ var router = express.Router();
 var errors = require('../mechanisms/error');
 var profileBO = require('../business/profiles.js');
 var validator = require('validator');
+var multiparty = require('multiparty');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -13,24 +14,41 @@ var numberValidate = function(req, res, next, id) {
 };
 
 
-router.post("/:profile/picture", function(req, res, next) {
+router.put("/me/picture", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-		if (req.body.picture === undefined) missingParameters.push("picture");
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
-			profileBO.uploadProfilePicture(token.profile, picture, req.rawToken, req.device)
-			.then(function(result) {
-				res.status(result.code).json(result.json);
-				resolve(result);
-			})
-			.catch(function(err) {
-				res.status(err.code).json(err.json);
-				resolve(err);
+			var gotImage = false;
+			var form = new multiparty.Form();
+			form.on('error', function(err) {
+				reject(errors.internalError(err));
 			});
+			form.on('part', function(part) {
+				if (part.name !== "picture") {
+					part.resume();
+					return;
+				}
+				gotImage = true;
+				profileBO.uploadProfilePicture(token.profile, rawToken, req.device, part)
+				.then(function(result) {
+					res.status(result.code).json(result.json);
+					resolve(result);
+				})
+				.catch(function(err) {
+					res.status(err.code).json(err.json);
+					resolve(err);
+				});
+			});
+			form.on('close', function() {
+				if (!gotImage) {
+					reject(errors.missingParameters("picture"));
+				}
+			});
+			form.parse(req);
 		}
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
