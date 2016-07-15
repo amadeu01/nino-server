@@ -27,9 +27,8 @@ router.get('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.platform + " " + req.useragent.os;
 
-		return schoolBO.read(req.params.school_id, device, req.rawToken, req.token)
+		return schoolBO.read(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -52,7 +51,6 @@ router.put('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
 
 		school = { //it could be undefined, must be check what will be updated
 			name: req.body.name,
@@ -63,7 +61,7 @@ router.put('/:school_id', function(req, res, next) {
 			cnpj: req.body.cnpj
 		};
 
-		return schoolBO.update(school, device, req.rawToken, req.token)
+		return schoolBO.update(school, req.device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -85,9 +83,8 @@ router.delete('/:school_id', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return schoolBO.delete(req.params.school_id, device, req.rawToken, req.token)
+		return schoolBO.delete(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 			resolve(response);
@@ -109,9 +106,7 @@ router.post('/:school_id/notifications/guardians', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		if (req.body.data === undefined) missingParameters.push("data");
-
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
 
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -129,7 +124,6 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 		if (req.body.data === undefined) missingParameters.push("data");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
 
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -161,7 +155,6 @@ router.post('/', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.platform + " " + req.useragent.os; //TODO: eh minusculo o platform e os, tava dando erro
 		school = {
 			name: req.body.name,
 			email: req.body.email,
@@ -170,7 +163,7 @@ router.post('/', function(req, res, next) {
 			telephone: req.body.telephone,
 			cnpj: req.body.cnpj
 		};
-		return schoolBO.create(school, device, req.rawToken, req.token)
+		return schoolBO.create(school, req.device, req.rawToken, req.token)
 		.then(function(resp){
 			res.status(resp.code).json(resp.json);
 			resolve(resp);
@@ -236,8 +229,7 @@ router.get('/:school_id/logotype', function(req, res, next) {
 		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
-		return schoolBO.readLogo(req.body.image, device, req.rawToken, req.token)
+		return schoolBO.readLogo(req.body.image, req.device, req.rawToken, req.token)
 		.then(function(resp){
 			res.status(resp.code).json(resp.json);
 		}).catch(function(err){
