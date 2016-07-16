@@ -34,8 +34,8 @@ router.get('/school/:school_id', function(req, res, next) {
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
 			return classesBO.getClassesForSchool(req.params.school_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
 				resolve(classes);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
@@ -47,24 +47,21 @@ router.get('/school/:school_id', function(req, res, next) {
 
 /**
 * @description Create a class for a school
-@param:
-* Class
-* School
-* Token
-
-@return:
-* ClassID
+* @param class {string}
+* @param School
+* @return ClassID
 */
 router.post('/school/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.token === undefined) reject(errors.missingParameters('token'));
-		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
-		else if(req.body.class_name === undefined) reject (errors.missingParameters('Class_name'));
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push('token');
+		if (req.rawToken === undefined) missingParameters.push('rawToken');
+		if (req.body.class_name === undefined) missingParameters.push('Class_name');
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
-
 			return classesBO.createClassForSchool(req.body.class_name, req.params.school_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
 				resolve(response);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
@@ -77,17 +74,19 @@ router.post('/school/:school_id', function(req, res, next) {
 /** @description Update a class information */
 router.put('/:class_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.token === undefined) reject(errors.missingParameters('token'));
-		else if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
-		else if (req.body.school_id === undefined) reject(errors.missingParameters('school_id'));
-		else if (req.params.class_id === undefined) reject(errors.missingParameters('class_id'));
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push('token');
+		if (req.rawToken === undefined) missingParameters.push('rawToken');
+		if (req.body.school_id === undefined) missingParameters.push('school_id');
+		if (req.params.class_id === undefined) missingParameters.push('class_id');
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
 			var classInfo = {
 				class_id: req.params.class_id,
 				class_name: req.body.name,
 				menu: req.body.menu
 			};
-			return classesBO.update(req.body.school_id, req.params.class_id, req.device, req.rawToken, req.token)
+			return classesBO.update(req.body.school_id, classInfo, req.device, req.rawToken, req.token)
 			.then(function(response){
 				res.status(response.code).json(response.json);
 			}).catch(function(err){
@@ -97,13 +96,15 @@ router.put('/:class_id', function(req, res, next) {
 	});
 });
 
-/** @description Mark a Class for deletion */
+/** @description Mark a Class for deleting */
 router.delete('/:class_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.token === undefined) reject(errors.missingParameter('token'));
-		else if (req.rawToken === undefined) reject(errors.missingParameter('rawToken'));
-		else if (req.body.school_id === undefined) reject(errors.missingParameters('school_id'));
-		else if (req.params.class_id === undefined) reject(errors.missingParameters('class_id'));
+		var missingParameters = [];
+		if (req.token === undefined) missingParameter.push('token');
+		if (req.rawToken === undefined) missingParameter.push('rawToken');
+		if (req.body.school_id === undefined) missingParameters.push('school_id');
+		if (req.params.class_id === undefined) missingParameters.push('class_id');
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
 			return classesBO.delete(req.body.school_id, req.params.class_id, req.device, req.rawToken, req.token)
 			.then(function(response){

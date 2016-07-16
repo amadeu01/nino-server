@@ -8,7 +8,6 @@ var router = express.Router();
 var errors = require('../mechanisms/error');
 var validator = require('validator');
 var activitiesBO = require('../business/activities.js');
-var useragent = require('express-useragent');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -30,14 +29,15 @@ var numberValidate = function(req, res, next, id) {
 */
 router.post('/:description', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
-		if (req.body.school === undefined) reject(errors.missingParameters('school'));
-		else if (req.body.name === undefined) reject(errors.missingParameters('name'));
-		else if (req.token === undefined) reject(errors.missingParameters('token'));
-		else if (req.rawToken === undefined) reject(errors.missingParameter('rawToken'));
-		else if (req.params.description === undefined ) reject(errors.missingParameters('description'));
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.body.school === undefined) missingParameters.push('school');
+		if (req.body.name === undefined) missingParameters.push('name');
+		if (req.params.description === undefined ) missingParameters.push('description');
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
-			var device = req.useragent.Platform + " " + req.useragent.OS;
-			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, device, req.rawToken, req.token)
+			return activitiesBO.createActivityToSchool(req.body.school, req.params.description, req.device, req.rawToken, req.token)
 			.then(function(response){
 				res.status(response.code).json(response.json);
 			}).catch(function(err) {

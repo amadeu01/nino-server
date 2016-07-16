@@ -181,7 +181,7 @@ accounts.logIn = function(email, password, device) {
 				// console.log("AccountsBO will print:");
 				// console.log(account);
 				if (password !== account.password) {
-					reject(errors.inexistentRegister())
+					reject(errors.inexistentRegister());
 					return;
 				}
 				tokenData.account = account.id;
@@ -236,7 +236,8 @@ accounts.logInTest = function(email, password, device) {
 						//console.log(tokenData);
 						var res = {
 							rawToken: token,
-							token: tokenData
+							token: tokenData,
+							resTest: account
 						};
 						resolve(new response(200, res, null));
 					});
