@@ -10,6 +10,7 @@ var awsMec = {};
 
 var profilePicBucket = 'ninoapp-profiles-files-01';
 var logotypeBucket = 'ninoapp-logotype-files-01';
+var picturesBucket = 'ninoapp-pictures-files-01';
 
 awsMec.uploadProfilePic = function(file, name, size) {
 	return awsMec.upload(file, name, profilePicBucket, size);
