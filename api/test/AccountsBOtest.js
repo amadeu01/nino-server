@@ -1,5 +1,5 @@
 /**
-* Carlos Millani
+* @author Amadeu Cavalcante
 * Module test
 */
 
@@ -9,6 +9,8 @@ var accountsBO = require('../business/accounts.js');
 var schoolsBO = require('../business/schools.js');
 var classesBO = require('../business/classes.js');
 var roomsBO = require('../business/rooms.js');
+var employeesBO = require('../business/employees.js');
+var fake = require('Faker');
 //var account = require('../mechanisms/database.js');
 
 //Returned variables
@@ -33,11 +35,23 @@ var confirmationHash = "";
 var school_id;
 var class_id;
 var room_id;
-
+var fakeData = [];
 
 suite('Account Profile and Credential BO', function () {
 
 	setup(function (done) {
+		// email = fake.Internet.email;
+		// school.email = fake.Internet.email;
+		// for (var i = 0; i < 10; i++) {
+		// 	fakeData[i] = {};
+		// 	fakeData[i].name = fake.Name.firstName();
+		// 	fakeData[i].surname = fake.Name.lastName();
+		// 	fakeData[i].email = fake.Internet.email();
+		// 	fakeData[i].cellphone = fake.PhoneNumber.phoneNumber();
+		// 	fakeData[i].address = fake.Address.streetAddress();
+		// 	fakeData[i].birthdate = fake.Date.between();
+		// }
+		//console.log(fakeData);
 		done();
 	});
 
@@ -45,9 +59,33 @@ suite('Account Profile and Credential BO', function () {
 		return;
 	});
 
-
+	// test('Should Populate Data', function() {
+	//
+	// 	for (var i = 0; i < 10; i++) {
+	// 		var account = {
+	// 			email: fakeData[i].name,
+	// 			cellphone: fakeData[i].cellphone
+	// 		};
+	//
+	// 		var profile = {
+	// 			name: fakeData[i].name,
+	// 			surname: fakeData[i].surname,
+	// 			birthdate: fakeData[i].birthdate,
+	// 			gender: 0
+	// 		};
+	// 		// console.log("Account :");
+	// 		// console.log(account);
+	// 		// console.log("Profile :");
+	// 		// console.log(profile);
+	//
+	// 		accountsBO.createNewUserTest(account, profile);
+	// 	}
+	// 	return;
+	//
+	// });
 
 	test('Should Create User', function() {
+
 		var account = {
 			email: email,
 			cellphone: cellphone
@@ -81,7 +119,6 @@ suite('Account Profile and Credential BO', function () {
 		}).catch(function(err){
 			console.log(err);
 		});
-
 	});
 
 	test('Should Check whether the user is confirmed or not', function() {
@@ -237,7 +274,7 @@ suite('Account Profile and Credential BO', function () {
 					console.log("The file results was saved!");
 				});
 			}).catch(function(err){
-				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log("Deu Erro Lendo Classe hue hue hue");
 				console.log(err);
 			});
 		});
@@ -263,7 +300,7 @@ suite('Account Profile and Credential BO', function () {
 					console.log("The file results was saved!");
 				});
 			}).catch(function(err){
-				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log("Deu Erro Criando Sala para classe hue hue hue");
 				console.log(err);
 			});
 		});
@@ -286,9 +323,110 @@ suite('Account Profile and Credential BO', function () {
 					console.log("The file results was saved!");
 				});
 			}).catch(function(err){
-				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log("Deu Erro lendo sala de classes hue hue hue");
 				console.log(err);
 			});
 		});
 
+		//Employee
+
+
+			test('Should Create Employee to School', function() {
+
+				var account = {};
+				account.email = fake.Internet.email();
+				account.cellphone = fake.PhoneNumber.phoneNumber();
+
+				var profile = {};
+				profile.name = fake.Name.firstName();
+				profile.surname = fake.Name.lastName();
+				profile.birthdate = fake.Date.between();
+				profile.gender = 0;
+
+				//console.log(employeesBO);
+				return employeesBO.createEducator(school_id, profile, account, device, rawToken, token)
+				.then(function(res){
+					var data = "Code: " + JSON.stringify(res.code) + "\n";
+					data += "##########################\n";
+					data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+					data += "##########################\n";
+					data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+					console.log(res.json.data);
+					return fs.writeFile("./results/Results_for_CreateEducator.txt", data, 'utf8', function(err) {
+						if(err) {
+							return console.log(err);
+						}
+						console.log("The file results was saved!");
+					});
+				}).catch(function(err){
+					console.log("Deu Erro criando educators hue hue hue");
+					console.log(err);
+				});
+			});
+
+			test('Should Create Employee (2) to School', function() {
+
+				var account = {};
+				account.email = fake.Internet.email();
+				account.cellphone = fake.PhoneNumber.phoneNumber();
+
+				var profile = {};
+				profile.name = fake.Name.firstName();
+				profile.surname = fake.Name.lastName();
+				profile.birthdate = fake.Date.between();
+				profile.gender = 1;
+
+				//console.log(employeesBO);
+				return employeesBO.createEducator(school_id, profile, account, device, rawToken, token)
+				.then(function(res){
+					var data = "Code: " + JSON.stringify(res.code) + "\n";
+					data += "##########################\n";
+					data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+					data += "##########################\n";
+					data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+					console.log(res.json.data);
+					return fs.writeFile("./results/Results_for_CreateEducator.txt", data, 'utf8', function(err) {
+						if(err) {
+							return console.log(err);
+						}
+						console.log("The file results was saved!");
+					});
+				}).catch(function(err){
+					console.log("Deu Erro criando educators hue hue hue");
+					console.log(err);
+				});
+			});
+
+			test('Should Get Employee', function() {
+				token.school = school_id;
+				return employeesBO.getEmployeesForSchool(rawToken, token)
+				.then(function(res){
+					var data = "Code: " + JSON.stringify(res.code) + "\n";
+					data += "##########################\n";
+					data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+					data += "##########################\n";
+					data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+					//console.log(res.json.data);
+					return fs.writeFile("./results/Results_for_GetEmployees.txt", data, 'utf8', function(err) {
+						if(err) {
+							return console.log(err);
+						}
+						console.log("The file results was saved!");
+					});
+				}).catch(function(err){
+					console.log("Deu Erro pegando lista de funcionarios hue hue hue");
+					console.log(err);
+				});
+			});
+
+
+		//Students
+
+		test('Should Create Student to School', function() {
+
+		});
+
+		test('Should Get all students', function() {
+
+		});
 });

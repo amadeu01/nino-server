@@ -14,7 +14,7 @@ var pool = require('../mechanisms/database.js').pool;
  * @param school {School}
  * @return created items {id}
  */
-employeesDAO.createEducator = function(account, profile, school) {
+employeesDAO.createEducator = function(school_id, account, profile) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -47,7 +47,7 @@ employeesDAO.createEducator = function(account, profile, school) {
 				});
 			}).then(function(response) { //Create Employee
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id', [response.profile.id, school.id], function(err, result) {
+					client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id', [response.profile.id, school_id], function(err, result) {
 						if (err) rej (err);
 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -59,7 +59,7 @@ employeesDAO.createEducator = function(account, profile, school) {
 				});
 			}).then(function(response) { //Create SchoolEducators
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO schools_educators (school, educator) VALUES ($1, $2)', [school.id , response.employee.id], function(err, result) {
+					client.query('INSERT INTO schools_educators (school, educator) VALUES ($1, $2)', [school_id , response.employee.id], function(err, result) {
 						if (err) rej (err);
 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -105,5 +105,31 @@ employeesDAO.findWithProfileId = function(id) {
 		});
 	});
 };
+
+/** @method
+ * @param email {string}
+ * @return Promise {Promise}
+ */
+employeesDAO.getEmplyeesWithSchoolId = function(school_id) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('SELECT p.name, e.id FROM profiles p, employees e WHERE school = $1 AND e.profile = p.id', [school_id], function(err, result) {
+				if (err) reject(err);
+				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
+				else if (result.name == "error") rej(result); //Some error occured : rejects
+				else resolve(result.rows); //Returns what was found
+			});
+		});
+	});
+};
+
+employeesDAO.read = function(profile_id) {
+
+};
+
 
 module.exports = employeesDAO;
