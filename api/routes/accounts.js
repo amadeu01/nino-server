@@ -51,26 +51,28 @@ router.post('/', function(req, res, next) {
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else {
 		//Provided that all the needed parameters are there, we call business to validate them
-		var account = {
-			email: req.body.email,
-			cellphone: req.body.cellphone
-		};
+			var account = {
+				email: req.body.email,
+				cellphone: req.body.cellphone
+			};
 
-		var profile = {
-			name: req.body.name,
-			surname: req.body.surname,
-			birthdate: req.body.birthdate,
-			gender: req.body.gender
-		};
-		return accountsBO.createNewUser(account, profile)
-		.then(function(resp) {
-			res.status(resp.code).json(resp.json);
-			resolve(resp);
-		}).catch(function(err) {
-			reject(err);
-		});
+			var profile = {
+				name: req.body.name,
+				surname: req.body.surname,
+				birthdate: req.body.birthdate,
+				gender: req.body.gender
+			};
+			return accountsBO.createNewUser(account, profile)
+			.then(function(resp) {
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
 	}).catch(function(err){
 		//console.log(err);
 		res.status(err.code).json(err.json);

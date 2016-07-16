@@ -41,7 +41,10 @@ module.exports = {
 	},
 	/**@method */
 	expiredCredential: function(data) {
-		return new response( 403, data, 301);
+		return new response( 403, data, 302);
+	},
+	isBot: function(data) {
+		return new response( 403, data, 303);
 	},
 	
 	persistenceError: function(err) {

@@ -18,6 +18,9 @@ var createAccounts = function(pool) {
 					 'hash	VARCHAR UNIQUE NOT NULL,' +
 					 'passwordHash	VARCHAR UNIQUE,' +
 					 'confirmed	BOOLEAN NOT NULL DEFAULT false,' + 
+					 'active BOOLEAN NOT NULL DEFAULT true,' + 
+					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+					 // 'updatedAt TIMESTAMP DEFAULT current_timestamp' +
 					 'lost BOOLEAN NOT NULL DEFAULT false)'
 			, function(err, result) {
 				done();
@@ -41,6 +44,7 @@ var createCredentials = function(pool) {
 					 'device	VARCHAR NOT NULL,' +
 					 'notifiable	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'notificationID	VARCHAR,' + 
+					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 					 'token	VARCHAR NOT NULL)'
 			, function(err, result) {
 				done();
@@ -64,6 +68,8 @@ var createProfiles = function(pool) {
 				 'surname	VARCHAR NOT NULL,' +
 				 'profilePicture	VARCHAR,' +
 				 'birthdate	TIMESTAMPTZ,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'gender	INTEGER)' 
 			, function(err, result) {
 				done();
@@ -90,6 +96,8 @@ var createSchools = function(pool) {
 				 'logo	VARCHAR,' +
 				 'telephone	VARCHAR,' +
 				 'email	VARCHAR UNIQUE NOT NULL,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'name	VARCHAR)' 
 			, function(err, result) {
 				done();
@@ -111,6 +119,8 @@ var createClasses = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE NOT NULL,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'menu	INTEGER REFERENCES menus (id) ON DELETE SET NULL)'
 			, function(err, result) {
 				done();
@@ -132,6 +142,8 @@ var createRooms = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
 				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE NOT NULL,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'notificationGroup	VARCHAR)'
 			, function(err, result) {
 				done();
@@ -153,6 +165,8 @@ var createStudents = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE NOT NULL,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE SET NULL)'
 			, function(err, result) {
 				done();
@@ -172,6 +186,7 @@ var createGuardians = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS guardians' +
 				'(id	SERIAL PRIMARY KEY,' +
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
@@ -192,6 +207,7 @@ var createEmployees = function(pool) {
 			client.query('CREATE TABLE IF NOT EXISTS employees' +
 				'(id	SERIAL PRIMARY KEY,' +
 				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL)'
 			, function(err, result) {
 				done();
@@ -212,6 +228,8 @@ var createMenus = function(pool) {
 			client.query('CREATE TABLE IF NOT EXISTS menus' +
 				'(id	SERIAL PRIMARY KEY,' +
 				 'school INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'description	VARCHAR NOT NULL)'
 			, function(err, result) {
 				done();
@@ -233,6 +251,8 @@ var createActivities = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
 				 'description	VARCHAR NOT NULL,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
@@ -256,6 +276,7 @@ var createEvents = function(pool) {
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE CASCADE,' +
 				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
 				 'date	TIMESTAMPTZ,' +
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'description	VARCHAR NOT NULL)'
 			, function(err, result) {
 				done();
@@ -280,6 +301,8 @@ var createDrafts = function(pool) {
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' + 
 				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE CASCADE,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)'
 			, function(err, result) {
 				done();
@@ -305,6 +328,8 @@ var createPosts = function(pool) {
 				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE CASCADE,' +
 				 'date	TIMESTAMPTZ DEFAULT current_timestamp,' +
+				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)'
 			, function(err, result) {
 				done();
