@@ -70,6 +70,7 @@ educators.createEmployee = function(school_id, profile, account, device, rawToke
     return credentialDAO.read(rawToken)
     .then(function(credential){
       //TODO: validate token information
+      account.hash = uid.sync(100);
       return employeesDAO.create(school_id, account, profile)
       .then(function(result){
         resolve(new response(200, result, null));
