@@ -17,7 +17,7 @@ var educators = {};
  * @return response {Promise}
  * @deprecated old educators method
  */
-educators.addEducatorToSchool = function(school_id, profile_id, rawToken, token) {
+educators.addEducatorToSchool = function(school_id, profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
@@ -65,7 +65,7 @@ educators.addEmployeeToSchool = function(school_id, profile_id, rawToken, token)
  * @param token {JSON} all information decoded
  * @return response {Promise}
  */
-educators.createEmployee = function(school_id, profile, account, device, rawToken, token) {
+educators.createEmployee = function(school_id, account, profile, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
@@ -114,7 +114,6 @@ educators.createEducator = function(school_id, profile, account, device, rawToke
  * @param rawToken {string} helps find user credential
  * @param token {JSON} all information decoded
  * @return response {Promise}
- * @deprecated
  */
 educators.getEducatorForSchool = function(school_id, rawToken, token) {
   return new Promise(function(resolve, reject){
@@ -122,7 +121,7 @@ educators.getEducatorForSchool = function(school_id, rawToken, token) {
     .then(function(credential){
       //TODO: validate token information
       //TODO: there is permition ?
-      return employeesDAO.readFromSchool(school_id)
+      return employeesDAO.getEmployeesWithSchoolId(school_id)
       .then(function(educators) {
         resolve(new response(200, educators, null));
       }).catch(function(err){
@@ -202,7 +201,29 @@ educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, 
     });
   });
 };
-
+/** @method updateEducatorFromSchool
+ * @description Update <tt>Educator</tt> info
+ * @param school_id {id}
+ * @param profile_id {id} educators profile
+ * @param rawToken {string} helps find user credential
+ * @param token {JSON} all information decoded
+ * @return response {Promise}
+ */
+educators.updateEmployeeFromSchool = function(school_id, accountInfo, profileInfo, device, rawToken, token) {
+  return new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      //TODO: validate token information
+      //TODO: there is permition ?
+      return employeesDAO.update(school_id, account, profile)
+      .then(function(educator) {
+        resolve(new response(200, educator, null));
+      }).catch(function(err){
+        reject(errors.internalError(err));
+      });
+    });
+  });
+};
 /** @method removeEducatorFromSchool
  * @description Remove <tt>Educator</tt> from school
  * @param school_id {id}
@@ -211,7 +232,7 @@ educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, 
  * @param token {JSON} all information decoded
  * @return response {Promise}
  */
-educators.removeEducatorFromSchool = function(school_id, profile_id, rawToken, token) {
+educators.removeEmployeeFromSchool = function(school_id, profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){

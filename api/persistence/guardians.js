@@ -14,7 +14,7 @@ var pool = require('../mechanisms/database.js').pool;
  * @param account {Account}
  * @return created IDs {id}
  */
-guardiansDAO.create = function(profile, account, student_id) {
+guardiansDAO.create = function(account, profile, student_id) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -94,6 +94,7 @@ guardiansDAO.create = function(profile, account, student_id) {
 };
 
 /** @method findWithId
+ * @description return all guardian information
  * @param id {id}
  * @return Promise {Promise}
  */
@@ -113,5 +114,7 @@ guardiansDAO.findWithId = function(id) {
 		});
 	});
 };
+
+
 
 module.exports = guardiansDAO;

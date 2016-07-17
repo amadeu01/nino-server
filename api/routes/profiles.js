@@ -34,7 +34,7 @@ router.put("/me/picture", function(req, res, next) {
 					return;
 				}
 				gotImage = true;
-				profileBO.uploadProfilePicture(token.profile, rawToken, req.device, part)
+				profileBO.uploadProfilePicture(token.profile, req.rawToken, req.device, part)
 				.then(function(result) {
 					res.status(result.code).json(result.json);
 					resolve(result);
