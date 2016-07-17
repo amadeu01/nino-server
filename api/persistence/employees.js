@@ -110,14 +110,14 @@ employeesDAO.findWithProfileId = function(id) {
  * @param email {string}
  * @return Promise {Promise}
  */
-employeesDAO.getEmplyeesWithSchoolId = function(school_id) {
+employeesDAO.getEmployeesWithSchoolId = function(school_id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT p.name, e.id FROM profiles p, employees e WHERE school = $1 AND e.profile = p.id', [school_id], function(err, result) {
+			client.query('SELECT p.name, e.id, p.id FROM profiles p, employees e WHERE school = $1 AND e.profile = p.id', [school_id], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
 				else if (result.name == "error") rej(result); //Some error occured : rejects

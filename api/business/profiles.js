@@ -65,7 +65,7 @@ profiles.getMyProfile = function(device, rawToken, token) {
 		.then(function(credential){
 			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
 			else {
-					awss3.findWithId(token.profile)
+					profileDAO.findWithId(token.profile)
 					.then(function(success) {
 						resolve( new response(200, success, null));
 					}).catch(function(err) {
@@ -90,7 +90,7 @@ profiles.get = function(profile_id, device, rawToken, token) {
 		.then(function(credential){
 			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
 			else {
-					awss3.findWithId(profile_id)
+					profileDAO.findWithId(profile_id)
 					.then(function(success) {
 						resolve( new response(200, success, null));
 					}).catch(function(err) {

@@ -99,7 +99,6 @@ educators.createEducator = function(school_id, profile, account, device, rawToke
       account.hash = uid.sync(100);
       return employeesDAO.createEducator(school_id, account, profile)
       .then(function(result){
-        console.log("entrou");
         resolve(new response(200, result, null));
       }).catch(function(err){
         reject(errors.internalError(err));
@@ -145,7 +144,7 @@ educators.getEmployeesForSchool = function(rawToken, token) {
     .then(function(credential){
       //TODO: validate token information
       //TODO: there is permition ?
-      return employeesDAO.getEmplyeesWithSchoolId(token.school)
+      return employeesDAO.getEmployeesWithSchoolId(token.school)
       .then(function(employees) {
         resolve(new response(200, employees, null));
       }).catch(function(err){
