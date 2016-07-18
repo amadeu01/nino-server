@@ -67,12 +67,6 @@ var credentialServices = {
 			});
 		});
 	},
-	delete: function(token) {
-		return models.waterline.collections.credential.destroy({token: token});
-	},
-	update: function(token, newToken) {
-		return models.waterline.collections.credential.update({token: token}, {token: newToken});
-	},
 	/** @method read
 	 *	@description Read a <tt>Credential</tt> provided a <tt>Token</tt>
 	 *	@param token <Token>

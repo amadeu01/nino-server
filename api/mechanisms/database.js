@@ -387,7 +387,7 @@ var createDraftsProfiles = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS drafts_profiles' +
 				'(draft INTEGER REFERENCES drafts (id) ON DELETE CASCADE,' +
-				 'target INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
+				 'profile INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
@@ -482,7 +482,7 @@ var createPostsProfiles = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS posts_profiles' +
 				'(post	INTEGER REFERENCES posts (id) ON DELETE CASCADE,' +
-				 'target	INTEGER REFERENCES profiles ON DELETE CASCADE)'
+				 'profile	INTEGER REFERENCES profiles ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
