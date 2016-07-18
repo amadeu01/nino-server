@@ -181,7 +181,7 @@ suite('Account Profile and Credential Persistence', function () {
 			birthdate: new Date(),
 			gender: 0
 		};
-		return employee.createEducator(eduacc, eduprof, schl.id)
+		return employee.createEducator(schl.id, eduacc, eduprof)
 		.then(function(done) {
 			dctr = done.employee;
 			console.log(done);
@@ -199,7 +199,7 @@ suite('Account Profile and Credential Persistence', function () {
 			birthdate: new Date(),
 			gender: 0
 		};
-		return student.create(stuprof, schl, rm)
+		return student.create(stuprof, schl.id, rm.id)
 		.then(function(done) {
 			stdnt = done.student;
 			console.log(done);
@@ -222,7 +222,7 @@ suite('Account Profile and Credential Persistence', function () {
 			cellphone: "+5519912345678",
 			hash: "thirdhashsuchsecretwowmuchwow"
 		};
-		return guardian.create(guardprof, stdnt, guardAcc)
+		return guardian.create(guardAcc, guardprof, stdnt.id)
 		.then(function(done) {
 			grdn = done.guardian;
 			console.log(done);
@@ -290,6 +290,39 @@ suite('Account Profile and Credential Persistence', function () {
 	
 	test('Should Read Profile s Employee info', function() {
 		return employee.findWithProfileId(prfl.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Read Guaridian s Students info', function() {
+		return student.findWithGuardianId(grdn.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Read Profile s Guardian info', function() {
+		return guardian.findWithProfileId(4)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+
+	test('Should Read Credential', function() {
+		return credential.read("thisismysuperdupertoken")
 		.then(function(done) {
 			console.log(done);
 			return(done);

@@ -100,7 +100,8 @@ employeesDAO.findWithProfileId = function(id) {
 				if (err) reject(err); //Error: rejects to BO
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
-				else resolve(result.rows[0]); //Executed correctly
+				else resolve(result.rows); //Executed correctly
+				done();
 			});
 		});
 	});
@@ -122,6 +123,7 @@ employeesDAO.getEmployeesWithSchoolId = function(school_id) {
 				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
 				else if (result.name == "error") rej(result); //Some error occured : rejects
 				else resolve(result.rows); //Returns what was found
+				done();
 			});
 		});
 	});

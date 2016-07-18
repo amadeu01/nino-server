@@ -145,6 +145,7 @@ accountsDAO.findWithHash = function(confirmationHash) {
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
 				else resolve({account: result.rows[0]}); //Executed correctly
+				done();
 			});
 		});
 	});
@@ -166,6 +167,7 @@ accountsDAO.logIn = function(email) {
 				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
 				else if (result.name == "error") rej(result); //Some error occured : rejects
 				else resolve(result.rows[0]); //Returns what was found
+				done();
 			});
 		});
 	});
