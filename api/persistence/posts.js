@@ -40,12 +40,12 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						var response = {};
 						response.post = result;
-						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2) RETURNING id', [response.post.id, author_id], function(err, result) {
+						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
 							if (err) rej (err);
 							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else {
-								response.author = result.rows[0];
+								response.author = author_id;
 								res(response);
 							}
 						});
@@ -93,40 +93,42 @@ var postsDAO = {
 				}).then(function(result) {
 					return new Promise(function(res, rej) {
 						var response = {};
-						response.post = result.rows[0];
-						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2) RETURNING id', [response.post.id, author_id], function(err, result) {
+						response.post = result;
+						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
 							if (err) rej (err);
 							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else {
-								response.author = result.rows[0];
+								response.author = author_id;
 								res(response);
 							}
 						});
 					});
-				}).then(function(result) {
-					result.profiles = []
+				}).then(function(response) {
+					response.profiles = []
 					return new Promise(function(res, rej) {
 						var done = 0;
+						var returned = false;
 						if (profiles.length == 0) res(response); //Case empty
 						else {
-							for i in profiles {
-								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING id', [response.post.id, profiles[i]], function(err, result) {
+							for (var i in profiles) {
+								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2)', [response.post.id, profiles[i]], function(err, result) {
 									done++;
 									if (err) rej (err);
 									else if (result.rowCount === 0) {
 										rej (result); //Reject here - will stop transaction
-										break;
+										returned = true;
 									}
 									else if (result.name == 'error') {
 										rej(result); //Some error occured : rejects
-										break;
+										returned = true;
 									}
 									else {
-										response.profiles.push(result.rows[0]);
-										if (done == profiles.length) res(response);
+										response.profiles.push(profiles[i]);
+										if (done == profiles.length && !returned) res(response);
 									}
 								});
+								if (returned) break;
 							}
 						}
 					});
@@ -163,7 +165,7 @@ var postsDAO = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res, rej) {
-						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2) RETURNING id', [post_id, profile_id], function(err, result) {
+						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2)', [post_id, profile_id], function(err, result) {
 							if (err) rej (err);
 							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects

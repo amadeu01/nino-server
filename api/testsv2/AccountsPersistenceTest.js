@@ -15,6 +15,8 @@ var guardian = require('../persistence/guardians.js');
 var profile = require('../persistence/profiles.js');
 //var account = require('../mechanisms/database.js');
 
+var post = require('../persistence/posts.js');
+
 //Returned variables
 var accnt;
 var prfl;
@@ -331,5 +333,20 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
+
+//******************************************************************************************//
+	
+	test('Should Post Many times', function() {
+		return post.create({message: "Ola Mundo", school: 1, type: 1}, 1)
+		.then(function(res) {
+			console.log(res);
+			return post.createWithProfiles({message: "Ola dois", type: 1}, 1, [2,3,4]);
+		}).then(function(res) {
+			console.log(res);
+		}).catch(function(err) {
+			console.log(err);
+		});
+	});
+
 
 });
