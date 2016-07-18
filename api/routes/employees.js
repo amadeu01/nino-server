@@ -36,6 +36,29 @@ router.post('/schools/:school_id', function(req, res, next){
 	});
 });
 
+router.get('/me', function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		
+		if (req.token === undefined) missingParameters.push('token');
+		if (req.rawToken === undefined) missingParameters.push('rawToken');
+		if (req.device === undefined) missingParameters.push('device');
+		
+		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		
+		else {
+			return employeesBO.getEmployeeWithProfile(token.profile, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+				resolve(classes);
+			}).catch(function(err){
+				res.status(err.code).json(err.json);
+				reject(err);
+			});
+		}
+	});
+})
+
 /** @description Create educator to school */
 router.post('/educators/schools/:school_id', function(req, res, next){
 	return new Promise(function(resolve, reject){
