@@ -112,7 +112,7 @@ var postsDAO = {
 						if (profiles.length == 0) res(response); //Case empty
 						else {
 							for (var i in profiles) {
-								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2)', [response.post.id, profiles[i]], function(err, result) {
+								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], function(err, result) {
 									done++;
 									if (err) rej (err);
 									else if (result.rowCount === 0) {
@@ -124,7 +124,7 @@ var postsDAO = {
 										returned = true;
 									}
 									else {
-										response.profiles.push(profiles[i]);
+										response.profiles.push(result.rows[0].profile);
 										if (done == profiles.length && !returned) res(response);
 									}
 								});
@@ -165,7 +165,7 @@ var postsDAO = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res, rej) {
-						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2)', [post_id, profile_id], function(err, result) {
+						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2) RETURNING profile', [post_id, profile_id], function(err, result) {
 							if (err) rej (err);
 							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
@@ -202,10 +202,9 @@ var postsDAO = {
 					reject(err);
 					return;
 				}
-				client.query('SELECT pr.profile, p.name, p.surname FROM posts_reads pr, posts p WHERE p.id = pr.post AND p.id = $1', [post_id], function(err, result) {
+				client.query('SELECT pr.profile, prf.name, prf.surname FROM posts_reads pr, posts p, profiles prf WHERE p.id = pr.post AND prf.id = pr.profile AND p.id = $1', [post_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Returns what was found
 					done();
 				});
@@ -222,8 +221,8 @@ var postsDAO = {
 				}
 				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.id = $1', [post_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows[0]); //Returns what was found
 					done();
 				});
@@ -240,8 +239,8 @@ var postsDAO = {
 				}
 				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.class = $1', [class_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Returns what was found
 					done();
 				});
@@ -258,8 +257,8 @@ var postsDAO = {
 				}
 				client.query('SELECT p.message, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1', [profile_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Returns what was found
 					done();
 				});
@@ -276,8 +275,8 @@ var postsDAO = {
 				}
 				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.room = $1', [room_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Returns what was found
 					done();
 				});
@@ -294,8 +293,8 @@ var postsDAO = {
 				}
 				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.school = $1', [school_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Returns what was found
 					done();
 				});
@@ -312,8 +311,8 @@ var postsDAO = {
 				}
 				client.query('SELECT p.message, p.type, p.date, p.attachment FROM posts p, posts_authors pa WHERE p.id = pa.post AND pa.author = $1', [author_id], function(err, result) {
 					if (err) reject(err);
-					else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-					else if (result.name == "error") rej(result); //Some error occured : rejects
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows); //Returns what was found
 					done();
 				});
