@@ -88,6 +88,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
 				else resolve(result.rows); //Executed correctly
+				done();
 			});
 		});
 	});
@@ -105,11 +106,12 @@ studentsDAO.findWithRoomId = function(roomID) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT id, name FROM students WHERE guardians = $1', [guardian_id], function(err, result) {
+			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room FROM profiles p, guardians g, students s, guardians_students gs WHERE gs.guardian = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
 				 else resolve(result.rows); //Executed correctly
+				 done();
 			 });
 		 });
 	 });

@@ -93,23 +93,24 @@ guardiansDAO.create = function(account, profile, student_id) {
 	});
 };
 
-/** @method findWithId
- * @description return all guardian information
+/** @method findWithProfileId
+ * @description return guardian Information from Profile
  * @param id {id}
  * @return Promise {Promise}
  */
-guardiansDAO.findWithId = function(id) {
+guardiansDAO.findWithProfileId = function(id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT a.email, a.password, a.cellphone, a.profile, a.id, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p, guardians g WHERE a.profile = p.id AND g.profile = p.id AND id = $1', [id], function(err, result) {
+			client.query('SELECT g.id FROM profiles p, guardians g WHERE g.profile = p.id AND p.id = $1', [id], function(err, result) {
 				if (err) reject(err);
-				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-				else if (result.name == "error") rej(result); //Some error occured : rejects
-				else resolve(result.rows[0]); //Returns what was found
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows); //Returns what was found
+				done();
 			});
 		});
 	});

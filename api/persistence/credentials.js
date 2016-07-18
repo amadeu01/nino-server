@@ -85,34 +85,12 @@ var credentialServices = {
 					reject(err);
 					return;
 				}
-				transaction.start(client)
-				.then(function() {
-					return new Promise(function(res, rej) {
-						client.query('SELECT device, token FROM credentials WHERE token = $1 ', [token], function(err, result) {
-							if (err) rej(err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
-							else if (result.name == "error") rej(result); //Some error occured : rejects
-							else res(result.rows[0]);
-						});
-					});
-				}).then(function(result) {
-					return transaction.commit(client)
-					.then(function() {
-						done();
-						resolve(result);
-					}).catch(function(err) {
-						done(err);
-						reject(err);
-					});
-				}).catch(function(err) {
-					return transaction.abort(client)
-					.then(function() {
-						done();
-						reject(err);
-					}).catch(function(err2) {
-						done(err2);
-						reject(err);
-					});
+				client.query('SELECT device, token FROM credentials WHERE token = $1 ', [token], function(err, result) {
+					if (err) reject (err);
+					else if (result.rowCount === 0) reject (result); //Reject here - will stop transaction
+					else if (result.name == "error") reject (result); //Some error occured : rejects
+					else resolve (result.rows[0]);
+					done();
 				});
 			});
 		});
