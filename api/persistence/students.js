@@ -14,7 +14,7 @@ var pool = require('../mechanisms/database.js').pool;
  * @param room {Room}
  */
 
-studentsDAO.create = function(profile, school, room) {
+studentsDAO.create = function(profile, school_id, room_id) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -37,7 +37,7 @@ studentsDAO.create = function(profile, school, room) {
 				});
 			}).then(function(response) { //Create Student
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO students (profile, school, room) VALUES ($1, $2, $3) RETURNING id', [response.profile.id, school.id, room.id], function(err, result) {
+					client.query('INSERT INTO students (profile, school, room) VALUES ($1, $2, $3) RETURNING id', [response.profile.id, school_id, room_id], function(err, result) {
 						if (err) rej (err);
 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -92,6 +92,28 @@ studentsDAO.findWithRoomId = function(roomID) {
 		});
 	});
 };
+
+/** @method findWithGuardianId
+ * @description Find all students for a guardian
+ * @param classID {id}
+ * @return class array {Array<Class>}
+ */
+ studentsDAO.findWithGuardianId = function(guardian_id) {
+	 return new Promise(function (resolve, reject) {
+		 pool.connect(function(err, client, done) {
+			 if (err) {
+				 reject(err); //Connection error, aborts already
+				 return;
+			 }
+			 client.query('SELECT id, name FROM students WHERE guardians = $1', [guardian_id], function(err, result) {
+				 if (err) reject(err); //Error: rejects to BO
+				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				 else if (result.name == "error") reject(result); //Some error occured : rejects
+				 else resolve(result.rows); //Executed correctly
+			 });
+		 });
+	 });
+ };
 
 
 module.exports = studentsDAO;

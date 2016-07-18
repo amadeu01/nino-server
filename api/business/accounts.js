@@ -21,8 +21,8 @@ var accounts = {};
 accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
 		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
-		else if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
-		else if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
+		if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
+		if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
 		else {
 			account.hash = uid.sync(100);
 			return accountsDAO.createNewUser(account, profile)
@@ -46,9 +46,10 @@ accounts.createNewUser = function(account, profile) {
  */
 accounts.createNewUserTest = function(account, profile) {
 	return new Promise(function(resolve, reject) {
+		var invalidParameters =[];
 		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
-		else if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
-		else if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
+		if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
+		if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
 		else {
 			account.hash = uid.sync(100);
 			var hash = account.hash;
@@ -181,7 +182,7 @@ accounts.logIn = function(email, password, device) {
 				// console.log("AccountsBO will print:");
 				// console.log(account);
 				if (password !== account.password) {
-					reject(errors.inexistentRegister())
+					reject(errors.inexistentRegister());
 					return;
 				}
 				tokenData.account = account.id;
@@ -236,7 +237,8 @@ accounts.logInTest = function(email, password, device) {
 						//console.log(tokenData);
 						var res = {
 							rawToken: token,
-							token: tokenData
+							token: tokenData,
+							resTest: account
 						};
 						resolve(new response(200, res, null));
 					});

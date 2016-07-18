@@ -50,16 +50,14 @@ classes.createClassForSchool = function(class_name, school_id, device, rawToken,
 * @return response {Promise} resolving the array of classes. If succeful, returns Array<Class> with <p> id <p> menu.id <p> name
 */
 classes.getClassesForSchool = function(school_id, device, rawToken, token) {
-	new Promise(function(resolve, reject){
+	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
 			if (credential.device !== device) reject(errors.invalidParameters("device"));
 			//if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); //Validates only string
 			//it can getting all classes ? token info ?
-			console.log(classesDAO);
 			return classesDAO.findWithSchoolId(school_id)
 			.then(function(result){
-				console.log(result);
 				resolve(new response(200, result, null));
 			}).catch(function(err){
 				reject(errors.internalError(err));
@@ -76,7 +74,20 @@ classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 * @param token {JSON} all information decoded
 */
 classes.delete = function (school_id, class_id, device, rawToken, token) {
+	return new Promise(function(resolve, reject){
+		return credentialDAO.read(rawToken)
+		.then(function(credential){
+			if (credential.device !== device) reject(errors.invalidParameters("device"));
 
+			return classesDAO.delete(class_id)
+			.then(function(result){
+				console.log(result);
+				resolve(new response(200, result, null));
+			}).catch(function(err){
+				reject(errors.internalError(err));
+			});
+		});
+	});
 };
 
 /** @method update
@@ -87,7 +98,20 @@ classes.delete = function (school_id, class_id, device, rawToken, token) {
 * @param token {JSON} all information decoded
 */
 classes.update = function (school_id, classInfo, device, rawToken, token) {
+	return new Promise(function(resolve, reject){
+		return credentialDAO.read(rawToken)
+		.then(function(credential){
+			if (credential.device !== device) reject(errors.invalidParameters("device"));
 
+			return classesDAO.update(classInfo)
+			.then(function(result){
+				console.log(result);
+				resolve(new response(200, result, null));
+			}).catch(function(err){
+				reject(errors.internalError(err));
+			});
+		});
+	});
 };
 
 module.exports = classes;

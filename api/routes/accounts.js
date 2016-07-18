@@ -4,11 +4,8 @@ var express = require('express');
 var router = express.Router();
 var errors = require('../mechanisms/error.js');
 var response = require('../mechanisms/response.js');
-var useragent = require('express-useragent');
 var accountsBO = require('../business/accounts.js');
-
 var app = express();
-app.use(useragent.express());
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -51,26 +48,28 @@ router.post('/', function(req, res, next) {
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else {
 		//Provided that all the needed parameters are there, we call business to validate them
-		var account = {
-			email: req.body.email,
-			cellphone: req.body.cellphone
-		};
+			var account = {
+				email: req.body.email,
+				cellphone: req.body.cellphone
+			};
 
-		var profile = {
-			name: req.body.name,
-			surname: req.body.surname,
-			birthdate: req.body.birthdate,
-			gender: req.body.gender
-		};
-		return accountsBO.createNewUser(account, profile)
-		.then(function(resp) {
-			res.status(resp.code).json(resp.json);
-			resolve(resp);
-		}).catch(function(err) {
-			reject(err);
-		});
+			var profile = {
+				name: req.body.name,
+				surname: req.body.surname,
+				birthdate: req.body.birthdate,
+				gender: req.body.gender
+			};
+			return accountsBO.createNewUser(account, profile)
+			.then(function(resp) {
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
 	}).catch(function(err){
 		//console.log(err);
 		res.status(err.code).json(err.json);
@@ -106,7 +105,6 @@ router.post('/authentication/:hash', function(req, res, next) {
 router.get('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
-		var origin = req.useragent.Platform + " " + req.useragent.OS;
 		var hashConfirmation = req.params.hash;
 
 		return accountsBO.findWithHash(hashConfirmation)
@@ -127,12 +125,11 @@ router.post('/authentication', function(req, res) {
 	return new Promise(function (resolve, reject) {
 		if (req.body.user === undefined) reject(errors.missingParameters('email'));
 		else if (req.body.password === undefined) reject(errors.missingParameters('password'));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
 		var email = req.body.user;
 		var password = req.body.password;
 		var populate = req.query.populate;
 
-		return accountsBO.logIn(email, password, device, populate)
+		return accountsBO.logIn(email, password, req.device, populate)
 		.then(function(resp) {
 			res.status(resp.code).json(resp.json);
 			resolve(resp);
@@ -155,9 +152,8 @@ router.delete('/authentication', function(req, res){
 		//if (req.body.user === undefined) reject(errors.missingParameters('email'));
 		if (req.rawToken === undefined) reject(errors.missingParameters('rawToken'));
 		if (req.token === undefined) reject(errors.missingParameters('token'));
-		var device = req.useragent.Platform + " " + req.useragent.OS;
 
-		return accountsBO.logout(device, req.rawToken, req.token)
+		return accountsBO.logout(req.device, req.rawToken, req.token)
 		.then(function(resp){
 			res.status(resp.code).json(resp.json);
 			resolve(resp);

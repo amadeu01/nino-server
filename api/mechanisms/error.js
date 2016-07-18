@@ -41,6 +41,29 @@ module.exports = {
 	},
 	/**@method */
 	expiredCredential: function(data) {
-		return new response( 403, data, 301);
+		return new response( 403, data, 302);
+	},
+	isBot: function(data) {
+		return new response( 403, data, 303);
+	},
+	
+	persistenceError: function(err) {
+		if (err.name == 'error') {
+			switch (err.code) {
+				case 23502:
+					return new response(400, {detail:err.detail}, 202)
+					break;
+				case 23505:
+					return new response(400, {detail:err.detail}, 203) //New code here
+					break;
+				default:
+					return new response(500, {detail:err.detail}, 201) //Default, unknown error
+					break;
+			}
+		} else if (err.rowCount === 0){
+			return new response(404, {}, 100)
+		} else {
+			return new response(500, {detail:err.detail}, 201) //Default, unknown error
+		}
 	}
 };
