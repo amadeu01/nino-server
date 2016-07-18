@@ -164,8 +164,8 @@ accountsDAO.logIn = function(email) {
 			}
 			client.query('SELECT a.email, a.password, a.cellphone, a.profile, a.id, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p WHERE a.profile = p.id AND a.email = $1 AND a.confirmed = $2', [email, true], function(err, result) {
 				if (err) reject(err);
-				else if (result.rowCount === 0) rej(result); //Nothing found, sends error
-				else if (result.name == "error") rej(result); //Some error occured : rejects
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
 				else resolve(result.rows[0]); //Returns what was found
 				done();
 			});
