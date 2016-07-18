@@ -171,7 +171,7 @@ educators.getEmployeeWithProfile = function(profile_id, rawToken, token) {
       .then(function(employee) {
         resolve(new response(200, employee, null));
       }).catch(function(err){
-        reject(errors.internalError(err));
+        resolve(errors.persistenceError(err));
       });
     });
   });

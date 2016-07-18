@@ -47,16 +47,18 @@ router.get('/me', function(req, res, next) {
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		
 		else {
-			return employeesBO.getEmployeeWithProfile(token.profile, req.rawToken, req.token)
+			return employeesBO.getEmployeeWithProfile(req.token.profile, req.rawToken, req.token)
 			.then(function(response){
 				res.status(response.code).json(response.json);
-				resolve(classes);
+				resolve(response);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-	});
+	}).catch(function(err) {
+		res.status(500).json(err);
+	})
 })
 
 /** @description Create educator to school */
