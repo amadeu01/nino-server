@@ -116,6 +116,23 @@ guardiansDAO.findWithProfileId = function(id) {
 	});
 };
 
+guardiansDAO.findWithSchoolStudentAndGuardian = function(school_id, student_id, guardian_id) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('SELECT g.id FROM schools sc, guardians g, students st, guardians_students gs WHERE sc.id = $1 AND st.id = $2 AND g.id = $3 AND st.school = sc.id AND gs.guardian = g.id AND gs.student = st.id', [school_id, student_id, guardian_id], function(err, result) {
+				if (err) reject(err);
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows); //Returns what was found
+				done();
+			});
+		});
+	});
+};
 
 
 module.exports = guardiansDAO;

@@ -334,7 +334,7 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 
-//****************************************POSTS**********************************************//
+//****************************************POSTS****************************************//
 	
 	test('Should Post Many times', function() {
 		return post.create({message: "Ola Mundo School", school: 1, type: 1}, 1)
@@ -432,7 +432,7 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 	
-	test('Should Find Post for Profile', function() { /////
+	test('Should Find Post for Profile', function() {
 		return post.findPostsWithProfileId(2)
 		.then(function(done) {
 			console.log(done);
@@ -443,7 +443,7 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 	
-	test('Should Find Post for Author', function() { /////
+	test('Should Find Post for Author', function() {
 		return post.findPostsWithAuthorId(1)
 		.then(function(done) {
 			console.log(done);
@@ -453,5 +453,88 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
+	
+	//*************************************PERMISSIONS*************************************//
 
+	test('Should Validate School Employee', function() {
+		return school.findWithEmployeeAndSchool(2, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate School Employee', function() {
+		return school.findWithEmployeeAndSchool(3, 1)
+		.then(function(done) {
+			// console.log(done);
+			console.log("ERROR HERE");
+			throw(done);
+		}).catch(function(err) {
+			// console.log(err);
+			return(err);
+		});
+	});
+	
+	test('Should Validate School Owner', function() {
+		return school.findWithOwnerAndSchool(1, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate School Owner', function() {
+		return school.findWithOwnerAndSchool(2, 1)
+		.then(function(done) {
+			// console.log(done);
+			console.log("ERROR HERE");
+			throw(done);
+		}).catch(function(err) {
+			// console.log(err);
+			return(err);
+		});
+	});
+	
+	test('Should Validate School Student', function() {
+		return student.findWithSchoolAndStudent(1, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Validate School Student', function() {
+		return student.findWithGuardianAndStudent(1, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Validate School Student', function() {
+		return guardian.findWithSchoolStudentAndGuardian(1, 1, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	
+	
 });
