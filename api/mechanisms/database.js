@@ -378,16 +378,35 @@ var createClassesEducators = function(pool) {
 	});
 };
 
-var createDraftsStudents = function(pool) {
+var createDraftsProfiles = function(pool) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TABLE IF NOT EXISTS drafts_students' +
+			client.query('CREATE TABLE IF NOT EXISTS drafts_profiles' +
 				'(draft INTEGER REFERENCES drafts (id) ON DELETE CASCADE,' +
-				 'student INTEGER REFERENCES students (id) ON DELETE CASCADE)'
+				 'profile INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
+			, function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var createDraftsAuthors = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TABLE IF NOT EXISTS drafts_authors' +
+				'(draft INTEGER REFERENCES drafts (id) ON DELETE CASCADE,' +
+				 'author INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
@@ -454,16 +473,16 @@ var createGuardiansStudents = function(pool) {
 	});
 };
 
-var createPostsStudents = function(pool) {
+var createPostsProfiles = function(pool) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TABLE IF NOT EXISTS posts_students' +
+			client.query('CREATE TABLE IF NOT EXISTS posts_profiles' +
 				'(post	INTEGER REFERENCES posts (id) ON DELETE CASCADE,' +
-				 'student	INTEGER REFERENCES students ON DELETE CASCADE)'
+				 'profile	INTEGER REFERENCES profiles ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
@@ -473,16 +492,16 @@ var createPostsStudents = function(pool) {
 	});
 };
 
-var createPostsEducators = function(pool) {
+var createPostsAuthors = function(pool) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TABLE IF NOT EXISTS posts_educators' +
+			client.query('CREATE TABLE IF NOT EXISTS posts_authors' +
 				'(post	INTEGER REFERENCES posts (id) ON DELETE CASCADE,' +
-				 'educator	INTEGER REFERENCES employees (id) ON DELETE CASCADE)'
+				 'author	INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
@@ -604,7 +623,7 @@ var db = {
 			}).then(function (done) {
 				return Promise.all([createDrafts(pool), createPosts(pool), createEvents(pool), createStudents(pool)]);
 			}).then(function(done) {
-				return Promise.all([createActivitiesClasses(pool), createClassesEducators(pool), createDraftsStudents(pool), createEducatorRooms(pool), createEventsConfirmations(pool), createGuardiansStudents(pool), createPostsStudents(pool), createPostsEducators(pool), createPostsReads(pool), createSchoolsPedagogues(pool), createSchoolsEducators(pool), createSchoolsNutritionists(pool), createSchoolsCoordinators(pool)]);
+				return Promise.all([createActivitiesClasses(pool), createClassesEducators(pool), createDraftsAuthors(pool), createDraftsProfiles(pool), createEducatorRooms(pool), createEventsConfirmations(pool), createGuardiansStudents(pool), createPostsProfiles(pool), createPostsAuthors(pool), createPostsReads(pool), createSchoolsPedagogues(pool), createSchoolsEducators(pool), createSchoolsNutritionists(pool), createSchoolsCoordinators(pool)]);
 			}).then(function(success) {
 				resolve(success);
 			})

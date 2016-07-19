@@ -15,6 +15,8 @@ var guardian = require('../persistence/guardians.js');
 var profile = require('../persistence/profiles.js');
 //var account = require('../mechanisms/database.js');
 
+var post = require('../persistence/posts.js');
+
 //Returned variables
 var accnt;
 var prfl;
@@ -323,6 +325,126 @@ suite('Account Profile and Credential Persistence', function () {
 
 	test('Should Read Credential', function() {
 		return credential.read("thisismysuperdupertoken")
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+
+//****************************************POSTS**********************************************//
+	
+	test('Should Post Many times', function() {
+		return post.create({message: "Ola Mundo School", school: 1, type: 1}, 1)
+		.then(function(res) {
+			console.log(res);
+			return post.createWithProfiles({message: "Ola Mundo Profiles", type: 1}, 1, [2,3,4]);
+		}).then(function(res) {
+			console.log(res);
+			return post.create({message: "Ola Mundo Class", class: 1, type: 1}, 1);
+		}).then(function(res) {
+			console.log(res);
+			return post.create({message: "Ola Mundo Room", room: 1, type: 1}, 1);
+		}).then(function(res) {
+			console.log(res);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Check if Posts Read', function() {
+		return post.getPostReadByInfo(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+
+	test('Should Mark Posts as Read', function() {
+		return post.markPostAsReadBy(2,1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Check if Posts Read Again', function() {
+		return post.getPostReadByInfo(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Find Post with Id', function() {
+		return post.findPostWithId(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Find Post with Class', function() {
+		return post.findPostsWithClassId(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Find Post with Room', function() {
+		return post.findPostsWithRoomId(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Find Post with School', function() {
+		return post.findPostsWithSchoolId(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Find Post for Profile', function() { /////
+		return post.findPostsWithProfileId(2)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Find Post for Author', function() { /////
+		return post.findPostsWithAuthorId(1)
 		.then(function(done) {
 			console.log(done);
 			return(done);

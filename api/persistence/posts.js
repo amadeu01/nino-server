@@ -5,73 +5,320 @@
 var models = require('../models');
 
 //errors and validator's module
-var errors = require('../services/errors');
+var errors = require('../mechanisms/error');
 var validator = require('validator');
+var transaction = require('../mechanisms/transaction');
+var pool = require('../mechanisms/database.js').pool;
 
 /**
 * @class
 */
-var postsServices = {
-	create: function(parameters) {
-    if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    return models.waterline.collections.post.create({
-      attachment: parameters.attachment,
-      message: parameters.message,
-      date: parameters.date,
-      type: parameters.type,
-      school: parameters.school
-    }).then(function(post){
-      if (!post) throw errors.internalError('Posts - Creation Error');
-      return ({post: post.id});
-    });
+var postsDAO = {
+ /** @method create
+  * @description Creates a new Post with author_id Profile as author
+  * @param post {Account} - Message, school, class, room, type
+  *	@param author_id {profile_id}
+  */
+	create: function(post, author_id) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
+							if (err) rej (err);
+							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+							else if (result.name == 'error') rej(result); //Some error occured : rejects
+							else res(result.rows[0]);
+						});
+					});
+				}).then(function(result) {
+					return new Promise(function(res, rej) {
+						var response = {};
+						response.post = result;
+						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
+							if (err) rej (err);
+							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+							else if (result.name == 'error') rej(result); //Some error occured : rejects
+							else {
+								response.author = author_id;
+								res(response);
+							}
+						});
+					});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result); //Success! Resolve to BO
+					}).catch(function(err) {
+						done(err);
+						reject(err); //Reject other to BO
+					});
+				}).catch(function (err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err); //Successfully aborted, rejects to BO
+					}).catch(function(err2) {
+						done(err2);
+						reject(err2); // Reject another error to BO
+					});
+				});
+			});
+		});
 	},
-	delete: function(parameters) {
-    if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    return models.waterline.collections.post.findOne(parameters)
-    .then(function(post){
-      if (!post) throw errors.inexistentRegister('Posts - Finding Error');
-      post.active = false;
-      return post.save();
-    });
+	
+	createWithProfiles: function(post, author_id, profiles) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
+							if (err) rej (err);
+							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+							else if (result.name == 'error') rej(result); //Some error occured : rejects
+							else res(result.rows[0]);
+						});
+					});
+				}).then(function(result) {
+					return new Promise(function(res, rej) {
+						var response = {};
+						response.post = result;
+						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
+							if (err) rej (err);
+							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+							else if (result.name == 'error') rej(result); //Some error occured : rejects
+							else {
+								response.author = author_id;
+								res(response);
+							}
+						});
+					});
+				}).then(function(response) {
+					response.profiles = []
+					return new Promise(function(res, rej) {
+						var done = 0;
+						var returned = false;
+						if (profiles.length == 0) res(response); //Case empty
+						else {
+							for (var i in profiles) {
+								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], function(err, result) {
+									done++;
+									if (err) rej (err);
+									else if (result.rowCount === 0) {
+										rej (result); //Reject here - will stop transaction
+										returned = true;
+									}
+									else if (result.name == 'error') {
+										rej(result); //Some error occured : rejects
+										returned = true;
+									}
+									else {
+										response.profiles.push(result.rows[0].profile);
+										if (done == profiles.length && !returned) res(response);
+									}
+								});
+								if (returned) break;
+							}
+						}
+					});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result); //Success! Resolve to BO
+					}).catch(function(err) {
+						done(err);
+						reject(err); //Reject other to BO
+					});
+				}).catch(function (err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err); //Successfully aborted, rejects to BO
+					}).catch(function(err2) {
+						done(err2);
+						reject(err2); // Reject another error to BO
+					});
+				});
+			});
+		});
 	},
-	update: function(parameters, newParatemers) {
-    if (!parameters || !newParatemers) throw errors.invalidParameters('Missing Parameter');
-    parameters.active = true;
-    return models.waterline.collections.post.update(parameters, newParatemers)
-    .then(function(posts){
-      if (!posts) throw errors.inexistentRegister('Posts - Finding Error');
-      return posts;
-    });
+	
+	markPostAsReadBy: function(profile_id, post_id) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2) RETURNING profile', [post_id, profile_id], function(err, result) {
+							if (err) rej (err);
+							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
+							else if (result.name == 'error') rej(result); //Some error occured : rejects
+							else res(result.rows[0]);
+						});
+					});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result); //Success! Resolve to BO
+					}).catch(function(err) {
+						done(err);
+						reject(err); //Reject other to BO
+					});
+				}).catch(function (err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err); //Successfully aborted, rejects to BO
+					}).catch(function(err2) {
+						done(err2);
+						reject(err2); // Reject another error to BO
+					});
+				});
+			});
+		});
 	},
-	read: function(parameters) {
-    if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    parameters.active = true;
-		return models.waterline.collections.post.findOne(parameters)
-    .then(function(post){
-      if (!post) throw errors.inexistentRegister('Posts - Finding Error');
-      return post;
-    });
+	
+	getPostReadByInfo: function(post_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT pr.profile, prf.name, prf.surname FROM posts_reads pr, posts p, profiles prf WHERE p.id = pr.post AND prf.id = pr.profile AND p.id = $1', [post_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
 	},
-  addEducator: function(parameters, educator_id) {
-    if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    parameters.active = true;
-		return models.waterline.collections.post.findOne(parameters).populate('educators')
-    .then(function(post){
-      if (!post) throw errors.inexistentRegister('Posts - Finding Error');
-      post.educators.add(educator_id);
-      return post.save();
-    });
-  },
-  addStudent: function(parameters, student_id) {
-    if (!parameters) throw errors.invalidParameters('Missing Parameter');
-    parameters.active = true;
-		return models.waterline.collections.post.findOne(parameters).populate('students')
-    .then(function(post){
-      if (!post) throw errors.inexistentRegister('Posts - Finding Error');
-      post.students.add(student_id);
-      return post.save();
-    });
-  }
-};
+	
+	findPostWithId: function(post_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.id = $1', [post_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows[0]); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+	
+	findPostsWithClassId: function(class_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.class = $1', [class_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+	
+	findPostsWithProfileId: function(profile_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT p.message, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1', [profile_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+	
+	findPostsWithRoomId: function(room_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.room = $1', [room_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+	
+	findPostsWithSchoolId: function(school_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.school = $1', [school_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+	
+	findPostsWithAuthorId: function(author_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT p.message, p.type, p.date, p.attachment FROM posts p, posts_authors pa WHERE p.id = pa.post AND pa.author = $1', [author_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	}
+}
 
-module.exports = postsServices;
+module.exports = postsDAO;
