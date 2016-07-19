@@ -25,7 +25,7 @@ var numberValidate = function(req, res, next, id) {
  * @param Token
  * @return Classes {Array<Class>}
 */
-router.get('/school/:school_id', function(req, res, next) {
+router.get('/schools/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
