@@ -24,7 +24,7 @@ router.post('/classes/:class_id', function(req, res, next) {
 	if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 	else {
 		var room = {name: req.body.room_name};
-		return roomsBO.createToClass(room, req.body.class_id, req.device, req.rawToken, req.token)
+		return roomsBO.createToClass(room, req.params.class_id, req.device, req.rawToken, req.token)
 		.then(function(response){
 			res.status(response.code).json(response.json);
 		}).catch(function(err) {

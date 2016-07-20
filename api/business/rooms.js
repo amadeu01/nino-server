@@ -45,7 +45,7 @@ rooms.getRoomFromClass = function(class_id, device, rawToken, token) {
       .then(function(rooms){
         resolve(new response(200, rooms, null));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        reject(errors.persistenceError(err));
       });
     }).catch(function(err){
       reject(errors.internalError("database:Credential"));
