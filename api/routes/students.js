@@ -89,7 +89,7 @@ router.post('/:student_id/guardians/:guardian_id', function(req, res, next) {
 	});
 });
 /** @description  Create student to school */
-router.post('/:schools/:school_id', function(req, res, next) {
+router.post('/schools/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
