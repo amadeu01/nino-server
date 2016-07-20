@@ -60,7 +60,7 @@ classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 			.then(function(result){
 				resolve(new response(200, result, null));
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				reject(errors.persistenceError(err));
 			});
 		});
 	});

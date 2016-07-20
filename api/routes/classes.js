@@ -51,7 +51,7 @@ router.get('/schools/:school_id', function(req, res, next) {
 * @param School
 * @return ClassID
 */
-router.post('/school/:school_id', function(req, res, next) {
+router.post('/schools/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push('token');
