@@ -40,6 +40,10 @@ awsMec.downloadProfilePic = function(name) {
 	return awsMec.download(name, profilePicBucket);
 }
 
+awsMec.downloadLogotype = function(name) {
+	return awsMec.download(name, logotypeBucket);
+}
+
 awsMec.download = function(name, bucket) {
 	return new Promise(function(resolve, reject) {
 		imgStream = s3.getObject({

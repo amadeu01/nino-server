@@ -103,6 +103,7 @@ schools.setLogo = function(school_id, rawToken, device, part) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
+			//TODO: Validate User Permissions
 			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
 			else {
 					awss3.uploadLogotype(part, "logo_" + school_id + ".png", part.byteCount)
@@ -114,10 +115,32 @@ schools.setLogo = function(school_id, rawToken, device, part) {
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			reject(errors.internalError(err));
 		});
 	});
 };
+
+schools.getLogo = function(school_id, rawToken, device) {
+	return new Promise(function(resolve, reject) {
+		credentialDAO.read(rawToken)
+		.then(function(credential){
+			//TODO: Validate User Permissions
+			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			else {
+					awss3.downloadLogotype("logo_" + school_id + ".png")
+					.then(function(success) {
+						resolve(success);
+					}).catch(function(err) {
+						resolve(errors.internalError(err));
+					});
+			}
+		})
+		.catch(function(err) {
+			resolve(errors.internalError(err));
+		});
+	});
+}
+
 /** @method delete
 * @param schoolInfo {JSON} what will be updated
 * @param device {string}
