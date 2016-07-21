@@ -119,7 +119,7 @@ schools.setLogo = function(school_id, rawToken, device, part) {
 	});
 };
 
-schools.getLogo = function(school_id, rawToken, device) {
+schools.readLogo = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
