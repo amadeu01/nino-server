@@ -117,36 +117,36 @@ studentsDAO.findWithRoomId = function(roomID) {
 	 });
  };
  
- studentsDAO.findWithGuardianAndStudent = function(guardian_id, student_id) {
+ studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) { 
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
 			 if (err) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT s.id FROM students s, guardians_students gs WHERE gs.guardian = $1 AND gs.student = s.id AND gs.student = $2', [guardian_id, student_id], function(err, result) {
+			 client.query('SELECT s.id FROM students s, guardians_students gs, guardians g WHERE gs.guardian = g.id AND gs.student = s.id AND s.profile = $2 AND g.profile = $1', [guardian_profile_id, student_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
-				 else resolve(result.rows); //Executed correctly
+				 else resolve(result.rows[0]); //Executed correctly
 				 done();
 			 });
 		 });
 	 });
  };
  
- studentsDAO.findWithSchoolAndStudent = function(school_id, student_id) {
+ studentsDAO.findWithSchoolAndStudentProfile = function(school_id, profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
 			 if (err) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT id FROM students WHERE school = $1 AND id = $2', [school_id, student_id], function(err, result) {
+			 client.query('SELECT s.id FROM students s, profiles p WHERE s.school = $1 AND s.profile = p.id AND p.id = $2', [school_id, profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
-				 else resolve(result.rows); //Executed correctly
+				 else resolve(result.rows[0]); //Executed correctly
 				 done();
 			 });
 		 });

@@ -424,7 +424,7 @@ var createEducatorRooms = function(pool) {
 				return;
 			}
 			client.query('CREATE TABLE IF NOT EXISTS educators_rooms' +
-				'(educator	INTEGER REFERENCES educator (id) ON DELETE CASCADE,' +
+				'(educator	INTEGER REFERENCES employees (id) ON DELETE CASCADE,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
