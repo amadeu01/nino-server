@@ -42,7 +42,7 @@ studentsDAO.create = function(profile, school_id, room_id) {
 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
-							response.student = result.rows[0];
+							//response.student = result.rows[0];
 							res(response); //Sends account and profile in response dictionary
 						}
 					});
