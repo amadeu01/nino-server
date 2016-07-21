@@ -457,7 +457,7 @@ suite('Account Profile and Credential Persistence', function () {
 	//*************************************PERMISSIONS*************************************//
 
 	test('Should Validate School Employee', function() {
-		return school.findWithEmployeeAndSchool(2, 1)
+		return school.findWithEmployeeProfileAndSchool(2, 1)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -468,13 +468,12 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 	
 	test('Should Fail Validate School Employee', function() {
-		return school.findWithEmployeeAndSchool(3, 1)
+		return school.findWithEmployeeProfileAndSchool(3, 1)
 		.then(function(done) {
-			// console.log(done);
 			console.log("ERROR HERE");
-			throw(done);
+			return(done);
 		}).catch(function(err) {
-			// console.log(err);
+			console.log("Failed Successfully!")
 			return(err);
 		});
 	});
@@ -493,17 +492,16 @@ suite('Account Profile and Credential Persistence', function () {
 	test('Should Fail Validate School Owner', function() {
 		return school.findWithOwnerAndSchool(2, 1)
 		.then(function(done) {
-			// console.log(done);
 			console.log("ERROR HERE");
-			throw(done);
+			return(done);
 		}).catch(function(err) {
-			// console.log(err);
+			console.log("Failed Successfully!")
 			return(err);
 		});
 	});
 	
 	test('Should Validate School Student', function() {
-		return student.findWithSchoolAndStudent(1, 1)
+		return student.findWithSchoolAndStudentProfile(1, 3)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -513,8 +511,19 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 	
-	test('Should Validate School Student', function() {
-		return student.findWithGuardianAndStudent(1, 1)
+	test('Should Fail Validate School Student', function() {
+		return student.findWithSchoolAndStudentProfile(1, 2)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
+		});
+	});
+	
+	test('Should Validate Guardian Student', function() {
+		return student.findWithGuardianProfileAndStudentProfile(4, 3)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -524,14 +533,36 @@ suite('Account Profile and Credential Persistence', function () {
 		});
 	});
 	
-	test('Should Validate School Student', function() {
-		return guardian.findWithSchoolStudentAndGuardian(1, 1, 1)
+	test('Should Fail Validate Guardian Student', function() {
+		return student.findWithGuardianProfileAndStudentProfile(4, 1)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
+		});
+	});
+	
+	test('Should Validate School Student and Guardian', function() {
+		return guardian.findWithSchoolAndStudentProfileAndGuardianProfile(1, 3, 4)
 		.then(function(done) {
 			console.log(done);
 			return(done);
 		}).catch(function(err) {
 			console.log(err);
 			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate School Student and Guardian', function() {
+		return guardian.findWithSchoolAndStudentProfileAndGuardianProfile(1, 1, 1)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
 		});
 	});
 	
