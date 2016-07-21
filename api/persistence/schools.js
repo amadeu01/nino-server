@@ -49,7 +49,7 @@ var schoolServices = {
 							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else {
-								response.employee = result.rows[0];
+								//response.employee = result.rows[0];
 								res(response);	//Proceed to commit transaction
 							}
 						});
@@ -88,7 +88,7 @@ var schoolServices = {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT name, email, telephone FROM schools WHERE id = $1', [id], function(err, result) {
+				client.query('SELECT name, email, telephone, address FROM schools WHERE id = $1', [id], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects

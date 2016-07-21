@@ -14,7 +14,7 @@ var profileServices = {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT name, surname, birthdate, gender FROM profiles WHERE id = $1', [id], function(err, result) {
+				client.query('SELECT id, name, surname, birthdate, gender FROM profiles WHERE id = $1', [id], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
