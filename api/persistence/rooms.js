@@ -10,12 +10,13 @@ var validator = require('validator');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/** @method create
- * @param room {JSON}
- * @param class_id {id}
- * @return Promise {Promise} resolves Room with ID
- */
+
 var roomServices = {
+	/** @method create
+	 * @param room {JSON}
+	 * @param class_id {id}
+	 * @return Promise {Promise} resolves Room with ID
+	 */
 	create: function(room, class_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -57,7 +58,7 @@ var roomServices = {
 	},
  /** @method findWithClassId
   * @description Find all rooms for a class
-  * @param classID {id}
+  * @param class_id {id}
   * @return class array {Array<Class>}
   */
 	findWithClassId: function(class_id) {

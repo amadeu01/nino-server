@@ -88,7 +88,10 @@ employeesDAO.createEducator = function(school_id, account, profile) {
 		});
 	});
 };
-
+/** @method findWithProfileId
+ * @param profile_id {id}
+ * @return Promise {Promise}
+ */
 employeesDAO.findWithProfileId = function(id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
@@ -107,7 +110,7 @@ employeesDAO.findWithProfileId = function(id) {
 	});
 };
 
-/** @method
+/** @method getEmployeesWithSchoolId
  * @param email {string}
  * @return Promise {Promise}
  */

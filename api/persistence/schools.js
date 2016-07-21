@@ -98,7 +98,11 @@ var schoolServices = {
 			});
 		});
 	},
-	
+	/** @method findWithOwnerAndSchool
+   * @description Finds a school with owner and school id
+   * @param id {int}
+   * @return schoo_id {id}
+   */
 	findWithOwnerAndSchool: function(profile_id, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -116,7 +120,7 @@ var schoolServices = {
 			});
 		});
 	},
-	
+
 	findWithEmployeeAndSchool: function(employee_id, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {

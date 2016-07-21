@@ -3,7 +3,6 @@ var router = express.Router();
 var errors = require('../mechanisms/error');
 var validator = require('validator');
 var response = require('../mechanisms/response.js');
-var useragent = require('express-useragent');
 var studentsBO = require('../business/students.js');
 
 var numberValidate = function(req, res, next, id) {
