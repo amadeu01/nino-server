@@ -98,11 +98,12 @@ schools.update = function(school, device, rawToken, token) {
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-schools.setLogo = function(school_id, rawToken, device, part) {
+schools.setLogo = function(school_id, device, rawToken, token, part) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			//TODO: Validate User Permissions
+			//TODO: Check if data type is png
 			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
 			else {
 					awss3.uploadLogotype(part, "logo_" + school_id + ".png", part.byteCount)
@@ -124,19 +125,23 @@ schools.readLogo = function(school_id, device, rawToken, token) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			//TODO: Validate User Permissions
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(errors.invalidParameters("device"));
 			else {
+				return schoolDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+				.then(function(result) {
 					awss3.downloadLogotype("logo_" + school_id + ".png")
 					.then(function(success) {
-						resolve(success);
+						resolve(success); //TODO: Delete this comment too, just to inform that here i am returning a response from amazon, i will pipe it, thats why its not a response object :)
 					}).catch(function(err) {
-						resolve(errors.internalError(err));
-					});
+		 				reject(err); //Just passes it to the route layer, this is an error i can`t handle, will throw a 500
+		 			});
+				}).catch(function() { //Error here means that its not authorized
+					resolve(errors.invalidCredential());
+				})
 			}
-		})
-		.catch(function(err) {
-			resolve(errors.internalError(err));
-		});
+		}).catch(function(err) {
+ 			reject(err);
+ 		});
 	});
 }
 

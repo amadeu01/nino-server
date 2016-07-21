@@ -197,7 +197,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 					return;
 				}
 				gotImage = true;
-				schoolBO.setLogo(req.params.school_id, req.rawToken, req.device, part)
+				schoolBO.setLogo(req.params.school_id, req.device, req.rawToken, req.token, part)
 				.then(function(result) {
 					res.status(result.code).json(result.json);
 					resolve(result);
