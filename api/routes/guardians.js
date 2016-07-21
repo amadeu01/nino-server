@@ -13,51 +13,22 @@ var numberValidate = function(req, res, next, id) {
 };
 
 
-/** @description Get list of Student's Guardians. */
-router.get('/students/:student_id', function(req, res, next) {
-	return new Promise(function(resolve, reject) {
-		var missingParameters = [];
-		if (req.token === undefined ) missingParameters.push("token");
-		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.device === undefined) missingParameters.push("device");
-
-		if (req.body.guardian_id === undefined) missingParameters.push("guardian_id");
-		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
-
-		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		else {
-
-			return guardiansBO.findStudents(req.body.guardian_id, req.device, req.rawToken, req.token)
-			.then(function(resp) {
-				res.status(resp.code).json(resp.json);
-				resolve(resp);
-			}).catch(function(err) {
-				reject(err);
-			});
-		}
-	}).catch(function(err){
-		//console.log(err);
-		res.status(err.code).json(err.json);
-	});
-});
-
 /** @description Get Guardian info*/
-router.get('/:guardian_id', function(req, res, next) {
+router.get('/profiles/:profile_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 
-		if (req.body.guardian_id === undefined) missingParameters.push("guardian_id");
+		if (req.params.profile_id === undefined) missingParameters.push("guardian_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
 		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
 		else {
 
-			return guardiansBO.read(req.body.guardian_id, req.device, req.rawToken, req.token)
+			return guardiansBO.read(req.params.profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -71,7 +42,7 @@ router.get('/:guardian_id', function(req, res, next) {
 	});
 });
 
-/*Delete a Guardian*/
+/** @description Delete a Guardian*/
 router.delete('/:guardian_id', function(req, res, next) {
 
 });
@@ -81,10 +52,35 @@ router.post('/:guardian_id/students/:student_id', function(req, res, next) {
 
 });
 
-/** @description Delete the 'Guardianship' between a Guardian and a Baby*/
-router.delete('/:guardian_id/students/:student_id', function(req, res, next) {
+/** @description get guardians info */
+router.get('/me', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
 
+		if (req.params.profile_id === undefined) missingParameters.push("guardian_id");
+		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
+		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+
+		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else {
+
+			return guardiansBO.readMe(req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).catch(function(err){
+		//console.log(err);
+		res.status(err.code).json(err.json);
+	});
 });
+
 
 /** @description Create a new Guardian*/
 router.post('/', function(req, res, next) {
@@ -97,7 +93,7 @@ router.post('/', function(req, res, next) {
 		//else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
 		if (req.body.name === undefined) missingParameters.push("name");
 		if (req.body.surname === undefined) missingParameters.push("surname");
-		if (req.body.student_id === undefined) missingParameters.push("student_id");
+		if (req.body.student_profile_id === undefined) missingParameters.push("student_profile_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
@@ -115,7 +111,36 @@ router.post('/', function(req, res, next) {
 				birthdate: req.body.birthdate,
 				gender: req.body.gender
 			};
-			return guardiansBO.create(account, profile, req.body.student_id, req.device, req.rawToken, req.token)
+			return guardiansBO.create(account, profile, req.body.student_profile_id, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).catch(function(err){
+		//console.log(err);
+		res.status(err.code).json(err.json);
+	});
+});
+
+/** @description Get a Guardian to a Student */
+router.get('/students/:student_profile_id', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.params.student_profile_id === undefined) missingParameters.push("student_profile_id");
+		if (req.params.profile_id === undefined) missingParameters.push("guardian_id");
+		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
+		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+
+		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else {
+
+			return guardiansBO.findGuardiansWithProfileId(req.params.student_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);

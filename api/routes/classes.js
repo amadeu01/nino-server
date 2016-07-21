@@ -2,7 +2,6 @@
 
 var express = require('express');
 var router = express.Router();
-var useragent = require('express-useragent');
 var errors = require('../mechanisms/error');
 var validator = require('validator');
 var classesBO = require('../business/classes.js');

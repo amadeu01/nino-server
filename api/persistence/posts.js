@@ -1,5 +1,5 @@
 /**
-* @module persistence
+* @module persistence/post
 */
 
 var models = require('../models');
@@ -72,7 +72,11 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method createWithProfiles
+   * @description something
+   * @param post {Account} - Message, school, class, room, type
+   * @param author_id {profile_id}
+   */
 	createWithProfiles: function(post, author_id, profiles) {
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -105,13 +109,14 @@ var postsDAO = {
 						});
 					});
 				}).then(function(response) {
-					response.profiles = []
+					response.profiles = [];
 					return new Promise(function(res, rej) {
 						var done = 0;
 						var returned = false;
-						if (profiles.length == 0) res(response); //Case empty
+						if (profiles.length === 0) res(response); //Case empty
 						else {
 							for (var i in profiles) {
+								//TODO: don't make functions on within loop !!!
 								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], function(err, result) {
 									done++;
 									if (err) rej (err);
@@ -154,7 +159,11 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method markPostAsReadBy
+   * @description something
+   * @param profile_id {id}
+   * @param post_id {id}
+   */
 	markPostAsReadBy: function(profile_id, post_id) {
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -194,7 +203,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method getPostReadByInfo
+   * @description something
+   * @param post_id {id}
+   */
 	getPostReadByInfo: function(post_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -211,7 +223,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostWithId
+	 * @description something
+	 * @param post_id {id}
+	 */
 	findPostWithId: function(post_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -229,7 +244,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithClassId
+	 * @description something
+	 * @param class_id {id}
+	 */
 	findPostsWithClassId: function(class_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -247,7 +265,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithProfileId
+	 * @description something
+	 * @param profile_id {id}
+	 */
 	findPostsWithProfileId: function(profile_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -265,7 +286,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithRoomId
+	 * @description something
+	 * @param room_id {id}
+	 */
 	findPostsWithRoomId: function(room_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -283,7 +307,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithSchoolId
+	 * @description something
+	 * @param school_id {id}
+	 */
 	findPostsWithSchoolId: function(school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -301,7 +328,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithAuthorId
+	 * @description something
+	 * @param author_id {id}
+	 */
 	findPostsWithAuthorId: function(author_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -319,6 +349,6 @@ var postsDAO = {
 			});
 		});
 	}
-}
+};
 
 module.exports = postsDAO;
