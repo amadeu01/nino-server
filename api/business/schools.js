@@ -49,9 +49,8 @@ schools.read = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			//console.log(credential);
 			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			//if (!validator.isNumeric(school_id)) reject(errors.invalidParameters("school_id")); //validates only strings
+			
 			//TODO: can read school ? no, so reject
 			else {
 				return schoolDAO.findWithId(school_id)
@@ -120,7 +119,7 @@ schools.setLogo = function(school_id, rawToken, device, part) {
 	});
 };
 
-schools.getLogo = function(school_id, rawToken, device) {
+schools.readLogo = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){

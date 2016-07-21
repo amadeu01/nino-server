@@ -226,12 +226,13 @@ router.get('/:school_id/logotype', function(req, res, next) {
 		//Check parameters
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
 		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
 		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
-		return schoolBO.readLogo(req.body.image, req.device, req.rawToken, req.token)
+		return schoolBO.readLogo(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(resp){
-			if (err instanceof response) {
+			if (resp instanceof response) {
 				res.status(resp.code).json(resp.json);
 			} else {
 				resp.pipe(res);

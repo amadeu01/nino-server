@@ -38,7 +38,7 @@ accountsDAO.createNewUser = function(account, profile) {
 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
-							response.account = result.rows[0]; //Sets account to response
+							//response.account = result.rows[0]; //Sets account to response
 							res(response); //Sends account and profile in response dictionary
 						}
 					});
@@ -81,7 +81,7 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 			.then(function() {
 				var response = {};
 				return new Promise(function(res, rej) {
-					client.query('UPDATE accounts SET (confirmed, password) = ($1, $2) WHERE hash = $3 RETURNING id, profile, email',[true, password, confirmationHash], function(err, result) {
+					client.query('UPDATE accounts SET (confirmed, password) = ($1, $2) WHERE hash = $3 RETURNING id, profile',[true, password, confirmationHash], function(err, result) {
 						if (err) rej(err);
 						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects

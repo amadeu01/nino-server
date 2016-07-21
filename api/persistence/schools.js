@@ -49,7 +49,7 @@ var schoolServices = {
 							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else {
-								response.employee = result.rows[0];
+								//response.employee = result.rows[0];
 								res(response);	//Proceed to commit transaction
 							}
 						});
@@ -121,16 +121,16 @@ var schoolServices = {
 		});
 	},
 
-	findWithEmployeeAndSchool: function(employee_id, school_id) {
+	findWithEmployeeProfileAndSchool: function(profile_id, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT e.profile, s.id FROM schools s, employees e WHERE e.school = s.id AND s.id = $1 AND e.id = $2', [school_id, employee_id], function(err, result) {
+				client.query('SELECT e.profile, s.id FROM schools s, employees e, profiles p WHERE e.school = s.id AND e.profile = p.id AND s.id = $1 AND p.id = $2', [school_id, profile_id], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
-					else if (result.rowCount === 0) resolve(result); //Nothing found, sends error
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
 					else resolve(result.rows[0]); //Executed correctly
 					done();

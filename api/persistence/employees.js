@@ -99,7 +99,7 @@ employeesDAO.findWithProfileId = function(id) {
 				reject(err); //Connection error, aborts already
 				return;
 			}
-			client.query('SELECT school, id FROM employees WHERE profile = $1', [id], function(err, result) {
+			client.query('SELECT school FROM employees WHERE profile = $1', [id], function(err, result) {
 				if (err) reject(err); //Error: rejects to BO
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
