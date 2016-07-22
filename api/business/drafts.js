@@ -1,7 +1,7 @@
 /** @module business/drafts */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var activitiesDAO = require('../persistence/drafts.js');
 
 var drafts = {};

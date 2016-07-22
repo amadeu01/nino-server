@@ -1,8 +1,5 @@
 /** @module persistence/students */
 
-var models = require('../models');
-var errors = require('../mechanisms/error');
-var validator = require('validator');
 var studentsDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;

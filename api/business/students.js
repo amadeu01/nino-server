@@ -1,10 +1,9 @@
 /** @module business/students */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var studentsDAO = require('../persistence/students.js');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
 var students = {};
 
 /** @method create
@@ -18,14 +17,12 @@ students.create = function(profile, school_id, room_id, device, rawToken, token 
     .then(function(credential){
       return studentsDAO.create(profile, school_id, room_id)
       .then(function(student_id){
-        resolve(new response(200, student_id, null));
+        resolve(responses.success(student_id));
       }).catch(function(err){
-        reject(errors.internalError(err));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      //console.log(err.fields);
-      //console.log(err.rows);
-      reject(errors.internalError(err));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -43,12 +40,12 @@ students.readForRoom = function(room_id, device, rawToken, token ) {
     .then(function(credential){
       return studentsDAO.findWithRoomId(room_id)
       .then(function(students){
-        resolve(new response(200, students, null));
+        resolve(responses.success(students));
       }).catch(function(err){
-        reject(errors.internalError(err));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError(err));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -64,7 +61,7 @@ students.readForGuardian = function(guardian_id, device, rawToken, token) {
     .then(function(credential){
 
     }).catch(function(err){
-      reject(errors.internalError(err));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -82,7 +79,7 @@ students.addForGuardian = function(student_id, guardian_id, device, rawToken, to
     .then(function(credential){
 
     }).catch(function(err){
-      reject(errors.internalError(err));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -100,7 +97,7 @@ students.removeFromGuardian = function(student_id, guardian_id, device, rawToken
     .then(function(credential){
 
     }).catch(function(err){
-      reject(errors.internalError(err));
+      resolve(responses.persistenceError(err));
     });
   });
 };

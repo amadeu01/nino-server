@@ -1,11 +1,5 @@
 /** @module persistence/schools */
 
-//var models = require('../models');
-
-//var errors = require('../services/errors');
-
-var validator = require('validator');
-//var permissions = require('../services/permissions');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 

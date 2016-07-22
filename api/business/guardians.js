@@ -1,12 +1,11 @@
 /** @module business/guardians */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var guardiansDAO = require('../persistence/guardians.js');
 var studentsDAO = require('../persistence/students.js');
 var uid = require('uid-safe');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
 var guardians = {};
 
 /** @method create
@@ -21,19 +20,18 @@ guardians.create = function(account, profile, student_id, device, rawToken, toke
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
         account.hash = uid.sync(100);
         guardiansDAO.create(account, profile, student_id)
 				.then(function(guardian_id) {
-					resolve( new response(200, guardian_id, null));
+					resolve(responses.success(guardian_id));
 				}).catch(function(err) {
-					resolve(errors.persistenceError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}
-		})
-		.catch(function(err) {
-			resolve(errors.persistenceError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -48,18 +46,17 @@ guardians.findStudents = function(guardian_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					studentsDAO.findWithGuardianId(guardian_id)
 					.then(function(students) {
-						resolve( new response(200, students, null));
+						resolve(responses.success(students));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -74,18 +71,17 @@ guardians.read = function(guardian_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					guardiansDAO.findWithProfileId(guardian_id)
 					.then(function(guardianInfo) {
-						resolve( new response(200, guardianInfo, null));
+						resolve(responses.success(guardianInfo));
 					}).catch(function(err) {
-						resolve(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			resolve(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -99,18 +95,17 @@ guardians.readMe = function(device, rawToken, token) {
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					studentsDAO.findWithProfileId(token.profile)
 					.then(function(guardianInfo) {
-						resolve( new response(200, guardianInfo, null));
+						resolve(responses.success(guardianInfo));
 					}).catch(function(err) {
-						resolve(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			resolve(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -124,18 +119,17 @@ guardians.findWithStudentId = function(student_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					studentsDAO.findGuardiansWithProfileId(token.profile)
 					.then(function(guardians) {
-						resolve( new response(200, guardians, null));
+						resolve(responses.success(guardians));
 					}).catch(function(err) {
-						resolve(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			resolve(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };

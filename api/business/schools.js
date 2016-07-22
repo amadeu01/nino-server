@@ -1,10 +1,9 @@
 /** @module business/schools */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var schoolDAO = require('../persistence/schools.js');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
 var schools = {};
 var awss3 = require('../mechanisms/AWSS3.js');
 
@@ -14,26 +13,21 @@ var awss3 = require('../mechanisms/AWSS3.js');
 * @return School {id}
 */
 schools.create = function(school, device, rawToken, token) {
-	//TODO: func do BO que vai validar as coisas e mandar o DAO criar. O route ta fazendo boa parte da validação, separa isso depois de modo que lá só verifique se existe e aqui valide :)
-	//console.log("In BO");
 	return new Promise(function(resolve, reject) {
 	    return credentialDAO.read(rawToken)
    		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			//else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); //TODO: aqui nao temos o school_id :v
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
-				//console.log(token.profile);
 				return schoolDAO.create(school, token.profile)
 				.then(function(school_id){
-					resolve(new response(200, school_id, null));
+					resolve(responses.success(school_id));
 				}).catch(function(err){
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}
     	}).catch(function(err) {
-
 				//when there is a error abose that first return, we need to treat it here :)
-				reject(errors.internalError(err));
+				resolve(responses.persistenceError(err));
 		});
   });
 };
@@ -49,20 +43,18 @@ schools.read = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			//TODO: can read school ? no, so reject
 			else {
 				return schoolDAO.findWithId(school_id)
 				.then(function(school){
-					//console.log(school);
-					resolve(new response(200, school, null));
+					resolve(responses.success(school));
 				}).catch(function(err){
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}
     }).catch(function(err){
-			console.log(err);
+			resolve(responses.persistenceError(err));
 		});
   });
 };
@@ -76,18 +68,18 @@ schools.update = function(school, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			//else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); validades only strings
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			//TODO: can read school ? no, so reject
 			else {
-
 				return schoolDAO.update(school)
 				.then(function(school_id){
-					resolve(new response(200, school_id, null));
+					resolve(responses.success(school_id));
 				}).catch(function(err){
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}
+    }).catch(function(err) {
+    	resolve(responses.persistenceError(err));
     });
   });
 };
@@ -104,18 +96,18 @@ schools.setLogo = function(school_id, device, rawToken, token, part) {
 		.then(function(credential){
 			//TODO: Validate User Permissions
 			//TODO: Check if data type is png
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					awss3.uploadLogotype(part, "logo_" + school_id + ".png", part.byteCount)
 					.then(function(success) {
-						resolve( new response(200, success, null));
+						resolve(responses.success(success));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			reject(errors.internalError(err));
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -125,7 +117,7 @@ schools.readLogo = function(school_id, device, rawToken, token) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			//TODO: Validate User Permissions
-			if ((credential.device !== device)) resolve(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 				return schoolDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
 				.then(function(result) {
@@ -133,14 +125,14 @@ schools.readLogo = function(school_id, device, rawToken, token) {
 					.then(function(success) {
 						resolve(success); //TODO: Delete this comment too, just to inform that here i am returning a response from amazon, i will pipe it, thats why its not a response object :)
 					}).catch(function(err) {
-		 				reject(err); //Just passes it to the route layer, this is an error i can`t handle, will throw a 500
+		 				resolve(responses.internalError(err));
 		 			});
 				}).catch(function() { //Error here means that its not authorized
-					resolve(errors.invalidCredential());
+					resolve(responses.invalidCredential());
 				})
 			}
 		}).catch(function(err) {
- 			reject(err);
+ 			resolve(responses.persistenceError(err));
  		});
 	});
 }
@@ -155,18 +147,18 @@ schools.delete = function(school_id, rawToken, token) {
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			//else if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); validades only strings
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			//TODO: can read school ? no, so reject
 			else {
-
 				return schoolDAO.delete(school_id)
 				.then(function(school_id){
-					resolve(new response(200, school_id, null));
+					resolve(responses.success(school_id));
 				}).catch(function(err){
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}
+    }).catch(function(err) {
+    	resolve(responses.persistenceError(err));
     });
   });
 };

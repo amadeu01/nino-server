@@ -1,7 +1,5 @@
 /** @module persistence/credentials */
 
-var models = require('../models');
-var errors = require('../mechanisms/error');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 

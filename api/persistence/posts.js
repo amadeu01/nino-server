@@ -2,11 +2,6 @@
 * @module persistence/post
 */
 
-var models = require('../models');
-
-//errors and validator's module
-var errors = require('../mechanisms/error');
-var validator = require('validator');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 

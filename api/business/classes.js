@@ -1,10 +1,9 @@
 /** @module business/classes */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var classesDAO = require('../persistence/classes.js');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
 var classes = {};
 
 
@@ -22,9 +21,7 @@ classes.createClassForSchool = function(class_name, school_id, device, rawToken,
     .then(function(credential){
 			var invalidParameters = [];
 			if ((credential.device !== device)) invalidParameters.push("device");
-			//if (!validator.isNumeric(school)) invalidParameters.push("school_id");
-			//if (!validator.isAlphanumeric(class_name, 'pt-PT')) invalidParameters.push("class_name");
-			if (invalidParameters.length > 0) reject(errors.invalidParameters(invalidParameters));
+			if (invalidParameters.length > 0) resolve(responses.invalidParameters(invalidParameters));
 			//TODO: can create class ? no, so reject
 			else {
 				var _class = {
@@ -32,13 +29,13 @@ classes.createClassForSchool = function(class_name, school_id, device, rawToken,
 				};
 				return classesDAO.create(_class, school_id)
 				.then(function(class_id) {
-					//console.log(class_id);
-					resolve(new response(200, class_id, null));
+					resolve(responses.success(class_id));
 				}).catch(function(err){
-					//var data = err.message + " Create class for school";
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}
+    }).catch(function(err) {
+    	resolve(responses.persistenceError(err));
     });
   });
 };
@@ -53,15 +50,16 @@ classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (credential.device !== device) reject(errors.invalidParameters("device"));
-			//if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); //Validates only string
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
 			//it can getting all classes ? token info ?
-			return classesDAO.findWithSchoolId(school_id)
+			else return classesDAO.findWithSchoolId(school_id)
 			.then(function(result){
-				resolve(new response(200, result, null));
+				resolve(responses.success(result));
 			}).catch(function(err){
-				reject(errors.persistenceError(err));
+				resolve(responses.persistenceError(err));
 			});
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -77,15 +75,15 @@ classes.delete = function (school_id, class_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (credential.device !== device) reject(errors.invalidParameters("device"));
-
-			return classesDAO.delete(class_id)
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else return classesDAO.delete(class_id)
 			.then(function(result){
-				console.log(result);
-				resolve(new response(200, result, null));
+				resolve(responses.success(result));
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				resolve(responses.persistenceError(err));
 			});
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -101,15 +99,15 @@ classes.update = function (school_id, classInfo, device, rawToken, token) {
 	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (credential.device !== device) reject(errors.invalidParameters("device"));
-
-			return classesDAO.update(classInfo)
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else return classesDAO.update(classInfo)
 			.then(function(result){
-				console.log(result);
-				resolve(new response(200, result, null));
+				resolve(responses.success(result));
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				resolve(responses.persistenceError(err));
 			});
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };

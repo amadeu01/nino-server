@@ -1,10 +1,9 @@
 /** @module business/rooms */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var roomsDAO = require('../persistence/rooms.js');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
 var rooms = {};
 
 
@@ -21,12 +20,12 @@ rooms.createToClass = function(room, class_id, device, rawToken, token) {
     .then(function(credential){
       return roomsDAO.create(room, class_id)
       .then(function(room_id){
-        resolve(new response(200, room_id, null));
+        resolve(responses.success(room_id));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -43,12 +42,12 @@ rooms.getRoomFromClass = function(class_id, device, rawToken, token) {
     .then(function(credential){
       return roomsDAO.findWithClassId(class_id)
       .then(function(rooms){
-        resolve(new response(200, rooms, null));
+        resolve(responses.success(rooms));
       }).catch(function(err){
-        reject(errors.persistenceError(err));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -66,12 +65,12 @@ rooms.addStudentToRoom = function(student_id, room_id, device, rawToken, token) 
     .then(function(credential){
       return roomsDAO.addStudent(student_id, room_id)
       .then(function(result){
-        resolve(new response(200, result, null));
+        resolve(responses.success(result));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -89,12 +88,12 @@ rooms.removeStudentFromRoom = function(student_id, room_id, device, rawToken, to
     .then(function(credential){
       return roomsDAO.removeStudent(student_id, room_id)
       .then(function(result){
-        resolve(new response(200, result, null));
+        resolve(responses.success(result));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -112,12 +111,12 @@ rooms.addEducatorToRoom = function(educator_id, room_id, device, rawToken, token
     .then(function(credential){
       return roomsDAO.addEducator(educator_id, room_id)
       .then(function(result){
-        resolve(new response(200, result, null));
+        resolve(responses.success(result));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -135,12 +134,12 @@ rooms.removeEducatorFromRoom = function(educator_id, room_id, device, rawToken, 
     .then(function(credential){
       return roomsDAO.removeEducator(educator_id, room_id)
       .then(function(result){
-        resolve(new response(200, result, null));
+        resolve(responses.success(result));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -157,12 +156,12 @@ rooms.update = function(roomInfo, device, rawToken, token) {
     .then(function(credential){
       return roomsDAO.update(roomInfo)
       .then(function(result){
-        resolve(new response(200, result, null));
+        resolve(responses.success(result));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -180,12 +179,12 @@ rooms.delete = function(room_id, class_id, device, rawToken, token) {
     .then(function(credential){
       return roomsDAO.delete(room_id)
       .then(function(result){
-        resolve(new response(200, result, null));
+        resolve(responses.success(result));
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.persistenceError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
