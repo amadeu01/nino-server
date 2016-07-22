@@ -19,9 +19,11 @@ var accounts = {};
  */
 accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) resolve(responses.invalidParameters("email"));
-		else if (!validator.isAlpha(profile.name, 'pt-PT')) resolve(responses.invalidParameters("name"));
-		else if (!validator.isAlpha(profile.surname, 'pt-PT')) resolve(responses.invalidParameters("surname"));
+		var invalidParameters = [];
+		if (!validator.isEmail(account.email)) invalidParameters.push("email");
+		if (!validator.isAlpha(profile.name, 'pt-PT')) invalidParameters.push("name");
+		if (!validator.isAlpha(profile.surname, 'pt-PT')) invalidParameters.push("surname");
+		else if (invalidParameters.length > 0) reject(responses.missingParameters(invalidParameters));
 		else {
 			account.hash = uid.sync(100);
 			return accountsDAO.createNewUser(account, profile)
@@ -44,19 +46,24 @@ accounts.createNewUser = function(account, profile) {
  */
 accounts.createNewUserTest = function(account, profile) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) resolve(responses.invalidParameters("email"));
-		else if (!validator.isAlpha(profile.name, 'pt-PT')) resolve(responses.invalidParameters("name"));
-		else if (!validator.isAlpha(profile.surname, 'pt-PT')) resolve(responses.invalidParameters("surname"));
+		var invalidParameters = [];
+		if (!validator.isEmail(account.email)) invalidParameters.push("email");
+		if (!validator.isAlpha(profile.name, 'pt-PT')) invalidParameters.push("name");
+		if (!validator.isAlpha(profile.surname, 'pt-PT')) invalidParameters.push("surname");
+		else if (invalidParameters.length > 0) reject(responses.missingParameters(invalidParameters));
 		else {
 			account.hash = uid.sync(100);
 			var hash = account.hash;
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
-				//console.log(hash);
+				//console.log(profile);
 				newUser.hash = hash;
+				//console.log(newUser);
 				//mail.sendUserConfirmation(account.email, {hash: account.hash});
 				resolve(responses.success(newUser));
 			}).catch(function(err) {
+				// console.log("Error:\n");
+				// console.log(err);
 				//var data = err.message + " Create User error";
 				resolve(responses.persistenceError(err));
 			});
@@ -80,7 +87,7 @@ accounts.confirmAccount = function(confirmationHash, device, password) {
 			};
 			return jwt.create(tokenData)
 			.then(function(token) {
-				return credentialDAO.logIn(device, token, account)
+				return credentialDAO.logIn(device, token, userInfo.id)
 				.then(function(result) {
 					var res = {token: token};
 					resolve(responses.success(res));
@@ -105,15 +112,14 @@ accounts.confirmAccountTest = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
 		return accountsDAO.confirmAccount(confirmationHash, password)
 		.then(function(userInfo) {
-			var account = userInfo.account;
 			var tokenData = {
 				profile: userInfo.profile,
 				device: device,
-				account: account.id
+				account: userInfo.id
 			};
 			return jwt.create(tokenData)
 			.then(function(token) {
-				return credentialDAO.logIn(device, token, account)
+				return credentialDAO.logIn(device, token, userInfo.id)
 				.then(function(result) {
 					var res = {
 						rawToken: token,
@@ -153,7 +159,6 @@ accounts.findWithHash = function(confirmationHash) {
 * @param email {string}
 * @param password {string}
 * @param device
-* @param populate {Array} tells which list must be populated
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
@@ -174,13 +179,13 @@ accounts.logIn = function(email, password, device) {
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
-					return credentialDAO.logIn(device, token, account)
+					return credentialDAO.logIn(device, token, account.id)
 					.then(function(result) {
 						var res = {token: token};
 						resolve(responses.success(res));
 					}).catch(function(err) {
 						resolve(responses.persistenceError(err));
-					})
+					});
 				}).catch(function(err) {
 					resolve(responses.internalError(err));
 				});
@@ -191,12 +196,11 @@ accounts.logIn = function(email, password, device) {
 	});
 };
 
-/** @method logIn
+/** @method logInTest
 * @description Only for test sake
 * @param email {string}
 * @param password {string}
 * @param device
-* @param populate {Array} tells which list must be populated
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
@@ -213,7 +217,7 @@ accounts.logInTest = function(email, password, device) {
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
-					return credentialDAO.logIn(device, token, account)
+					return credentialDAO.logIn(device, token, account.id)
 					.then(function(result) {
 						var res = {
 							rawToken: token,

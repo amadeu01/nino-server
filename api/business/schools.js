@@ -129,13 +129,13 @@ schools.readLogo = function(school_id, device, rawToken, token) {
 		 			});
 				}).catch(function() { //Error here means that its not authorized
 					resolve(responses.invalidCredential());
-				})
+				});
 			}
 		}).catch(function(err) {
  			resolve(responses.persistenceError(err));
  		});
 	});
-}
+};
 
 /** @method delete
 * @param schoolInfo {JSON} what will be updated

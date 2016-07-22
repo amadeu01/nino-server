@@ -11,7 +11,7 @@ var pool = require('../mechanisms/database.js').pool;
 var postsDAO = {
  /** @method create
   * @description Creates a new Post with author_id Profile as author
-  * @param post {Account} - Message, school, class, room, type
+  * @param post {Post} - Message, school, class, room, type
   *	@param author_id {profile_id}
   */
 	create: function(post, author_id) {
@@ -67,8 +67,9 @@ var postsDAO = {
 	},
 	/** @method createWithProfiles
    * @description something
-   * @param post {Account} - Message, school, class, room, type
+   * @param post {Post} - Message, school, class, room, type
    * @param author_id {profile_id}
+	 * @param profiles {Array<profiles_id>}
    */
 	createWithProfiles: function(post, author_id, profiles) {
 		return new Promise(function(resolve, reject) {

@@ -14,7 +14,7 @@ var credentialServices = {
 	 * @param account {Account}
 	 * @return Promise {Promise}
 	 */
-	logIn: function(device, token, account) {
+	logIn: function(device, token, account_id) {
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
@@ -24,7 +24,7 @@ var credentialServices = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res, rej) {
-						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account.id, device], function(err, result) {
+						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account_id, device], function(err, result) {
 							if (err) rej(err);
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);
@@ -33,7 +33,7 @@ var credentialServices = {
 				}).then(function(result) {
 				   return new Promise(function (res, rej) {
 					   if (result.rowCount === 0) { //No row was updated, meaning that we need to create one
-						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account.id, device, token], function(err, result) {
+						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account_id, device, token], function(err, result) {
 							   if (err) rej(err);
 								 else if (result.name == "error") rej(result); //Some error occured : rejects
 								 else res(result);

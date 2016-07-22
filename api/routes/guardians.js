@@ -19,7 +19,6 @@ router.get('/:guardian_profile_id', function(req, res, next) {
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-
 		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian_profile_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
@@ -42,8 +41,32 @@ router.get('/:guardian_profile_id', function(req, res, next) {
 });
 
 /** @description Remove a Guardian*/
-router.delete('/:guardian_id', function(req, res, next) {
+router.delete('/:guardian_profile_id/students/:student_profile_id', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.params.student_profile_id === undefined) missingParameters.push("student_profile_id");
+		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian_profile_id");
+		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
+		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
+		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		else {
+
+			return guardiansBO.delete(req.params.guardian_profile_id, req.params.student_profile_id, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).catch(function(err){
+		//console.log(err);
+		res.status(err.code).json(err.json);
+	});
 });
 
 /** @description Add a Guardian to a Student */

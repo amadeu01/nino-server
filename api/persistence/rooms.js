@@ -69,7 +69,18 @@ var roomServices = {
 				});
 			});
 		});
+	},
+	addEducator: function(educator_profile_id, room_id) {
+
+	},
+	removeEducatorFromRoom: function(educator_profile_id, room_id) {
+
+	},
+
+	delete: function(room_id) {
+
 	}
+
 };
 
 module.exports = roomServices;

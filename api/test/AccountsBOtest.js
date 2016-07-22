@@ -11,6 +11,7 @@ var classesBO = require('../business/classes.js');
 var roomsBO = require('../business/rooms.js');
 var employeesBO = require('../business/employees.js');
 var studentsBO = require('../business/students.js');
+var guardiansBO = require('../business/guardians.js');
 var fake = require('Faker');
 //var account = require('../mechanisms/database.js');
 
@@ -20,7 +21,9 @@ var password = "superpassword";
 var email = "amadeu@ninoapp.com.br";
 var cellphone = "+5585981501028";
 var class_name = "Classe teste";
+var class_name1 = "Classe do Wesley";
 var room_name = "Sala teste";
+var room_name1 = "Sala da brincadeira";
 var school = {
 	name: "Escola Feliz",
 	email: "escolafeliz@escolafeliz.com.br",
@@ -29,13 +32,18 @@ var school = {
 	telephone: "+558534768162",
 	cnpj: "08123939412"
 };
-
+var student_id1;
+var student_id2;
+var student_id3;
+var student_id4;
 var token;
 var rawToken;
 var confirmationHash = "";
 var school_id;
 var class_id;
+var class_id1;
 var room_id;
+var room_id1;
 var fakeData = [];
 
 suite('Account Profile and Credential BO', function () {
@@ -56,7 +64,7 @@ suite('Account Profile and Credential BO', function () {
 		fakeData[i].email = fake.Internet.email();
 		fakeData[i].cellphone = fake.PhoneNumber.phoneNumber();
 		fakeData[i].address = fake.Address.streetAddress();
-		fakeData[i].birthdate = "27/01/1994";
+		fakeData[i].birthdate = new Date('1994-01-27');
 		fakeData[i].device = "iPhone";
 		fakeData[i].password = fake.Lorem.words()[0];
 	}
@@ -82,6 +90,7 @@ suite('Account Profile and Credential BO', function () {
 
 			return accountsBO.createNewUserTest(account, profile)
 			.then(function(res){
+				//console.log(res);
 				fakeUser.confirmationHash = res.json.data.hash;
 			}).then(function(res){
 				return accountsBO.confirmAccountTest(fakeUser.confirmationHash, fakeUser.device, fakeUser.password)
@@ -134,7 +143,7 @@ suite('Account Profile and Credential BO', function () {
 
 
 	test('Should Create User Owner', function() {
-		console.log(email);
+		//console.log(email);
 		var account = {
 			email: email,
 			cellphone: cellphone
@@ -189,6 +198,7 @@ suite('Account Profile and Credential BO', function () {
 	test('Should confirm account ', function() {
 		return accountsBO.confirmAccountTest(confirmationHash, device, password)
 		.then(function(res){
+			//console.log(res);
 			var data = "Code: " + JSON.stringify(res.code) + "\n";
 			data += "##########################\n";
 			data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
@@ -216,10 +226,11 @@ suite('Account Profile and Credential BO', function () {
 	// Login
 
 		test('Should Login in the server', function() {
-			console.log(email);
+			//console.log(email);
 			return accountsBO.logInTest(email, password, device)
 			.then(function(res) {
-				//console.log("Entrou");
+				//console.log(res);
+				//console.log(res.json.data.resTest);
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
@@ -284,7 +295,7 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		//Classes
+		//- MARK: Classes
 
 		test('Should Create Class', function() {
 			return classesBO.createClassForSchool(class_name, school_id, device, rawToken, token)
@@ -307,7 +318,28 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		test('Should Read Class For school', function() {
+		test('Should Create Class do Wesley', function() {
+			return classesBO.createClassForSchool(class_name1, school_id, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				class_id1 = res.json.data.class.id;
+				return fs.writeFile("./results/Results_for_CreateClass.txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro Criando Classe hue hue hue");
+				console.log(err);
+			});
+		});
+
+		test('Should Read Classes For school', function() {
 			// console.log(classesBO);
 			// console.log(classesBO.getClassesForSchool);
 			return classesBO.getClassesForSchool(school_id, device, rawToken, token).then(function(res){
@@ -318,7 +350,7 @@ suite('Account Profile and Credential BO', function () {
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				return fs.writeFile("./results/Results_for_ReadClassFrom.txt", data, 'utf8', function(err) {
+				return fs.writeFile("./results/Results_for_ReadClassFromSchoolId" + school_id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -330,7 +362,7 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		//Romm
+		//- Mark: Room
 
 		test('Should Create Room For Class', function() {
 			var room = {
@@ -344,7 +376,31 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				room_id = res.json.data.room.id;
-				return fs.writeFile("./results/Results_for_CreateRoom.txt", data, 'utf8', function(err) {
+				return fs.writeFile("./results/Results_for_CreateRoomId" + res.json.data.room.id + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro Criando Sala para classe hue hue hue");
+				console.log(err);
+			});
+		});
+
+		test('Should Create Room (2) For Class', function() {
+			var room = {
+				name: room_name
+			};
+			return roomsBO.createToClass(room, class_id, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				room_id1 = res.json.data.room.id;
+				return fs.writeFile("./results/Results_for_CreateRoomId" + res.json.data.room.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -404,7 +460,7 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_CreateEducator.txt", data, 'utf8', function(err) {
+				return fs.writeFile("./results/Results_for_CreateEducatorID" + res.json.data.account.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -437,7 +493,7 @@ suite('Account Profile and Credential BO', function () {
 					data += "##########################\n";
 					data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 					//console.log(res.json.data);
-					return fs.writeFile("./results/Results_for_CreateEducator.txt", data, 'utf8', function(err) {
+					return fs.writeFile("./results/Results_for_CreateEducatorID" + res.json.data.account.id + ".txt", data, 'utf8', function(err) {
 						if(err) {
 							return console.log(err);
 						}
@@ -470,7 +526,7 @@ suite('Account Profile and Credential BO', function () {
 					data += "##########################\n";
 					data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 					//console.log(res.json.data);
-					return fs.writeFile("./results/Results_for_CreateEducator.txt", data, 'utf8', function(err) {
+					return fs.writeFile("./results/Results_for_CreateEducatorID" + res.json.data.account.id + ".txt", data, 'utf8', function(err) {
 						if(err) {
 							return console.log(err);
 						}
@@ -492,7 +548,7 @@ suite('Account Profile and Credential BO', function () {
 					data += "##########################\n";
 					data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 					//console.log(res.json.data);
-					return fs.writeFile("./results/Results_for_GetEmployees.txt", data, 'utf8', function(err) {
+					return fs.writeFile("./results/Results_for_GetEmployeesForSchoolId" + school_id + ".txt", data, 'utf8', function(err) {
 						if(err) {
 							return console.log(err);
 						}
@@ -517,12 +573,14 @@ suite('Account Profile and Credential BO', function () {
 			};
 			return studentsBO.create(student_profile, school_id, room_id, device, rawToken, token)
 			.then(function(res){
+				//console.log(res.json.data);
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
+				student_id1 = res.json.data.profile.id;
 				return fs.writeFile("./results/Results_for_CreateStudent.txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
@@ -551,8 +609,9 @@ suite('Account Profile and Credential BO', function () {
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				student_id2 = res.json.data.profile.id;
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.student.id + ".txt", data, 'utf8', function(err) {
+				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -581,7 +640,8 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.student.id + ".txt", data, 'utf8', function(err) {
+				student_id3 = res.json.data.profile.id;
+				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -609,8 +669,9 @@ suite('Account Profile and Credential BO', function () {
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.student.id + ".txt", data, 'utf8', function(err) {
+				// console.log(res.json.data);
+				student_id4 = res.json.data.profile.id;
+				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -632,7 +693,7 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_GetAllStudentsForRoom.txt", data, 'utf8', function(err) {
+				return fs.writeFile("./results/Results_for_GetAllStudentsForRoomId" + room_id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -644,5 +705,180 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		//Guardian 
+		//- MARK: Guardian
+
+		test('Should Create Mother of student', function() {
+			var account = {};
+			account.email = fake.Internet.email();
+			account.cellphone = fake.PhoneNumber.phoneNumber();
+
+			var profile = {};
+			profile.name = fake.Name.firstNameFemale();
+			profile.surname = fake.Name.lastName();
+			profile.birthdate = "16/08/1992";
+			profile.gender = 1;
+
+
+			return guardiansBO.create(account, profile, student_id1, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_MotherStudentId" + student_id1 + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Mãe de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
+
+		test('Should Create Father of student', function() {
+			var account = {};
+			account.email = fake.Internet.email();
+			account.cellphone = fake.PhoneNumber.phoneNumber();
+
+			var profile = {};
+			profile.name = fake.Name.firstNameMale();
+			profile.surname = fake.Name.lastName();
+			profile.birthdate = "16/08/1992";
+			profile.gender = 0;
+
+
+			return guardiansBO.create(account, profile, student_id1, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id1 + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
+
+		//Guardian
+
+		test('Should Create Mother (2) of student', function() {
+			var account = {};
+			account.email = fake.Internet.email();
+			account.cellphone = fake.PhoneNumber.phoneNumber();
+
+			var profile = {};
+			profile.name = fake.Name.firstNameFemale();
+			profile.surname = fake.Name.lastName();
+			profile.birthdate = "16/08/1992";
+			profile.gender = 1;
+
+
+			return guardiansBO.create(account, profile, student_id2, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_MotherStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Mãe de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
+
+		test('Should Create Father (2) of student', function() {
+			var account = {};
+			account.email = fake.Internet.email();
+			account.cellphone = fake.PhoneNumber.phoneNumber();
+
+			var profile = {};
+			profile.name = fake.Name.firstNameMale();
+			profile.surname = fake.Name.lastName();
+			profile.birthdate = "16/08/1992";
+			profile.gender = 0;
+
+
+			return guardiansBO.create(account, profile, student_id2, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
+
+		// test('Should Read all guardians for a kid', function() {
+		//
+		// 	return guardiansBO.readForStudents(school_id, student_id1, device, rawToken, token)
+		// 	.then(function(res){
+		// 		var data = "Code: " + JSON.stringify(res.code) + "\n";
+		// 		data += "##########################\n";
+		// 		data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+		// 		data += "##########################\n";
+		// 		data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+		// 		//console.log(res.json.data);
+		// 		return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id1 + ".txt", data, 'utf8', function(err) {
+		// 			if(err) {
+		// 				return console.log(err);
+		// 			}
+		// 			//console.log("The file results was saved!");
+		// 		});
+		// 	}).catch(function(err){
+		// 		console.log("Deu Erro criando Pai de estudante hue hue hue");
+		// 		console.log(err.data);
+		// 	});
+		// });
+		// test('Should Read all guardians for a kid', function() {
+		//
+		// 	return guardiansBO.readForStudents(school_id, student_id2, device, rawToken, token)
+		// 	.then(function(res){
+		// 		var data = "Code: " + JSON.stringify(res.code) + "\n";
+		// 		data += "##########################\n";
+		// 		data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+		// 		data += "##########################\n";
+		// 		data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+		// 		//console.log(res.json.data);
+		// 		return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+		// 			if(err) {
+		// 				return console.log(err);
+		// 			}
+		// 			//console.log("The file results was saved!");
+		// 		});
+		// 	}).catch(function(err){
+		// 		console.log("Deu Erro criando Pai de estudante hue hue hue");
+		// 		console.log(err.data);
+		// 	});
+		// });
+
+		//- MARK: Post
 });

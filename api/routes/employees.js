@@ -33,7 +33,7 @@ router.post('/schools/:school_id', function(req, res, next){
 		}
 	});
 });
-
+/**@description */
 router.get('/me', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];

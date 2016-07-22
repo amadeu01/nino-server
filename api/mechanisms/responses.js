@@ -17,13 +17,13 @@ function Response(code, data, error) {
 }
 
 module.exports = {
-	
+
 	//Success!
 	/**@method */
 	success: function(data) {
-		return new Response(200, date, null);
+		return new Response(200, data, null);
 	},
-	
+
 	//Register related errors
 	/**@method */
 	inexistentRegister: function(data) {

@@ -110,29 +110,51 @@ guardians.readMe = function(device, rawToken, token) {
 	});
 };
 
+/** @method delete
+* @param guardian_id {id} Id from profile
+* @param student_profile_id {id} Id from profile
+* @param device
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
+*/
+guardians.delete = function(guardian_id, student_profile_id, evice, rawToken, token) {
+  return new Promise(function(resolve, reject) {
+		credentialDAO.read(rawToken)
+		.then(function(credential){
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
+			else {
+
+			}
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
+		});
+	});
+};
+
 /** @method findWithStudentId
 * @param student_id {id} Id from profile
 * @param device
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
+* @deprecated
 */
-// guardians.findWithStudentId = function(student_id, device, rawToken, token) {
-//   return new Promise(function(resolve, reject) {
-// 		credentialDAO.read(rawToken)
-// 		.then(function(credential){
-// 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-// 			else {
-// 					studentsDAO.findGuardiansWithProfileId(token.profile)
-// 					.then(function(guardians) {
-// 						resolve(responses.success(guardians));
-// 					}).catch(function(err) {
-// 						resolve(responses.persistenceError(err));
-// 					});
-// 			}
-// 		}).catch(function(err) {
-// 			resolve(responses.persistenceError(err));
-// 		});
-// 	});
-// };
+guardians.findWithStudentId = function(student_id, device, rawToken, token) {
+  return new Promise(function(resolve, reject) {
+		credentialDAO.read(rawToken)
+		.then(function(credential){
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
+			else {
+					studentsDAO.findGuardiansWithProfileId(token.profile)
+					.then(function(guardians) {
+						resolve(responses.success(guardians));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
+					});
+			}
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
+		});
+	});
+};
 
 module.exports = guardians;

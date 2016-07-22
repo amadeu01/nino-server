@@ -12,7 +12,7 @@ var profiles = {};
 * @param profile {JSON}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.create = function(profile, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -36,7 +36,7 @@ profiles.create = function(profile, device, rawToken, token) {
 * @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.getMyProfile = function(device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -60,7 +60,7 @@ profiles.getMyProfile = function(device, rawToken, token) {
 * @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.get = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -84,7 +84,7 @@ profiles.get = function(profile_id, device, rawToken, token) {
 * @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.getProfilePicture = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -108,7 +108,7 @@ profiles.getProfilePicture = function(profile_id, device, rawToken, token) {
 * @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.updateProfilePicture = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -133,7 +133,7 @@ profiles.updateProfilePicture = function(profile_id, device, rawToken, token) {
 * @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.update = function(profileInfo, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -159,7 +159,7 @@ profiles.update = function(profileInfo, device, rawToken, token) {
 * @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.delete = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {

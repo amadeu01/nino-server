@@ -11,6 +11,7 @@ var educators = {};
  * @description something
  * @param school_id {id}
  * @param profile_id {id}
+ * @param device {string}
  * @param rawToken {string} helps find user credential
  * @param token {JSON} all information decoded
  * @return response {Promise}
@@ -165,9 +166,9 @@ educators.getEmployeesForSchool = function(rawToken, token) {
   });
 };
 
-/** @method getEmployeeForSchool
+/** @method getEmployeeWithProfile
  * @description something
- * @param school_id {id}
+ * @param profile_id {id}
  * @param rawToken {string} helps find user credential
  * @param token {JSON} all information decoded
  * @return response {Promise}
@@ -205,7 +206,7 @@ educators.getEducatorForRoom = function(school_id, class_id, room_id, rawToken, 
     .then(function(credential){
       //TODO: validate token information
       //TODO: there is permition ?
-      return employeesDAO.readFromRoom(school_id, class_id, room_id)
+      return employeesDAO.getEmployeesWithRoomId(school_id, class_id, room_id)
       .then(function(educators) {
         resolve(responses.success(educators));
       }).catch(function(err){

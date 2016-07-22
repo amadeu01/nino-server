@@ -85,7 +85,6 @@ router.get("/:profile_id/picture", function(req, res, next) {
 		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
-
 });
 
 /**@description get my profile*/
