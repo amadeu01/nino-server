@@ -3,6 +3,7 @@
 var validator = require('validator');
 var responses = require('../mechanisms/responses.js');
 var studentsDAO = require('../persistence/students.js');
+var guardiansDAO = require('../persistence/guardians.js');
 var credentialDAO = require('../persistence/credentials.js');
 var students = {};
 
@@ -55,11 +56,16 @@ students.readForRoom = function(room_id, device, rawToken, token ) {
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-students.readForGuardian = function(guardian_id, device, rawToken, token) {
+students.readForGuardian = function(school_id, guardian_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-
+      return studentsDAO.findWithSchoolAndGuardianProfile(school_id, guardian_id)
+      .then(function(students){
+        resolve(new response(200, students, null));
+      }).catch(function(err){
+        resolve(errors.internalError(err));
+      });
     }).catch(function(err){
       resolve(responses.persistenceError(err));
     });

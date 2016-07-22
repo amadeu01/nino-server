@@ -23,8 +23,8 @@ router.post('/schools/:school_id', function(req, res, next){
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return employeesBO.addEducatorToSchool(req.params.school_id, req.body.profile_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
 				resolve(classes);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
@@ -37,18 +37,16 @@ router.post('/schools/:school_id', function(req, res, next){
 router.get('/me', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
-		
+
 		if (req.token === undefined) missingParameters.push('token');
 		if (req.rawToken === undefined) missingParameters.push('rawToken');
 		if (req.device === undefined) missingParameters.push('device');
-		
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
-		
 		else {
 			return employeesBO.getEmployeeWithProfile(req.token.profile, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
-				resolve(response);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
 				reject(err);
@@ -56,8 +54,8 @@ router.get('/me', function(req, res, next) {
 		}
 	}).catch(function(err) {
 		res.status(500).json(err);
-	})
-})
+	});
+});
 
 /** @description Create educator to school */
 router.post('/educators/schools/:school_id', function(req, res, next){
@@ -85,9 +83,9 @@ router.post('/educators/schools/:school_id', function(req, res, next){
 				gender: req.body.gender
 			};
 			return employeesBO.createEducator(req.params.school_id, account, profile, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
-				resolve(classes);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
 				reject(err);
@@ -97,12 +95,13 @@ router.post('/educators/schools/:school_id', function(req, res, next){
 });
 
 /** @description update employee info */
-router.put('/educators/schools/:school_id', function(req, res, next){
+router.put('/:profile_id/schools/:school_id', function(req, res, next){
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push('token');
 		if (req.rawToken === undefined) missingParameters.push('rawToken');
 		if (req.device === undefined) missingParameters.push('device');
+		if (req.params.profile_id === undefined) missingParameters.push('profile_id');
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var account = {
@@ -117,9 +116,9 @@ router.put('/educators/schools/:school_id', function(req, res, next){
 				gender: req.body.gender
 			};
 			return employeesBO.updateEmployeeFromSchool(req.params.school_id, account, profile, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
-				resolve(classes);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
 				reject(err);
@@ -137,18 +136,18 @@ router.get('/educators/schools/:school_id/*', function(req, res, next){
 		else {
 			if (req.query.room === undefined) {
 				return employeesBO.getEducatorForSchool(req.params.school_id, req.rawToken, req.token)
-				.then(function(response){
-					res.status(response.code).json(response.json);
-					resolve(classes);
+				.then(function(resp){
+					res.status(resp.code).json(resp.json);
+					resolve(resp);
 				}).catch(function(err){
 					res.status(err.code).json(err.json);
 					reject(err);
 				});
 			} else {
 				return employeesBO.getEducatorForRoom(school_id, req.rawToken, req.token)
-				.then(function(response){
-					res.status(response.code).json(response.json);
-					resolve(classes);
+				.then(function(resp){
+					res.status(resp.code).json(resp.json);
+					resolve(resp);
 				}).catch(function(err){
 					res.status(err.code).json(err.json);
 					reject(err);
@@ -168,7 +167,7 @@ router.get('/educators/schools/:school_id/*', function(req, res, next){
 * [Profile]
 *
 */
-router.delete('/schools/:school_id', function(req, res, next){
+router.delete('/:profile_id/schools/:school_id', function(req, res, next){
 	return new Promise(function(resolve, reject){
 		if (req.token === undefined) reject(responses.missingParameters('token'));
 		else if (req.body.profile_id === undefined) reject(responses.missingParameters('profile_id'));
@@ -176,9 +175,9 @@ router.delete('/schools/:school_id', function(req, res, next){
 		else if (req.params.school_id === undefined) reject(responses.missingParameters('school_id'));
 		else {
 			return employeesBO.removeEmployeeFromSchool(req.params.school_id, req.body.profile_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
-				resolve(classes);
+			.then(function(resp){
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err){
 				res.status(err.code).json(err.json);
 				reject(err);

@@ -38,6 +38,7 @@ router.put('/:room_id', function(req, res, next) {
 	var missingParameters = [];
 	if (req.token === undefined) missingParameters.push("token");
 	if (req.rawToken === undefined) missingParameters.push("rawToken");
+	if (req.params.room_id === undefined) missingParameters.push("room_id");
 	if (req.body.room_name === undefined) missingParameters.push("room_name");
 	if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 	else {

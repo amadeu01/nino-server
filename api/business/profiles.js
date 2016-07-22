@@ -9,7 +9,7 @@ var credentialDAO = require('../persistence/credentials.js');
 var profiles = {};
 
 /** @method create
-* @param
+* @param profile {JSON}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -33,7 +33,7 @@ profiles.create = function(profile, device, rawToken, token) {
 	});
 };
 /** @method getMyProfile
-* @param
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -57,7 +57,7 @@ profiles.getMyProfile = function(device, rawToken, token) {
 	});
 };
 /** @method get
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -81,7 +81,7 @@ profiles.get = function(profile_id, device, rawToken, token) {
 	});
 };
 /** @method getProfilePicture
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -105,7 +105,7 @@ profiles.getProfilePicture = function(profile_id, device, rawToken, token) {
 	});
 };
 /** @method updatePicture
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -130,6 +130,7 @@ profiles.updateProfilePicture = function(profile_id, device, rawToken, token) {
 };
 /** @method update
 * @param profileInfo {JSON}
+* @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -155,6 +156,7 @@ profiles.update = function(profileInfo, device, rawToken, token) {
 
 /** @method delete
 * @param profile_id {id}
+* @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
