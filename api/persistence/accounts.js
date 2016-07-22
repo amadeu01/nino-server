@@ -24,7 +24,6 @@ accountsDAO.createNewUser = function(account, profile) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else res(result);
 					});
@@ -35,7 +34,6 @@ accountsDAO.createNewUser = function(account, profile) {
 					response.profile = result.rows[0]; //Sets profile to response
 					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [result.rows[0].id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							//response.account = result.rows[0]; //Sets account to response
@@ -79,19 +77,13 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 			}
 			transaction.start(client)
 			.then(function() {
-				var response = {};
 				return new Promise(function(res, rej) {
 					client.query('UPDATE accounts SET (confirmed, password) = ($1, $2) WHERE hash = $3 RETURNING id, profile',[true, password, confirmationHash], function(err, result) {
 						if (err) rej(err);
 						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
-							response.account = {
-								id: result.rows[0].id,
-								email: result.rows[0].email
-							};
-							response.profile = result.rows[0].profile;
-							res(response);
+							res(result.rows[0]);
 						} //Updated one row, user confirmed! - proceed
 					});
 				});

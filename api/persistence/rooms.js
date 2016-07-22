@@ -29,7 +29,6 @@ var roomServices = {
 					return new Promise(function(res,rej) {
 						client.query('INSERT INTO rooms (name, class, notificationGroup) VALUES ($1, $2, $3) RETURNING id',[room.name, class_id, room.notificationGroup], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
-							else if (result.rowCount === 0) rej(result); //Nothing inserted, rejects so BO can handle
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);	//Proceed to commit transaction
 						});

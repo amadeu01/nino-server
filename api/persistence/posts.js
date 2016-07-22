@@ -31,7 +31,6 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
 						});
@@ -42,7 +41,6 @@ var postsDAO = {
 						response.post = result;
 						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else {
 								response.author = author_id;
@@ -89,7 +87,6 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
 						});
@@ -100,7 +97,6 @@ var postsDAO = {
 						response.post = result;
 						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else {
 								response.author = author_id;
@@ -119,9 +115,8 @@ var postsDAO = {
 								//TODO: don't make functions on within loop !!!
 								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], function(err, result) {
 									done++;
-									if (err) rej (err);
-									else if (result.rowCount === 0) {
-										rej (result); //Reject here - will stop transaction
+									if (err) {
+										rej (err);
 										returned = true;
 									}
 									else if (result.name == 'error') {
@@ -176,7 +171,6 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2) RETURNING profile', [post_id, profile_id], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
 						});

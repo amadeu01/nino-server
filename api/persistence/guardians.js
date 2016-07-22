@@ -27,7 +27,6 @@ guardiansDAO.create = function(account, profile, student_id) {
 					var response = {};
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
 							response.profile = result.rows[0]; //Sets profile to response
@@ -39,7 +38,6 @@ guardiansDAO.create = function(account, profile, student_id) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [response.profile.id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							response.account = result.rows[0]; //Sets account to response
@@ -51,7 +49,6 @@ guardiansDAO.create = function(account, profile, student_id) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO guardians (profile) VALUES ($1) RETURNING id', [response.profile.id], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							response.guardian = result.rows[0]; //Sets profile to response
@@ -63,7 +60,6 @@ guardiansDAO.create = function(account, profile, student_id) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO guardians_students (guardian, student) VALUES ($1, $2)', [response.guardian.id, student_id], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							res(response); //Sends account and profile in response dictionary

@@ -27,7 +27,6 @@ studentsDAO.create = function(profile, school_id, room_id) {
 					var response = {};
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
 							response.profile = result.rows[0]; //Sets profile to response
@@ -39,7 +38,6 @@ studentsDAO.create = function(profile, school_id, room_id) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO students (profile, school, room) VALUES ($1, $2, $3) RETURNING id', [response.profile.id, school_id, room_id], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							//response.student = result.rows[0];

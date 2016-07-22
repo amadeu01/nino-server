@@ -33,7 +33,6 @@ var classServices = {
 					return new Promise(function(res,rej) {
 						client.query('INSERT INTO classes (name, school, menu) VALUES ($1, $2, $3) RETURNING id',[_class.name, school_id, _class.menu], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
-							else if (result.rowCount === 0) rej(result); //Nothing inserted, rejects so BO can handle
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);	//Proceed to commit transaction
 						});
