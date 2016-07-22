@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var app = require('../app');
-var errors = require('../mechanisms/error');
-var response = require('../mechanisms/response.js');
+var responses = require('../mechanisms/responses.js');
 var useragent = require('express-useragent');
 var schoolBO = require('../business/schools.js');
 var multiparty = require('multiparty');
@@ -11,7 +9,7 @@ var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).json(errors.missingParameters("path_isNaN").clean);
+		res.status(400).json(responses.missingParameters("path_isNaN").clean);
 	}
 };
 
@@ -26,7 +24,7 @@ router.get('/:school_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 		return schoolBO.read(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(response){
@@ -50,7 +48,7 @@ router.put('/:school_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 		school = { //it could be undefined, must be check what will be updated
 			name: req.body.name,
@@ -82,7 +80,7 @@ router.delete('/:school_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 		return schoolBO.delete(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(response){
@@ -106,7 +104,7 @@ router.post('/:school_id/notifications/guardians', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		if (req.body.data === undefined) missingParameters.push("data");
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -123,7 +121,7 @@ router.post('/:school_id/notifications/educators', function(req, res, next) {
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		if (req.body.data === undefined) missingParameters.push("data");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -154,7 +152,7 @@ router.post('/', function(req, res, next) {
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		school = {
 			name: req.body.name,
 			email: req.body.email,
@@ -184,12 +182,12 @@ router.put('/:school_id/logotype', function(req, res, next) {
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var gotImage = false;
 			var form = new multiparty.Form();
 			form.on('error', function(err) {
-				reject(errors.internalError(err));
+				reject(responses.internalError(err));
 			});
 			form.on('part', function(part) {
 				if (part.name !== "picture") {
@@ -209,7 +207,7 @@ router.put('/:school_id/logotype', function(req, res, next) {
 			});
 			form.on('close', function() {
 				if (!gotImage) {
-					reject(errors.missingParameters("picture"));
+					reject(responses.missingParameters("picture"));
 				}
 			});
 			form.parse(req);
@@ -229,7 +227,7 @@ router.get('/:school_id/logotype', function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		//if (req.body.image === undefined) missingParameters.push("image - logo");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		return schoolBO.readLogo(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(resp){
 			if (resp instanceof response) {

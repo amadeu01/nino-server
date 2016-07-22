@@ -1,15 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var errors = require('../mechanisms/error');
-var validator = require('validator');
-var response = require('../mechanisms/response.js');
+var responses = require('../mechanisms/responses.js');
 var studentsBO = require('../business/students.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).end(errors.invalidParameters("path_isNaN"));
+		res.status(400).end(responses.invalidParameters("path_isNaN"));
 	}
 };
 
@@ -21,7 +19,7 @@ router.post('/rooms/:room_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.room_id === undefined) missingParameters.push("room_id");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return studentsBO.readForRoom(req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(response){
@@ -46,7 +44,7 @@ router.get('/:student_id/guardians/:guardian_id', function(req, res, next) {
 		if (req.params.student_id === undefined) missingParameters.push("student");
 		if (req.params.guardian_id === undefined) missingParameters.push("guardian");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return studentsBO.readForGuardian(req.params.guardian_id, req.device, req.rawToken, req.token)
 			.then(function(response){
@@ -71,7 +69,7 @@ router.post('/:student_id/guardians/:guardian_id', function(req, res, next) {
 		if (req.params.student_id === undefined) missingParameters.push("student");
 		if (req.params.guardian_id === undefined) missingParameters.push("guardian");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return studentsBO.addForGuardian(req.params.student_id, req.params.guardian_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
@@ -99,7 +97,7 @@ router.post('/schools/:school_id', function(req, res, next) {
 		if (req.body.surname === undefined) missingParameters.push("surname");
 		if (req.body.birthdate === undefined) missingParameters.push("birthdate");
 		if (req.body.gender === undefined) missingParameters.push("gender");
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var student_profile = {
 				name: req.body.name,
@@ -130,7 +128,7 @@ router.delete('/:student_id/guardians/:guardian_id', function(req, res, next) {
 		if (req.params.student_id === undefined) missingParameters.push("student");
 		if (req.params.guardian_id === undefined) missingParameters.push("guardian");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return studentsBO.removeFromGuardian(req.params.student_id, req.params.guardian_id, req.device, req.rawToken, req.token)
 			.then(function(resp){

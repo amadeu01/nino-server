@@ -1,14 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var errors = require('../mechanisms/error');
-var validator = require('validator');
+var responses = require('../mechanisms/responses.js');
 var guardiansBO = require('../business/guardians.js');
 /*Check if parameter is valid id*/
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).end(errors.invalidParameters("path_isNaN"));
+		res.status(400).end(responses.invalidParameters("path_isNaN"));
 	}
 };
 
@@ -25,7 +24,7 @@ router.get('/profiles/:profile_id', function(req, res, next) {
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
-		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
 			return guardiansBO.read(req.params.profile_id, req.device, req.rawToken, req.token)
@@ -64,7 +63,7 @@ router.get('/me', function(req, res, next) {
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
-		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
 			return guardiansBO.readMe(req.device, req.rawToken, req.token)
@@ -97,7 +96,7 @@ router.post('/', function(req, res, next) {
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
-		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 		//Provided that all the needed parameters are there, we call business to validate them
 			var account = {
@@ -137,7 +136,7 @@ router.get('/students/:student_profile_id', function(req, res, next) {
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
 
-		else if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
 			return guardiansBO.findGuardiansWithProfileId(req.params.student_profile_id, req.device, req.rawToken, req.token)

@@ -1,15 +1,14 @@
 var express = require('express');
 var router = express.Router();
-var errors = require('../mechanisms/error');
+var responses = require('../mechanisms/responses.js');
 var profileBO = require('../business/profiles.js');
-var validator = require('validator');
 var multiparty = require('multiparty');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).end(errors.invalidParameters("path_isNaN"));
+		res.status(400).end(responses.invalidParameters("path_isNaN"));
 	}
 };
 
@@ -21,12 +20,12 @@ router.put("/me/picture", function(req, res, next) {
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var gotImage = false;
 			var form = new multiparty.Form();
 			form.on('error', function(err) {
-				reject(errors.internalError(err));
+				reject(responses.internalError(err));
 			});
 			form.on('part', function(part) {
 				if (part.name !== "picture") {
@@ -46,7 +45,7 @@ router.put("/me/picture", function(req, res, next) {
 			});
 			form.on('close', function() {
 				if (!gotImage) {
-					reject(errors.missingParameters("picture"));
+					reject(responses.missingParameters("picture"));
 				}
 			});
 			form.parse(req);
@@ -67,16 +66,19 @@ router.get("/:profile_id/picture", function(req, res, next) {
 		if (req.params.profile_id === undefined ) missingParameters.push("profile_id");
 
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
 
 			return profileBO.getProfilePicture(req.params.profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
-				res.status(resp.code).json(resp.json);
-				resolve(resp);
+				if (resp instanceof response) {
+					res.status(resp.code).json(resp.json);
+				} else {
+					resp.pipe(res);
+				}
 			}).catch(function(err) {
-				reject(err);
+				res.status(err.code).json(err.json);
 			});
 		}
 	}).catch(function(err){
@@ -94,7 +96,7 @@ router.get("/me", function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
 
@@ -120,7 +122,7 @@ router.put("/:profile_id", function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var profileInfo = {
 				name: req.body.name,
@@ -175,7 +177,7 @@ router.post("/", function(req, res, next) {
 		// if (req.school === undefined) missingParameters.push("school");
 		// if (req.guardian === undefined) missingParameters.push("guardian");
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var profile = {
 				name: req.body.name,
@@ -209,10 +211,10 @@ router.put("/:profile_id/picture", function(req, res, next) {
 		if (req.params.profile_id === undefined ) missingParameters.push("name");
 
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
-			return profileBO.updatePicture(req.params.profile_id, req.device, req.rawToken, req.token)
+			return profileBO.updateProfilePicture(req.params.profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -237,7 +239,7 @@ router.put("/:profile_id", function(req, res, next) {
 		if (req.params.profile_id === undefined ) missingParameters.push("name");
 
 
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
 			return profileBO.delete(req.params.profile_id, req.device, req.rawToken, req.token)
