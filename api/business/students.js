@@ -3,6 +3,7 @@
 var validator = require('validator');
 var response = require('../mechanisms/response.js') ;
 var studentsDAO = require('../persistence/students.js');
+var guardiansDAO = require('../persistence/guardians.js');
 var credentialDAO = require('../persistence/credentials.js');
 var errors = require('../mechanisms/error');
 var students = {};
@@ -20,12 +21,10 @@ students.create = function(profile, school_id, room_id, device, rawToken, token 
       .then(function(student_id){
         resolve(new response(200, student_id, null));
       }).catch(function(err){
-        reject(errors.internalError(err));
+        resolve(errors.internalError(err));
       });
     }).catch(function(err){
-      //console.log(err.fields);
-      //console.log(err.rows);
-      reject(errors.internalError(err));
+      resolve(errors.internalError(err));
     });
   });
 };
@@ -45,10 +44,10 @@ students.readForRoom = function(room_id, device, rawToken, token ) {
       .then(function(students){
         resolve(new response(200, students, null));
       }).catch(function(err){
-        reject(errors.internalError(err));
+        resolve(errors.internalError(err));
       });
     }).catch(function(err){
-      reject(errors.internalError(err));
+      resolve(errors.internalError(err));
     });
   });
 };
@@ -58,13 +57,18 @@ students.readForRoom = function(room_id, device, rawToken, token ) {
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-students.readForGuardian = function(guardian_id, device, rawToken, token) {
+students.readForGuardian = function(school_id, guardian_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-
+      return studentsDAO.findWithSchoolAndGuardianProfile(school_id, guardian_id)
+      .then(function(students){
+        resolve(new response(200, students, null));
+      }).catch(function(err){
+        resolve(errors.internalError(err));
+      });
     }).catch(function(err){
-      reject(errors.internalError(err));
+      resolve(errors.internalError(err));
     });
   });
 };

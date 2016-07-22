@@ -96,7 +96,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 
 /** @method findWithGuardianId
  * @description Find all students for a guardian
- * @param classID {id}
+ * @param class_id {id}
  * @return class array {Array<Class>}
  */
  studentsDAO.findWithGuardianId = function(guardian_id) {
@@ -116,8 +116,8 @@ studentsDAO.findWithRoomId = function(roomID) {
 		 });
 	 });
  };
- 
- studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) { 
+
+ studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
 			 if (err) {
@@ -134,7 +134,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 		 });
 	 });
  };
- 
+
  studentsDAO.findWithSchoolAndStudentProfile = function(school_id, profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
@@ -151,6 +151,14 @@ studentsDAO.findWithRoomId = function(roomID) {
 			 });
 		 });
 	 });
+ };
+ /** @method findWithSchoolAndGuardianProfile
+ * @param school_id {id}
+ * @param guardian_profile_id {id}
+ * @return guardian {Array<Guardians>}
+ */
+ studentsDAO.findWithSchoolAndGuardianProfile = function(school_id, guardian_profile_id) {
+
  };
 
 

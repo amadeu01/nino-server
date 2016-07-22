@@ -133,6 +133,15 @@ guardiansDAO.findWithSchoolAndStudentProfileAndGuardianProfile = function(school
 		});
 	});
 };
+/** @method findWithSchoolAndStudentProfile
+* @param school_id {id}
+* @param student_profile_id {id}
+* @return guardian {Array<Guardians>}
+*/
+guardiansDAO.findWithSchoolAndStudentProfile = function(school_id, student_profile_id) {
+	return new Promise(function (resolve, reject) {
 
+	});
+};
 
 module.exports = guardiansDAO;

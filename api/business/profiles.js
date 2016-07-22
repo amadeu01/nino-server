@@ -9,6 +9,12 @@ var profilesDAO = require('../persistence/profiles.js');
 var credentialDAO = require('../persistence/credentials.js');
 var profiles = {};
 
+/** @method create
+* @param part
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
+* @return
+*/
 profiles.uploadProfilePicture = function(profile_id, part, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
@@ -29,7 +35,7 @@ profiles.uploadProfilePicture = function(profile_id, part, device, rawToken, tok
 	});
 };
 /** @method create
-* @param
+* @param profile {JSON}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -44,17 +50,17 @@ profiles.create = function(profile, device, rawToken, token) {
 					.then(function(profile_id) {
 						resolve( new response(200, profile_id, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
 /** @method getMyProfile
-* @param
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -69,17 +75,17 @@ profiles.getMyProfile = function(device, rawToken, token) {
 					.then(function(profile) {
 						resolve( new response(200, profile, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
 /** @method get
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -94,17 +100,17 @@ profiles.get = function(profile_id, device, rawToken, token) {
 					.then(function(profile) {
 						resolve( new response(200, profile, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
 /** @method getProfilePicture
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -119,17 +125,17 @@ profiles.getProfilePicture = function(profile_id, device, rawToken, token) {
 					.then(function(picture) {
 						resolve( new response(200, picture, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
 /** @method updatePicture
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -144,17 +150,18 @@ profiles.updatePicture = function(profile_id, device, rawToken, token) {
 					.then(function(success) {
 						resolve( new response(200, success, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
 /** @method update
 * @param profileInfo {JSON}
+* @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -169,18 +176,19 @@ profiles.update = function(profileInfo, device, rawToken, token) {
 					.then(function(success) {
 						resolve( new response(200, success, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
 
 /** @method delete
 * @param profile_id {id}
+* @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return
@@ -195,12 +203,12 @@ profiles.delete = function(profile_id, device, rawToken, token) {
 					.then(function(success) {
 						resolve( new response(200, success, null));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(errors.internalError(err));
 					});
 			}
 		})
 		.catch(function(err) {
-			return(errors.internalError(err));
+			resolve(errors.internalError(err));
 		});
 	});
 };
