@@ -18,6 +18,7 @@ students.create = function(profile, school_id, room_id, device, rawToken, token 
     .then(function(credential){
       return studentsDAO.create(profile, school_id, room_id)
       .then(function(student_id){
+        console.log(student_id);
         resolve(responses.success(student_id));
       }).catch(function(err){
         resolve(responses.persistenceError(err));

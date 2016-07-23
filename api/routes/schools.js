@@ -27,15 +27,17 @@ router.get('/:school_id', function(req, res, next) {
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 		return schoolBO.read(req.params.school_id, req.device, req.rawToken, req.token)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
-			res.status(err.code).json(err.json);
-			resolve(err);
+			var resp = responses.internalError(err);
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		});
 	}).catch(function(err){
-		res.status(err.code).json(err.json);
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -60,12 +62,13 @@ router.put('/:school_id', function(req, res, next) {
 		};
 
 		return schoolBO.update(school, req.device, req.rawToken, req.token)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
-			res.status(err.code).json(err.json);
-			reject(err);
+			var resp = responses.internalError(err);
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		});
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -83,12 +86,13 @@ router.delete('/:school_id', function(req, res, next) {
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 		return schoolBO.delete(req.params.school_id, req.device, req.rawToken, req.token)
-		.then(function(response){
-			res.status(response.code).json(response.json);
-			resolve(response);
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		}).catch(function(err){
-			res.status(err.code).json(err.json);
-			reject(err);
+			var resp = responses.internalError(err);
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		});
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -166,8 +170,9 @@ router.post('/', function(req, res, next) {
 			res.status(resp.code).json(resp.json);
 			resolve(resp);
 		}).catch(function(err){
-			res.status(err.code).json(err.json);
-			reject(err);
+			var resp = responses.internalError(err);
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
 		});
 	}).catch(function(err){
 		res.status(err.code).json(err.json);
@@ -201,8 +206,9 @@ router.put('/:school_id/logotype', function(req, res, next) {
 					resolve(result);
 				})
 				.catch(function(err) {
-					res.status(err.code).json(err.json);
-					resolve(err);
+					var resp = responses.internalError(err);
+					res.status(resp.code).json(resp.json);
+					resolve(resp);
 				});
 			});
 			form.on('close', function() {
@@ -230,16 +236,18 @@ router.get('/:school_id/logotype', function(req, res, next) {
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		return schoolBO.readLogo(req.params.school_id, req.device, req.rawToken, req.token)
 		.then(function(resp){
-			if (resp instanceof response) {
+			if (resp instanceof Response) {
 				res.status(resp.code).json(resp.json);
 			} else {
 				resp.pipe(res);
 			}
 		}).catch(function(err){
-			res.status(err.code).json(err.json);
+			var resp = responses.internalError(err);
+			res.status(resp.code).json(resp.json);
 		});
 	}).catch(function(err){
-		res.status(err.code).json(err.json);
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 
 });

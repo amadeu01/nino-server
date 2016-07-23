@@ -837,6 +837,38 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
+		test('Should Read guardian', function() {
+			var account = {};
+			account.email = fake.Internet.email();
+			account.cellphone = fake.PhoneNumber.phoneNumber();
+
+			var profile = {};
+			profile.name = fake.Name.firstNameMale();
+			profile.surname = fake.Name.lastName();
+			profile.birthdate = "16/08/1992";
+			profile.gender = 0;
+
+
+			return guardiansBO.create(account, profile, student_id2, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
+
 		// test('Should Read all guardians for a kid', function() {
 		//
 		// 	return guardiansBO.readForStudents(school_id, student_id1, device, rawToken, token)

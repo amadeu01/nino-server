@@ -91,8 +91,8 @@ studentsDAO.findWithRoomId = function(roomID) {
 
 /** @method findWithGuardianId
  * @description Find all students for a guardian
- * @param class_id {id}
- * @return class array {Array<Class>}
+ * @param guardian_id {id}
+ * @return student {Array<Student>}
  */
  studentsDAO.findWithGuardianId = function(guardian_id) {
 	 return new Promise(function (resolve, reject) {
@@ -111,7 +111,28 @@ studentsDAO.findWithRoomId = function(roomID) {
 		 });
 	 });
  };
-
+ /** @method findWithProfileId
+  * @description Find all students for a guardian
+  * @param class_id {id}
+  * @return class array {Array<Class>}
+  */
+  studentsDAO.findWithProfileId = function(profile_id) {
+ 	 return new Promise(function (resolve, reject) {
+ 		 pool.connect(function(err, client, done) {
+ 			 if (err) {
+ 				 reject(err); //Connection error, aborts already
+ 				 return;
+ 			 }
+ 			 client.query('SELECT s.id, s.school, s.room FROM profiles p, students s WHERE p.id = $1 AND p.id = s.profile', [profile_id], function(err, result) {
+ 				 if (err) reject(err); //Error: rejects to BO
+ 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+ 				 else if (result.name == "error") reject(result); //Some error occured : rejects
+ 				 else resolve(result.rows[0]); //Executed correctly
+ 				 done();
+ 			 });
+ 		 });
+ 	 });
+  };
  studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
