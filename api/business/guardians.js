@@ -41,6 +41,7 @@ guardians.create = function(account, profile, student_id, device, rawToken, toke
 * @param device
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
+* @return guardians {Array<Guardian>}
 */
 guardians.readForStudents = function(school_id, student_profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
@@ -136,15 +137,16 @@ guardians.delete = function(guardian_id, student_profile_id, evice, rawToken, to
 * @param device
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
+* @return guardians {Array<Guardian>}
 * @deprecated
 */
-guardians.findWithStudentId = function(student_id, device, rawToken, token) {
+guardians.findWithStudentId = function(student_profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
-					studentsDAO.findGuardiansWithProfileId(token.profile)
+					studentsDAO.findWithGuardianProfileAndStudentProfile(token.profile, student_profile_id)
 					.then(function(guardians) {
 						resolve(responses.success(guardians));
 					}).catch(function(err) {

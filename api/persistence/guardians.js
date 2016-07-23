@@ -102,7 +102,7 @@ guardiansDAO.findWithProfileId = function(id) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
-				else resolve(result.rows); //Returns what was found
+				else resolve(result.rows[0]); //Returns what was found
 				done();
 			});
 		});
@@ -133,7 +133,19 @@ guardiansDAO.findWithSchoolAndStudentProfileAndGuardianProfile = function(school
 */
 guardiansDAO.findWithSchoolAndStudentProfile = function(school_id, student_profile_id) {
 	return new Promise(function (resolve, reject) {
-
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('SELECT g.id, p.name, p.surname, p.gender FROM schools sc, students st, profiles p, guardians g, guardians_students gs WHERE sc.id = $1 AND st.profile = $2 AND st.school = sc.id AND gs.student = st.id AND gs.guardian = g.id AND p.id = g.profile', [school_id, student_profile_id], function(err, result) {
+				if (err) reject(err);
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows); //Returns what was found
+				done();
+			});
+		});
 	});
 };
 

@@ -32,10 +32,10 @@ var school = {
 	telephone: "+558534768162",
 	cnpj: "08123939412"
 };
-var student_id1;
-var student_id2;
-var student_id3;
-var student_id4;
+var student_id1 = {};
+var student_id2 = {};
+var student_id3 = {};
+var student_id4 = {};
 var token;
 var rawToken;
 var confirmationHash = "";
@@ -44,6 +44,10 @@ var class_id;
 var class_id1;
 var room_id;
 var room_id1;
+var mother_id = {};
+var father_id = {};
+var mother_id1 = {};
+var father_id1= {};
 var fakeData = [];
 
 suite('Account Profile and Credential BO', function () {
@@ -580,12 +584,17 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				student_id1 = res.json.data.profile.id;
-				return fs.writeFile("./results/Results_for_CreateStudent.txt", data, 'utf8', function(err) {
+				student_id1.profile = res.json.data.profile.id;
+				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
 					//console.log("The file results was saved!");
+				});
+			}).then(function(){
+				return studentsBO.readWithProfileId(student_id1.profile, device, rawToken, token)
+				.then(function(res){
+					student_id1.account = res.json.data.id;
 				});
 			}).catch(function(err){
 				console.log("Deu Erro pegando Criando estudante hue hue hue");
@@ -609,13 +618,18 @@ suite('Account Profile and Credential BO', function () {
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				student_id2 = res.json.data.profile.id;
+				student_id2.profile = res.json.data.profile.id;
 				//console.log(res.json.data);
 				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
 					//console.log("The file results was saved!");
+				});
+			}).then(function(){
+				return studentsBO.readWithProfileId(student_id2.profile, device, rawToken, token)
+				.then(function(res){
+					student_id2.account = res.json.data.id;
 				});
 			}).catch(function(err){
 				console.log("Deu Erro pegando Criando estudante hue hue hue");
@@ -640,12 +654,17 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				student_id3 = res.json.data.profile.id;
+				student_id3.profile = res.json.data.profile.id;
 				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
 					//console.log("The file results was saved!");
+				});
+			}).then(function(){
+				return studentsBO.readWithProfileId(student_id3.profile, device, rawToken, token)
+				.then(function(res){
+					student_id3.account = res.json.data.id;
 				});
 			}).catch(function(err){
 				console.log("Deu Erro pegando Criando estudante hue hue hue");
@@ -670,12 +689,17 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				// console.log(res.json.data);
-				student_id4 = res.json.data.profile.id;
+				student_id4.profile = res.json.data.profile.id;
 				return fs.writeFile("./results/Results_for_CreateStudent" + res.json.data.profile.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
 					//console.log("The file results was saved!");
+				});
+			}).then(function(){
+				return studentsBO.readWithProfileId(student_id4.profile, device, rawToken, token)
+				.then(function(res){
+					student_id4.account = res.json.data.id;
 				});
 			}).catch(function(err){
 				console.log("Deu Erro pegando Criando estudante hue hue hue");
@@ -719,7 +743,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 1;
 
 
-			return guardiansBO.create(account, profile, student_id1, device, rawToken, token)
+			return guardiansBO.create(account, profile, student_id1.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -727,7 +751,8 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_MotherStudentId" + student_id1 + ".txt", data, 'utf8', function(err) {
+				mother_id = res.json.data;
+				return fs.writeFile("./results/Results_for_MotherStudentId" + student_id1.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -751,7 +776,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 0;
 
 
-			return guardiansBO.create(account, profile, student_id1, device, rawToken, token)
+			return guardiansBO.create(account, profile, student_id1.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -759,7 +784,8 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id1 + ".txt", data, 'utf8', function(err) {
+				father_id = res.json.data;
+				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id1.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -785,7 +811,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 1;
 
 
-			return guardiansBO.create(account, profile, student_id2, device, rawToken, token)
+			return guardiansBO.create(account, profile, student_id2.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -793,7 +819,8 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_MotherStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+				mother_id1 = res.json.data;
+				return fs.writeFile("./results/Results_for_MotherStudentId" + student_id2.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -817,7 +844,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 0;
 
 
-			return guardiansBO.create(account, profile, student_id2, device, rawToken, token)
+			return guardiansBO.create(account, profile, student_id2.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -825,7 +852,8 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+				father_id1 = res.json.data;
+				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id2.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -838,26 +866,16 @@ suite('Account Profile and Credential BO', function () {
 		});
 
 		test('Should Read guardian', function() {
-			var account = {};
-			account.email = fake.Internet.email();
-			account.cellphone = fake.PhoneNumber.phoneNumber();
 
-			var profile = {};
-			profile.name = fake.Name.firstNameMale();
-			profile.surname = fake.Name.lastName();
-			profile.birthdate = "16/08/1992";
-			profile.gender = 0;
-
-
-			return guardiansBO.create(account, profile, student_id2, device, rawToken, token)
+			return guardiansBO.read(mother_id.profile.id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				//console.log(res.json.data);
-				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
+				console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_ReadMotherWithId" + res.json.data.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
 					}
@@ -869,48 +887,48 @@ suite('Account Profile and Credential BO', function () {
 			});
 		});
 
-		// test('Should Read all guardians for a kid', function() {
-		//
-		// 	return guardiansBO.readForStudents(school_id, student_id1, device, rawToken, token)
-		// 	.then(function(res){
-		// 		var data = "Code: " + JSON.stringify(res.code) + "\n";
-		// 		data += "##########################\n";
-		// 		data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
-		// 		data += "##########################\n";
-		// 		data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-		// 		//console.log(res.json.data);
-		// 		return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id1 + ".txt", data, 'utf8', function(err) {
-		// 			if(err) {
-		// 				return console.log(err);
-		// 			}
-		// 			//console.log("The file results was saved!");
-		// 		});
-		// 	}).catch(function(err){
-		// 		console.log("Deu Erro criando Pai de estudante hue hue hue");
-		// 		console.log(err.data);
-		// 	});
-		// });
-		// test('Should Read all guardians for a kid', function() {
-		//
-		// 	return guardiansBO.readForStudents(school_id, student_id2, device, rawToken, token)
-		// 	.then(function(res){
-		// 		var data = "Code: " + JSON.stringify(res.code) + "\n";
-		// 		data += "##########################\n";
-		// 		data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
-		// 		data += "##########################\n";
-		// 		data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-		// 		//console.log(res.json.data);
-		// 		return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id2 + ".txt", data, 'utf8', function(err) {
-		// 			if(err) {
-		// 				return console.log(err);
-		// 			}
-		// 			//console.log("The file results was saved!");
-		// 		});
-		// 	}).catch(function(err){
-		// 		console.log("Deu Erro criando Pai de estudante hue hue hue");
-		// 		console.log(err.data);
-		// 	});
-		// });
+		test('Should Read all guardians for a kid', function() {
+
+			return guardiansBO.readForStudents(school_id, student_id1.profile, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id1.account + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
+		test('Should Read all guardians for a kid', function() {
+
+			return guardiansBO.readForStudents(school_id, student_id2.profile, device, rawToken, token)
+			.then(function(res){
+				var data = "Code: " + JSON.stringify(res.code) + "\n";
+				data += "##########################\n";
+				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
+				data += "##########################\n";
+				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
+				//console.log(res.json.data);
+				return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id2.account + ".txt", data, 'utf8', function(err) {
+					if(err) {
+						return console.log(err);
+					}
+					//console.log("The file results was saved!");
+				});
+			}).catch(function(err){
+				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log(err.data);
+			});
+		});
 
 		//- MARK: Post
 });

@@ -18,7 +18,7 @@ students.create = function(profile, school_id, room_id, device, rawToken, token 
     .then(function(credential){
       return studentsDAO.create(profile, school_id, room_id)
       .then(function(student_id){
-        console.log(student_id);
+        //console.log(student_id);
         resolve(responses.success(student_id));
       }).catch(function(err){
         resolve(responses.persistenceError(err));
@@ -56,6 +56,7 @@ students.readForRoom = function(room_id, device, rawToken, token ) {
 * @description something
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
+* @return students {Array<Student>}
 */
 students.readForGuardian = function(school_id, guardian_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
@@ -63,7 +64,7 @@ students.readForGuardian = function(school_id, guardian_id, device, rawToken, to
     .then(function(credential){
       return studentsDAO.findWithSchoolAndGuardianProfile(school_id, guardian_id)
       .then(function(students){
-        resolve(new response(200, students, null));
+        resolve(responses.success(students));
       }).catch(function(err){
         resolve(errors.internalError(err));
       });
@@ -108,4 +109,28 @@ students.removeFromGuardian = function(student_id, guardian_id, device, rawToken
     });
   });
 };
+/** @method readWithProfileId
+* @description read a student from profile_id
+* @param student_profile_id {id}
+* @param device {string}
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
+*/
+students.readWithProfileId = function(student_profile_id, device, rawToken, token ) {
+  return new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      return studentsDAO.findWithProfileId(student_profile_id)
+      .then(function(student){
+        resolve(responses.success(student));
+      }).catch(function(err){
+        resolve(responses.persistenceError(err));
+      });
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
+    });
+  });
+};
+
+
 module.exports = students;
