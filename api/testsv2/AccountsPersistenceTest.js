@@ -111,7 +111,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 
 	test('Should try create Credential', function() {
-		return credential.logIn("My Device", "thisismysuperdupertoken", {id:1})
+		return credential.logIn("My Device", "thisismysuperdupertoken", 1)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -224,7 +224,7 @@ suite('Account Profile and Credential Persistence', function () {
 			cellphone: "+5519912345678",
 			hash: "thirdhashsuchsecretwowmuchwow"
 		};
-		return guardian.create(guardAcc, guardprof, stdnt.id)
+		return guardian.create(guardAcc, guardprof, 1)
 		.then(function(done) {
 			grdn = done.guardian;
 			console.log(done);
@@ -302,18 +302,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 	
 	test('Should Read Guaridian s Students info', function() {
-		return student.findWithGuardianId(grdn.id)
-		.then(function(done) {
-			console.log(done);
-			return(done);
-		}).catch(function(err) {
-			console.log(err);
-			throw(err);
-		});
-	});
-	
-	test('Should Read Profile s Guardian info', function() {
-		return guardian.findWithProfileId(4)
+		return student.findWithGuardianProfileId(4)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -556,7 +545,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 	
 	test('Should Fail Validate School Student and Guardian', function() {
-		return guardian.findWithSchoolAndStudentProfileAndGuardianProfile(1, 1, 1)
+		return guardian.findWithSchoolAndStudentProfileAndGuardianProfile(1, 1, 4)
 		.then(function(done) {
 			console.log("ERROR HERE");
 			return(done);

@@ -42,20 +42,9 @@ guardiansDAO.create = function(account, profile, student_id) {
 						}
 					});
 				});
-			}).then(function(response) { //Create Guardian
-				return new Promise(function(res, rej) {
-					client.query('INSERT INTO guardians (profile) VALUES ($1) RETURNING id', [response.profile.id], function(err, result) {
-						if (err) rej (err);
-						else if (result.name == "error") rej(result); //Some error occured : rejects
-						else {
-							response.guardian = result.rows[0]; //Sets profile to response
-							res(response); //Sends account and profile in response dictionary
-						}
-					});
-				});
 			}).then(function(response) { //Create Guardian to Student
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO guardians_students (guardian, student) VALUES ($1, $2)', [response.guardian.id, student_id], function(err, result) {
+					client.query('INSERT INTO guardians_profile_students (guardian_profile, student) VALUES ($1, $2)', [response.profile.id, student_id], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
@@ -90,24 +79,25 @@ guardiansDAO.create = function(account, profile, student_id) {
  * @description return guardian Information from Profile
  * @param id {id}
  * @return Promise {Promise}
+ * @deprecated
  */
-guardiansDAO.findWithProfileId = function(id) {
-	return new Promise(function (resolve, reject) {
-		pool.connect(function(err, client, done) {
-			if (err) {
-				reject(err);
-				return;
-			}
-			client.query('SELECT g.id FROM profiles p, guardians g WHERE g.profile = p.id AND p.id = $1', [id], function(err, result) {
-				if (err) reject(err);
-				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
-				else if (result.name == "error") reject(result); //Some error occured : rejects
-				else resolve(result.rows[0]); //Returns what was found
-				done();
-			});
-		});
-	});
-};
+// guardiansDAO.findWithProfileId = function(id) {
+// 	return new Promise(function (resolve, reject) {
+// 		pool.connect(function(err, client, done) {
+// 			if (err) {
+// 				reject(err);
+// 				return;
+// 			}
+// 			client.query('SELECT g.id FROM profiles p, guardians g WHERE g.profile = p.id AND p.id = $1', [id], function(err, result) {
+// 				if (err) reject(err);
+// 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+// 				else if (result.name == "error") reject(result); //Some error occured : rejects
+// 				else resolve(result.rows[0]); //Returns what was found
+// 				done();
+// 			});
+// 		});
+// 	});
+// }; //TODO: amadeu, Olha aqui! Eu comentei pq nao faz sentido ter, nao tem guardians mais no db, só o profile e a tabela que linka um student com um profile pra ser guardian
 
 guardiansDAO.findWithSchoolAndStudentProfileAndGuardianProfile = function(school_id, student_profile_id, guardian_profile_id) {
 	return new Promise(function (resolve, reject) {
@@ -116,7 +106,7 @@ guardiansDAO.findWithSchoolAndStudentProfileAndGuardianProfile = function(school
 				reject(err);
 				return;
 			}
-			client.query('SELECT g.id FROM schools sc, guardians g, students st, guardians_students gs WHERE sc.id = $1 AND st.profile = $2 AND g.profile = $3 AND st.school = sc.id AND gs.guardian = g.id AND gs.student = st.id', [school_id, student_profile_id, guardian_profile_id], function(err, result) {
+			client.query('SELECT p.id FROM schools sc, profiles p, students st, guardians_profile_students gs WHERE sc.id = $1 AND st.profile = $2 AND gs.guardian_profile = $3 AND st.school = sc.id AND gs.student = st.id AND p.id = $3', [school_id, student_profile_id, guardian_profile_id], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -138,7 +128,7 @@ guardiansDAO.findWithSchoolAndStudentProfile = function(school_id, student_profi
 				reject(err);
 				return;
 			}
-			client.query('SELECT g.id, p.name, p.surname, p.gender FROM schools sc, students st, profiles p, guardians g, guardians_students gs WHERE sc.id = $1 AND st.profile = $2 AND st.school = sc.id AND gs.student = st.id AND gs.guardian = g.id AND p.id = g.profile', [school_id, student_profile_id], function(err, result) {
+			client.query('SELECT p.id, p.name, p.surname, p.gender FROM schools sc, students st, profiles p, guardians_profile_students gs WHERE sc.id = $1 AND st.profile = $2 AND st.school = sc.id AND gs.student = st.id AND p.id = gs.guardian_profile', [school_id, student_profile_id], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects

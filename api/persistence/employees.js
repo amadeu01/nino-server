@@ -129,16 +129,5 @@ employeesDAO.read = function(profile_id) {
 
 };
 
-employeesDAO.getEmployeesWithClassIdAndRoomId = function(school_id, class_id, room_id) {
-
-};
-
-employeesDAO.getEmployeesWithClassId = function(school_id, class_id) {
-
-};
-
-employeesDAO.removeEducator = function(school_id, profile_id) {
-
-};
 
 module.exports = employeesDAO;

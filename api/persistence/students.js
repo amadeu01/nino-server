@@ -94,14 +94,14 @@ studentsDAO.findWithRoomId = function(roomID) {
  * @param guardian_id {id}
  * @return student {Array<Student>}
  */
- studentsDAO.findWithGuardianId = function(guardian_id) {
+ studentsDAO.findWithGuardianProfileId = function(guardian_profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
 			 if (err) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room FROM profiles p, guardians g, students s, guardians_students gs WHERE gs.guardian = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_id], function(err, result) {
+			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room FROM profiles p, students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -140,7 +140,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT s.id FROM students s, guardians_students gs, guardians g WHERE gs.guardian = g.id AND gs.student = s.id AND s.profile = $2 AND g.profile = $1', [guardian_profile_id, student_profile_id], function(err, result) {
+			 client.query('SELECT s.id FROM students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND s.profile = $2', [guardian_profile_id, student_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
