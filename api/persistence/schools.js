@@ -68,10 +68,34 @@ var schoolServices = {
 			});
 		});
 	},
+	
+ /** @method findWithProfileId
+  * @description Finds a school with a given Profile ID
+  * @param profile_id {int}
+  * @return list of [name, email, telephone, address] from school {[School]}
+  */
+	findWithProfileId: function(profile_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT s.name, s.email, s.telephone, s.address FROM schools s, profiles p, employees e WHERE s.id = e.school AND e.profile = p.id AND p.id = $1', [profile_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+	
  /** @method findWithId
   * @description Finds a school with detemined ID
   * @param id {int}
-  * @return name, email, telephone from school {School}
+  * @return name, email, telephone, address from school {School}
   */
 	findWithId: function(id) {
 		return new Promise(function (resolve, reject) {

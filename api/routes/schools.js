@@ -16,6 +16,30 @@ var numberValidate = function(req, res, next, id) {
 //Always check all path parameters for NaN error
 router.param('school_id', numberValidate);
 
+/** @description Get School that token profile works for. */
+router.get('/me', function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+
+		return schoolBO.read_me(req.device, req.rawToken, req.token)
+		.then(function(resp){
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
+		}).catch(function(err){
+			var resp = responses.internalError(err);
+			res.status(resp.code).json(resp.json);
+			resolve(resp);
+		});
+	}).catch(function(err){
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+})
+
 /** @description Get School's info. */
 router.get('/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){

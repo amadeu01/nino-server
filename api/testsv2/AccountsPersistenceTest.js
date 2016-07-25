@@ -245,6 +245,17 @@ suite('Account Profile and Credential Persistence', function () {
 			throw(err);
 		});
 	});
+	
+	test('Should Read School From Profile', function() {
+		return school.findWithProfileId(1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
 
 	test('Should Read Classes for School', function() {
 		return _class.findWithSchoolId(schl.id)

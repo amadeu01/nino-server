@@ -37,7 +37,7 @@ schools.create = function(school, device, rawToken, token) {
 * @param school {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return School {id}
+* @return School {School}
 */
 schools.read = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -58,6 +58,33 @@ schools.read = function(school_id, device, rawToken, token) {
 		});
   });
 };
+
+/** @method read_me
+* @description Read a <tt>School</tt>
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
+* @return School {School}
+*/
+schools.read_me = function(device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
+			//TODO: can read school ? no, so reject
+			else {
+				return schoolDAO.findWithProfileId(token.profile)
+				.then(function(school){
+					resolve(responses.success(school));
+				}).catch(function(err){
+					resolve(responses.persistenceError(err));
+				});
+			}
+    }).catch(function(err){
+			resolve(responses.persistenceError(err));
+		});
+  });
+};
+
 /** @method update
 * @param schoolInfo {JSON} what will be updated
 * @param device {string}
