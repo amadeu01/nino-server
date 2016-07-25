@@ -72,7 +72,7 @@ var schoolServices = {
  /** @method findWithProfileId
   * @description Finds a school with a given Profile ID
   * @param profile_id {int}
-  * @return list of [name, email, telephone, address] from school {[School]}
+  * @return list of [id, name, email, telephone, address] from school {[School]}
   */
 	findWithProfileId: function(profile_id) {
 		return new Promise(function (resolve, reject) {
@@ -81,7 +81,7 @@ var schoolServices = {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT s.name, s.email, s.telephone, s.address FROM schools s, profiles p, employees e WHERE s.id = e.school AND e.profile = p.id AND p.id = $1', [profile_id], function(err, result) {
+				client.query('SELECT s.id, s.name, s.email, s.telephone, s.address FROM schools s, profiles p, employees e WHERE s.id = e.school AND e.profile = p.id AND p.id = $1', [profile_id], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
