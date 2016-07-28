@@ -133,6 +133,12 @@ studentsDAO.findWithRoomId = function(roomID) {
  		 });
  	 });
   };
+	/** @method findWithGuardianProfileAndStudentProfile
+  * @description Validate student to school
+  * @param guardian_profile_id {id}
+  * @param student_profile_id {id}
+  * @return student {id}
+  */
  studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
@@ -150,7 +156,12 @@ studentsDAO.findWithRoomId = function(roomID) {
 		 });
 	 });
  };
-
+ /** @method findWithSchoolAndStudentProfile
+ * @description Validate student to school
+ * @param school_id {id}
+ * @param student_profile_id {id}
+ * @return student {id}
+ */
  studentsDAO.findWithSchoolAndStudentProfile = function(school_id, profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
@@ -171,7 +182,7 @@ studentsDAO.findWithRoomId = function(roomID) {
  /** @method findWithSchoolAndGuardianProfile
  * @param school_id {id}
  * @param guardian_profile_id {id}
- * @return guardian {Array<Guardians>}
+ * @return guardian {Array<Students>}
  */
  studentsDAO.findWithSchoolAndGuardianProfile = function(school_id, guardian_profile_id) {
 

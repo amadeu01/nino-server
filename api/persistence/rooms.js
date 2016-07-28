@@ -76,6 +76,9 @@ var roomServices = {
 	removeEducatorFromRoom: function(educator_profile_id, room_id) {
 
 	},
+	update: function(roomInfo) {
+
+	},
 
 	delete: function(room_id) {
 

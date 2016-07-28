@@ -13,20 +13,21 @@ var numberValidate = function(req, res, next, id) {
 
 
 /** @description Get Guardian info*/
-router.get('/:guardian_profile_id', function(req, res, next) {
+router.get('/:guardian_profile_id/schools/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian_profile_id");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.useragent.isBot === true ) reject(responses.isBot("Bot"));
 
 		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
-			return guardiansBO.read(req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			return guardiansBO.read(req.params.school_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -35,7 +36,6 @@ router.get('/:guardian_profile_id', function(req, res, next) {
 			});
 		}
 	}).catch(function(err){
-		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
@@ -49,13 +49,14 @@ router.delete('/:guardian_profile_id/students/:student_profile_id', function(req
 		if (req.device === undefined) missingParameters.push("device");
 		if (req.params.student_profile_id === undefined) missingParameters.push("student_profile_id");
 		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian_profile_id");
+		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.useragent.isBot === true ) reject(responses.isBot("Bot"));
 
 		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
-			return guardiansBO.delete(req.params.guardian_profile_id, req.params.student_profile_id, req.device, req.rawToken, req.token)
+			return guardiansBO.delete(req.body.school_id, req.params.guardian_profile_id, req.params.student_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -64,7 +65,6 @@ router.delete('/:guardian_profile_id/students/:student_profile_id', function(req
 			});
 		}
 	}).catch(function(err){
-		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
@@ -82,7 +82,7 @@ router.get('/me', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.useragent.isBot === true ) reject(responses.isBot("Bot"));
 
 		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
@@ -96,7 +96,6 @@ router.get('/me', function(req, res, next) {
 			});
 		}
 	}).catch(function(err){
-		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
@@ -109,13 +108,14 @@ router.post('/', function(req, res, next) {
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		if (req.body.email === undefined) missingParameters.push("email");
 		//else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
 		if (req.body.name === undefined) missingParameters.push("name");
 		if (req.body.surname === undefined) missingParameters.push("surname");
 		if (req.body.student_profile_id === undefined) missingParameters.push("student_profile_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.useragent.isBot === true ) reject(responses.isBot("Bot"));
 
 		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
@@ -131,7 +131,7 @@ router.post('/', function(req, res, next) {
 				birthdate: req.body.birthdate,
 				gender: req.body.gender
 			};
-			return guardiansBO.create(account, profile, req.body.student_profile_id, req.device, req.rawToken, req.token)
+			return guardiansBO.create(req.body.school_id, account, profile, req.body.student_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -140,7 +140,6 @@ router.post('/', function(req, res, next) {
 			});
 		}
 	}).catch(function(err){
-		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
@@ -169,7 +168,6 @@ router.get('/guardians/students/:student_profile_id/schools/:school_id', functio
 			});
 		}
 	}).catch(function(err){
-		//console.log(err);
 		res.status(err.code).json(err.json);
 	});
 });
