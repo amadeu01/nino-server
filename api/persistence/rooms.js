@@ -79,6 +79,24 @@ var roomServices = {
 
 	delete: function(room_id) {
 
+	},
+	
+	findWithEmployeeProfileAndRoomId: function(employee_profile_id, room_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT r.id FROM rooms r, classes c, schools s, employees e, profiles p WHERE r.id = $2 AND p.id = $1 AND e.school = s.id AND e.profile = p.id AND c.school = s.id AND r.class = c.id', [employee_profile_id, room_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
 	}
 
 };

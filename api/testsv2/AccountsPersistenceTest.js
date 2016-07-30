@@ -456,6 +456,51 @@ suite('Account Profile and Credential Persistence', function () {
 	
 	//*************************************PERMISSIONS*************************************//
 
+	test('Should Validate Room Employee', function() {
+		return room.findWithEmployeeProfileAndRoomId(2, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate Room Employee', function() {
+		return room.findWithEmployeeProfileAndRoomId(3, 1)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
+		});
+	});
+
+
+	test('Should Validate Class Employee', function() {
+		return _class.findWithEmployeeProfileAndClassId(2, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate Class Employee', function() {
+		return _class.findWithEmployeeProfileAndClassId(3, 1)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
+		});
+	});
+
 	test('Should Validate School Employee', function() {
 		return school.findWithEmployeeProfileAndSchool(2, 1)
 		.then(function(done) {
