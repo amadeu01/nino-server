@@ -1,11 +1,5 @@
 /** @module persistence/schools */
 
-//var models = require('../models');
-
-//var errors = require('../services/errors');
-
-var validator = require('validator');
-//var permissions = require('../services/permissions');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
@@ -34,7 +28,6 @@ var schoolServices = {
 						var response = {};
 						client.query('INSERT INTO schools (owner, notificationGroup, address, cnpj, telephone, email, name) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',[profile_id, school.notificationGroup, school.address, school.cnpj, school.telephone, school.email, school.name], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
-							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else {
 								response.school = result.rows[0];
@@ -46,7 +39,6 @@ var schoolServices = {
 					return new Promise(function(res,rej) {
 						client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id',[profile_id, response.school.id], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
-							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else {
 								//response.employee = result.rows[0];
@@ -76,10 +68,34 @@ var schoolServices = {
 			});
 		});
 	},
+
+ /** @method findWithProfileId
+  * @description Finds a school with a given Profile ID
+  * @param profile_id {int}
+  * @return schools {Array<School>} list of [id, name, email, telephone, address] from school
+  */
+	findWithProfileId: function(profile_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT s.id, s.name, s.email, s.telephone, s.address FROM schools s, profiles p, employees e WHERE s.id = e.school AND e.profile = p.id AND p.id = $1', [profile_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+
  /** @method findWithId
   * @description Finds a school with detemined ID
   * @param id {int}
-  * @return name, email, telephone from school {School}
+  * @return school {School} name, email, telephone, address from school
   */
 	findWithId: function(id) {
 		return new Promise(function (resolve, reject) {
@@ -98,7 +114,11 @@ var schoolServices = {
 			});
 		});
 	},
-	
+	/** @method findWithOwnerAndSchool
+   * @description Finds a school with owner and school id
+   * @param id {int}
+   * @return schoo_id {id}
+   */
 	findWithOwnerAndSchool: function(profile_id, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -116,7 +136,12 @@ var schoolServices = {
 			});
 		});
 	},
-	
+	/** @method findWithEmployeeProfileAndSchool
+   * @description Finds a school with owner and school id
+   * @param profile_id {id}
+   * @param schoo_id {id}
+	 * @return id {JSON} employee id and school id
+   */
 	findWithEmployeeProfileAndSchool: function(profile_id, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {

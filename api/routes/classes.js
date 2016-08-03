@@ -2,16 +2,14 @@
 
 var express = require('express');
 var router = express.Router();
-var useragent = require('express-useragent');
-var errors = require('../mechanisms/error');
-var validator = require('validator');
+var responses = require('../mechanisms/responses.js');
 var classesBO = require('../business/classes.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
 		next();
 	} else {
-		res.status(400).end(errors.invalidParameters("path_isNaN"));
+		res.status(400).end(responses.invalidParameters("path_isNaN"));
 	}
 };
 
@@ -31,7 +29,7 @@ router.get('/schools/:school_id', function(req, res, next) {
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return classesBO.getClassesForSchool(req.params.school_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
@@ -57,7 +55,7 @@ router.post('/schools/:school_id', function(req, res, next) {
 		if (req.token === undefined) missingParameters.push('token');
 		if (req.rawToken === undefined) missingParameters.push('rawToken');
 		if (req.body.class_name === undefined) missingParameters.push('Class_name');
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return classesBO.createClassForSchool(req.body.class_name, req.params.school_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
@@ -79,7 +77,7 @@ router.put('/:class_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push('rawToken');
 		if (req.body.school_id === undefined) missingParameters.push('school_id');
 		if (req.params.class_id === undefined) missingParameters.push('class_id');
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var classInfo = {
 				class_id: req.params.class_id,
@@ -104,7 +102,7 @@ router.delete('/:class_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameter.push('rawToken');
 		if (req.body.school_id === undefined) missingParameters.push('school_id');
 		if (req.params.class_id === undefined) missingParameters.push('class_id');
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return classesBO.delete(req.body.school_id, req.params.class_id, req.device, req.rawToken, req.token)
 			.then(function(response){

@@ -4,7 +4,7 @@
 */
 
 var jwt = require('jsonwebtoken');
-var errors = require('./error');
+var responses = require('./responses.js');
 var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 	    jwt.verify(token, jwtSecret, function(err, decoded) {
 	      if (err) {
-					reject(errors.invalidCredential(JSON.stringify(err)));
+					reject(responses.invalidCredential(JSON.stringify(err)));
 	      } else {
 					delete decoded.iat;
 					delete decoded.exp;
@@ -50,7 +50,7 @@ module.exports = {
 	  return new Promise(function (resolve, reject) {
 	    jwt.verify(token, jwtSecret, function(err, decoded) {
 	      if (err) {
-					reject(errors.invalidCredential(JSON.stringify(err)));
+					reject(responses.invalidCredential(JSON.stringify(err)));
 	      } else {
 					resolve(decoded);
 	      }

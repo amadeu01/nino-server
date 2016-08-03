@@ -1,10 +1,10 @@
 /** @module business/rooms */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var roomsDAO = require('../persistence/rooms.js');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
+var schoolsDAO = require('../persistence/schools.js');
 var rooms = {};
 
 
@@ -15,40 +15,82 @@ var rooms = {};
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.createToClass = function(room, class_id, device, rawToken, token) {
+rooms.createToClass = function(school_id, room, class_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.create(room, class_id)
-      .then(function(room_id){
-        resolve(new response(200, room_id, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.create(room, class_id)
+        .then(function(room_id){
+          resolve(responses.success(room_id));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
 
-/** @method getRoomFromClass
-* @param class_id {id}
+/** @method getRoomFromSchool
+* @param school_id {id}
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.getRoomFromClass = function(class_id, device, rawToken, token) {
+rooms.getRoomFromSchool = function(school_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.findWithClassId(class_id)
-      .then(function(rooms){
-        resolve(new response(200, rooms, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.findWithSchoolId(school_id)
+        .then(function(rooms){
+          resolve(responses.success(rooms));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.persistenceError(err));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
+    });
+  });
+}
+
+/** @method getRoomFromClass
+* @param class_id {id}
+* @param device {string}
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
+* @return <p><b>Model</b> ```  ```
+*/
+rooms.getRoomFromClass = function(school_id, class_id, device, rawToken, token) {
+  return new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.findWithClassId(class_id)
+        .then(function(rooms){
+          resolve(responses.success(rooms));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
+      }).catch(function(err){
+        resolve(responses.invalidPermissions(err));
+      });
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -56,22 +98,29 @@ rooms.getRoomFromClass = function(class_id, device, rawToken, token) {
 /** @method addStudentToRoom
 * @param student_id {id}
 * @param room_id {id}
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.addStudentToRoom = function(student_id, room_id, device, rawToken, token) {
+rooms.addStudentToRoom = function(school_id, student_id, room_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.addStudent(student_id, room_id)
-      .then(function(result){
-        resolve(new response(200, result, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.addStudent(student_id, room_id)
+        .then(function(result){
+          resolve(responses.success(result));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -83,18 +132,24 @@ rooms.addStudentToRoom = function(student_id, room_id, device, rawToken, token) 
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.removeStudentFromRoom = function(student_id, room_id, device, rawToken, token) {
+rooms.removeStudentFromRoom = function(school_id, student_id, room_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.removeStudent(student_id, room_id)
-      .then(function(result){
-        resolve(new response(200, result, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.removeStudent(student_id, room_id)
+        .then(function(result){
+          resolve(responses.success(result));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -102,22 +157,29 @@ rooms.removeStudentFromRoom = function(student_id, room_id, device, rawToken, to
 /** @method addEducatorToRoom
 * @param educator_id {id}
 * @param room_id {id}
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.addEducatorToRoom = function(educator_id, room_id, device, rawToken, token) {
+rooms.addEducatorToRoom = function(school_id, educator_id, room_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.addEducator(educator_id, room_id)
-      .then(function(result){
-        resolve(new response(200, result, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.addEducator(educator_id, room_id)
+        .then(function(result){
+          resolve(responses.success(result));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -125,44 +187,58 @@ rooms.addEducatorToRoom = function(educator_id, room_id, device, rawToken, token
 /** @method removeEducatorFromRoom
 * @param educator_id {id}
 * @param room_id {id}
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.removeEducatorFromRoom = function(educator_id, room_id, device, rawToken, token) {
+rooms.removeEducatorFromRoom = function(school_id, educator_id, room_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.removeEducator(educator_id, room_id)
-      .then(function(result){
-        resolve(new response(200, result, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+      .then(function(id){
+        return roomsDAO.removeEducator(educator_id, room_id)
+        .then(function(result){
+          resolve(responses.success(result));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
 
 /** @method update
 * @param roomInfo {JSON}
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.update = function(roomInfo, device, rawToken, token) {
+rooms.update = function(school_id, roomInfo, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.update(roomInfo)
-      .then(function(result){
-        resolve(new response(200, result, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+      .then(function(id){
+        return roomsDAO.update(roomInfo)
+        .then(function(result){
+          resolve(responses.success(result));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };
@@ -170,22 +246,29 @@ rooms.update = function(roomInfo, device, rawToken, token) {
 /** @method delete
 * @param room_id {id}
 * @param class_id {id}
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.delete = function(room_id, class_id, device, rawToken, token) {
+rooms.delete = function(school_id, room_id, class_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return roomsDAO.delete(room_id)
-      .then(function(result){
-        resolve(new response(200, result, null));
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+      .then(function(id){
+        return roomsDAO.delete(room_id)
+        .then(function(result){
+          resolve(responses.success(result));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
       }).catch(function(err){
-        reject(errors.internalError("database:Room"));
+        resolve(responses.invalidPermissions(err));
       });
     }).catch(function(err){
-      reject(errors.internalError("database:Credential"));
+      resolve(responses.persistenceError(err));
     });
   });
 };

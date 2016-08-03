@@ -1,8 +1,5 @@
 /** @module persistence/employees */
 
-var models = require('../models');
-var errors = require('../mechanisms/error');
-var validator = require('validator');
 var employeesDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
@@ -26,7 +23,6 @@ employeesDAO.createEducator = function(school_id, account, profile) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else res(result);
 					});
@@ -37,7 +33,6 @@ employeesDAO.createEducator = function(school_id, account, profile) {
 					response.profile = result.rows[0]; //Sets profile to response
 					client.query('INSERT INTO accounts (profile, email, cellphone, hash) VALUES ($1, $2, $3, $4) RETURNING id', [response.profile.id, account.email, account.cellphone, account.hash], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							response.account = result.rows[0]; //Sets account to response
@@ -49,7 +44,6 @@ employeesDAO.createEducator = function(school_id, account, profile) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO employees (profile, school) VALUES ($1, $2) RETURNING id', [response.profile.id, school_id], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							response.employee = result.rows[0]; //Sets employee to response
@@ -61,7 +55,6 @@ employeesDAO.createEducator = function(school_id, account, profile) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO schools_educators (school, educator) VALUES ($1, $2)', [school_id , response.employee.id], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else res(response); //Sends account and profile in response dictionary
 					});
@@ -88,7 +81,10 @@ employeesDAO.createEducator = function(school_id, account, profile) {
 		});
 	});
 };
-
+/** @method findWithProfileId
+ * @param profile_id {id}
+ * @return Promise {Promise}
+ */
 employeesDAO.findWithProfileId = function(id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
@@ -107,7 +103,7 @@ employeesDAO.findWithProfileId = function(id) {
 	});
 };
 
-/** @method
+/** @method getEmployeesWithSchoolId
  * @param email {string}
  * @return Promise {Promise}
  */

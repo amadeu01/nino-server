@@ -119,7 +119,8 @@ var createClasses = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR NOT NULL,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE NOT NULL,' +
-				 'active BOOLEAN NOT NULL DEFAULT true,' + 
+				 'active	BOOLEAN NOT NULL DEFAULT true,' + 
+				 'agenda	INTEGER DEFAULT 0,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'menu	INTEGER REFERENCES menus (id) ON DELETE SET NULL)'
 			, function(err, result) {
@@ -168,26 +169,6 @@ var createStudents = function(pool) {
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE SET NULL)'
-			, function(err, result) {
-				done();
-				if (err) reject(err);
-				else resolve(result);
-			});
-		});
-	});
-};
-
-var createGuardians = function(pool) {
-	return new Promise(function (resolve, reject) {
-		pool.connect(function(err, client, done) {
-			if (err) {
-			   	reject (err);
-				return;
-			}
-			client.query('CREATE TABLE IF NOT EXISTS guardians' +
-				'(id	SERIAL PRIMARY KEY,' +
-				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
@@ -254,6 +235,48 @@ var createActivities = function(pool) {
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE)'
+			, function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var createAgendasSections = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+			   	reject (err);
+				return;
+			}
+			client.query('CREATE TABLE IF NOT EXISTS agendas_sections' +
+				'(id	SERIAL PRIMARY KEY,' +
+				 'title	VARCHAR NOT NULL,' +
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE)'
+			, function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var createAgendasSectionsRows = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+			   	reject (err);
+				return;
+			}
+			client.query('CREATE TABLE IF NOT EXISTS agendas_sections_rows' +
+				'(id	SERIAL PRIMARY KEY,' +
+				 'type	INTEGER NOT NULL,' +
+				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+				 'section	INTEGER REFERENCES agendas_sections (id) ON DELETE CASCADE)'
 			, function(err, result) {
 				done();
 				if (err) reject(err);
@@ -454,15 +477,15 @@ var createEventsConfirmations = function(pool) {
 	});
 };
 
-var createGuardiansStudents = function(pool) {
+var createGuardiansProfileStudents = function(pool) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TABLE IF NOT EXISTS guardians_students' +
-				'(guardian	INTEGER REFERENCES guardians (id) ON DELETE RESTRICT,' +
+			client.query('CREATE TABLE IF NOT EXISTS guardians_profile_students' +
+				'(guardian_profile	INTEGER REFERENCES profiles (id) ON DELETE RESTRICT,' +
 				 'student	INTEGER REFERENCES students (id) ON DELETE RESTRICT)'
 			, function(err, result) {
 				done();
@@ -613,17 +636,17 @@ var db = {
 			.then(function(done) {
 				return createAccounts(pool);
 			}).then(function(done) {
-				return Promise.all([createCredentials(pool), createSchools(pool), createGuardians(pool)]);
+				return Promise.all([createCredentials(pool), createSchools(pool)]);
 			}).then(function(done) {
 				return Promise.all([createActivities(pool), createMenus(pool), createEmployees(pool)]);
 			}).then(function(done) {
 				return createClasses(pool);
 			}).then(function(done) {
-				return createRooms(pool);
+				return Promise.all([createRooms(pool), createAgendasSections(pool)]);
 			}).then(function (done) {
-				return Promise.all([createDrafts(pool), createPosts(pool), createEvents(pool), createStudents(pool)]);
+				return Promise.all([createDrafts(pool), createPosts(pool), createEvents(pool), createStudents(pool),  createAgendasSectionsRows(pool)]);
 			}).then(function(done) {
-				return Promise.all([createActivitiesClasses(pool), createClassesEducators(pool), createDraftsAuthors(pool), createDraftsProfiles(pool), createEducatorRooms(pool), createEventsConfirmations(pool), createGuardiansStudents(pool), createPostsProfiles(pool), createPostsAuthors(pool), createPostsReads(pool), createSchoolsPedagogues(pool), createSchoolsEducators(pool), createSchoolsNutritionists(pool), createSchoolsCoordinators(pool)]);
+				return Promise.all([createActivitiesClasses(pool), createClassesEducators(pool), createDraftsAuthors(pool), createDraftsProfiles(pool), createEducatorRooms(pool), createEventsConfirmations(pool), createGuardiansProfileStudents(pool), createPostsProfiles(pool), createPostsAuthors(pool), createPostsReads(pool), createSchoolsPedagogues(pool), createSchoolsEducators(pool), createSchoolsNutritionists(pool), createSchoolsCoordinators(pool)]);
 			}).then(function(success) {
 				resolve(success);
 			})

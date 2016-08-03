@@ -1,8 +1,7 @@
 /** @module business/accounts */
 
 var validator = require('validator');
-var errors = require('../mechanisms/error.js');
-var response = require('../mechanisms/response.js');
+var responses = require('../mechanisms/responses.js');
 var accountsDAO = require('../persistence/accounts.js');
 var credentialDAO = require('../persistence/credentials.js');
 var jwt = require('../mechanisms/jwt.js');
@@ -20,18 +19,19 @@ var accounts = {};
  */
 accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
-		if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
-		if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
+		var invalidParameters = [];
+		if (!validator.isEmail(account.email)) invalidParameters.push("email");
+		if (!validator.isAlpha(profile.name, 'pt-PT')) invalidParameters.push("name");
+		if (!validator.isAlpha(profile.surname, 'pt-PT')) invalidParameters.push("surname");
+		else if (invalidParameters.length > 0) reject(responses.missingParameters(invalidParameters));
 		else {
 			account.hash = uid.sync(100);
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
 				mail.sendUserConfirmation(account.email, {hash: account.hash});
-				resolve(new response(200, newUser, null));
+				resolve(responses.success(newUser));
 			}).catch(function(err) {
-				//var data = err.message + " Create User error";
-				reject(errors.internalError(err));
+				resolve(responses.persistenceError(err));
 			});
 		}
 	});
@@ -46,22 +46,24 @@ accounts.createNewUser = function(account, profile) {
  */
 accounts.createNewUserTest = function(account, profile) {
 	return new Promise(function(resolve, reject) {
-		var invalidParameters =[];
-		if (!validator.isEmail(account.email)) reject(errors.invalidParameters("email"));
-		if (!validator.isAlpha(profile.name, 'pt-PT')) reject(errors.invalidParameters("name"));
-		if (!validator.isAlpha(profile.surname, 'pt-PT')) reject(errors.invalidParameters("surname"));
+		var invalidParameters = [];
+		if (!validator.isEmail(account.email)) invalidParameters.push("email");
+		if (!validator.isAlpha(profile.name, 'pt-PT')) invalidParameters.push("name");
+		if (!validator.isAlpha(profile.surname, 'pt-PT')) invalidParameters.push("surname");
+		else if (invalidParameters.length > 0) reject(responses.missingParameters(invalidParameters));
 		else {
 			account.hash = uid.sync(100);
 			var hash = account.hash;
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
-				//console.log(hash);
+				//console.log(profile);
 				newUser.hash = hash;
+				//console.log(newUser);
 				//mail.sendUserConfirmation(account.email, {hash: account.hash});
-				resolve(new response(200, newUser, null));
+				resolve(responses.success(newUser));
 			}).catch(function(err) {
-				//var data = err.message + " Create User error";
-				reject(errors.internalError(err));
+				//console.log(err);
+				resolve(responses.persistenceError(err));
 			});
 		}
 	});
@@ -76,29 +78,25 @@ accounts.confirmAccount = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
 		return accountsDAO.confirmAccount(confirmationHash, password)
 		.then(function(userInfo) {
-			// TODO: check Ipad ?
-			// TODO: if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
-			var account = userInfo.account;
 			var tokenData = {
 				profile: userInfo.profile,
 				device: device,
-				account: account.id
+				account: userInfo.id
 			};
 			return jwt.create(tokenData)
 			.then(function(token) {
-				return credentialDAO.logIn(device, token, account)
+				return credentialDAO.logIn(device, token, userInfo.id)
 				.then(function(result) {
 					var res = {token: token};
-					resolve(new response(200, res, null));
+					resolve(responses.success(res));
 				}).catch(function(err) {
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				resolve(responses.internalError(err));
 			});
 		}).catch(function(err){
-			//var data = "Confirm account error " + err.message;
-			reject(errors.internalError(err));
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -112,32 +110,29 @@ accounts.confirmAccountTest = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
 		return accountsDAO.confirmAccount(confirmationHash, password)
 		.then(function(userInfo) {
-			// TODO: check Ipad ?
-			// TODO: if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
-			var account = userInfo.account;
 			var tokenData = {
 				profile: userInfo.profile,
 				device: device,
-				account: account.id
+				account: userInfo.id
 			};
 			return jwt.create(tokenData)
 			.then(function(token) {
-				return credentialDAO.logIn(device, token, account)
+				return credentialDAO.logIn(device, token, userInfo.id)
 				.then(function(result) {
 					var res = {
 						rawToken: token,
 						token: tokenData
 					};
-					resolve(new response(200, res, null));
+					resolve(responses.success(res));
 				}).catch(function(err) {
-					reject(errors.internalError(err));
+					resolve(responses.persistenceError(err));
 				});
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				resolve(responses.internalError(err));
 			});
 		}).catch(function(err){
 			//var data = "Confirm account error " + err.message;
-			reject(errors.internalError(err));
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -151,12 +146,9 @@ accounts.findWithHash = function(confirmationHash) {
 	return new Promise(function(resolve, reject){
 		return accountsDAO.findWithHash(confirmationHash)
 		.then(function(userInfo) {
-			// TODO: check Ipad ?
-			// TODO: if (!(userInfo.credentials.device === origin)) reject(new response(500, "extraneous device", 1));
-			resolve(new response(200, userInfo, null));
+			resolve(responses.success(userInfo));
 		}).catch(function(err){
-			//var data = "Confirm account error " + err.message;
-			reject(errors.internalError(err));
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -165,87 +157,80 @@ accounts.findWithHash = function(confirmationHash) {
 * @param email {string}
 * @param password {string}
 * @param device
-* @param populate {Array} tells which list must be populated
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
 accounts.logIn = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(email)) reject(errors.invalidParameters("email"));
+		if (!validator.isEmail(email)) resolve(responses.invalidParameters("email"));
 		else {
 			var tokenData = {
 				device: device
 			};
-
 			return accountsDAO.logIn(email)
 			.then(function(account) {
-				// console.log("AccountsBO will print:");
-				// console.log(account);
 				if (password !== account.password) {
-					reject(errors.inexistentRegister());
+					resolve(responses.inexistentRegister());
 					return;
 				}
 				tokenData.account = account.id;
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
-					return credentialDAO.logIn(device, token, account)
+					return credentialDAO.logIn(device, token, account.id)
 					.then(function(result) {
-						//console.log("CredentialDAO Login res");
-						//console.log(result);
 						var res = {token: token};
-						resolve(new response(200, res, null));
+						resolve(responses.success(res));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
 					});
+				}).catch(function(err) {
+					resolve(responses.internalError(err));
 				});
 			}).catch(function(err){
-				//var data = "Login error " + err.message;
-				reject(errors.internalError(err));
+				resolve(responses.persistenceError(err));
 			});
 		}
 	});
 };
 
-/** @method logIn
+/** @method logInTest
 * @description Only for test sake
 * @param email {string}
 * @param password {string}
 * @param device
-* @param populate {Array} tells which list must be populated
 * @return Token {string}
 * @return response {Promise} If successful, returns user id insede data
 */
 accounts.logInTest = function(email, password, device) {
 	return new Promise(function(resolve, reject) {
-		if (!validator.isEmail(email)) reject(errors.invalidParameters("email"));
+		if (!validator.isEmail(email)) resolve(responses.invalidParameters("email"));
 		else {
 			var tokenData = {
 				device: device
 			};
-
 			return accountsDAO.logIn(email)
 			.then(function(account) {
-				// console.log("AccountsBO will print:");
-				//console.log(account);
 				tokenData.account = account.id;
 				tokenData.profile = account.profile;
 				return jwt.create(tokenData)
 				.then(function(token) {
-					return credentialDAO.logIn(device, token, account)
+					return credentialDAO.logIn(device, token, account.id)
 					.then(function(result) {
-						//console.log("CredentialDAO Login res");
-						//console.log(result);
-						//console.log(tokenData);
 						var res = {
 							rawToken: token,
 							token: tokenData,
 							resTest: account
 						};
-						resolve(new response(200, res, null));
+						resolve(responses.success(res));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
 					});
+				}).catch(function(err) {
+					resolve(responses.internalError(err));
 				});
 			}).catch(function(err){
-				//var data = "Login error " + err.message;
-				reject(errors.internalError(err));
+				resolve(responses.persistenceError(err));
 			});
 		}
 	});
@@ -257,13 +242,11 @@ accounts.logInTest = function(email, password, device) {
 */
 accounts.logout = function(device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
-		//TODO: if (jwt.validate(token, device) === )
 		return credentialDAO.logout(device, token)
 		.then(function(response){
-			resolve(new response(200, response, null));
+			resolve(responses.success(response));
 		}).catch(function(err){
-			//var data = "Logout error " + err.message;
-			reject(errors.internalError(err));
+			resolve(responses.persistenceError(err));
 		});
 	});
 };

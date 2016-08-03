@@ -111,7 +111,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 
 	test('Should try create Credential', function() {
-		return credential.logIn("My Device", "thisismysuperdupertoken", {id:1})
+		return credential.logIn("My Device", "thisismysuperdupertoken", 1)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -224,7 +224,7 @@ suite('Account Profile and Credential Persistence', function () {
 			cellphone: "+5519912345678",
 			hash: "thirdhashsuchsecretwowmuchwow"
 		};
-		return guardian.create(guardAcc, guardprof, stdnt.id)
+		return guardian.create(guardAcc, guardprof, 1)
 		.then(function(done) {
 			grdn = done.guardian;
 			console.log(done);
@@ -237,6 +237,17 @@ suite('Account Profile and Credential Persistence', function () {
 
 	test('Should Read School', function() {
 		return school.findWithId(schl.id)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Read School From Profile', function() {
+		return school.findWithProfileId(1)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -302,18 +313,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 	
 	test('Should Read Guaridian s Students info', function() {
-		return student.findWithGuardianId(grdn.id)
-		.then(function(done) {
-			console.log(done);
-			return(done);
-		}).catch(function(err) {
-			console.log(err);
-			throw(err);
-		});
-	});
-	
-	test('Should Read Profile s Guardian info', function() {
-		return guardian.findWithProfileId(4)
+		return student.findWithGuardianProfileId(4)
 		.then(function(done) {
 			console.log(done);
 			return(done);
@@ -456,6 +456,51 @@ suite('Account Profile and Credential Persistence', function () {
 	
 	//*************************************PERMISSIONS*************************************//
 
+	test('Should Validate Room Employee', function() {
+		return room.findWithEmployeeProfileAndRoomId(2, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate Room Employee', function() {
+		return room.findWithEmployeeProfileAndRoomId(3, 1)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
+		});
+	});
+
+
+	test('Should Validate Class Employee', function() {
+		return _class.findWithEmployeeProfileAndClassId(2, 1)
+		.then(function(done) {
+			console.log(done);
+			return(done);
+		}).catch(function(err) {
+			console.log(err);
+			throw(err);
+		});
+	});
+	
+	test('Should Fail Validate Class Employee', function() {
+		return _class.findWithEmployeeProfileAndClassId(3, 1)
+		.then(function(done) {
+			console.log("ERROR HERE");
+			return(done);
+		}).catch(function(err) {
+			console.log("Failed Successfully!")
+			return(err);
+		});
+	});
+
 	test('Should Validate School Employee', function() {
 		return school.findWithEmployeeProfileAndSchool(2, 1)
 		.then(function(done) {
@@ -556,7 +601,7 @@ suite('Account Profile and Credential Persistence', function () {
 	});
 	
 	test('Should Fail Validate School Student and Guardian', function() {
-		return guardian.findWithSchoolAndStudentProfileAndGuardianProfile(1, 1, 1)
+		return guardian.findWithSchoolAndStudentProfileAndGuardianProfile(1, 1, 4)
 		.then(function(done) {
 			console.log("ERROR HERE");
 			return(done);

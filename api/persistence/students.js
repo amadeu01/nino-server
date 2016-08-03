@@ -1,8 +1,5 @@
 /** @module persistence/students */
 
-var models = require('../models');
-var errors = require('../mechanisms/error');
-var validator = require('validator');
 var studentsDAO = {};
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
@@ -27,7 +24,6 @@ studentsDAO.create = function(profile, school_id, room_id) {
 					var response = {};
 					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
 							response.profile = result.rows[0]; //Sets profile to response
@@ -39,7 +35,6 @@ studentsDAO.create = function(profile, school_id, room_id) {
 				return new Promise(function(res, rej) {
 					client.query('INSERT INTO students (profile, school, room) VALUES ($1, $2, $3) RETURNING id', [response.profile.id, school_id, room_id], function(err, result) {
 						if (err) rej (err);
-						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
 						else {
 							//response.student = result.rows[0];
@@ -96,17 +91,17 @@ studentsDAO.findWithRoomId = function(roomID) {
 
 /** @method findWithGuardianId
  * @description Find all students for a guardian
- * @param classID {id}
- * @return class array {Array<Class>}
+ * @param guardian_id {id}
+ * @return student {Array<Student>}
  */
- studentsDAO.findWithGuardianId = function(guardian_id) {
+ studentsDAO.findWithGuardianProfileId = function(guardian_profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
 			 if (err) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room FROM profiles p, guardians g, students s, guardians_students gs WHERE gs.guardian = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_id], function(err, result) {
+			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room FROM profiles p, students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -116,15 +111,42 @@ studentsDAO.findWithRoomId = function(roomID) {
 		 });
 	 });
  };
- 
- studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) { 
+ /** @method findWithProfileId
+  * @description Find all students for a guardian
+  * @param class_id {id}
+  * @return class array {Array<Class>}
+  */
+  studentsDAO.findWithProfileId = function(profile_id) {
+ 	 return new Promise(function (resolve, reject) {
+ 		 pool.connect(function(err, client, done) {
+ 			 if (err) {
+ 				 reject(err); //Connection error, aborts already
+ 				 return;
+ 			 }
+ 			 client.query('SELECT s.id, s.school, s.room FROM profiles p, students s WHERE p.id = $1 AND p.id = s.profile', [profile_id], function(err, result) {
+ 				 if (err) reject(err); //Error: rejects to BO
+ 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+ 				 else if (result.name == "error") reject(result); //Some error occured : rejects
+ 				 else resolve(result.rows[0]); //Executed correctly
+ 				 done();
+ 			 });
+ 		 });
+ 	 });
+  };
+	/** @method findWithGuardianProfileAndStudentProfile
+  * @description Validate student to school
+  * @param guardian_profile_id {id}
+  * @param student_profile_id {id}
+  * @return student {id}
+  */
+ studentsDAO.findWithGuardianProfileAndStudentProfile = function(guardian_profile_id, student_profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
 			 if (err) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT s.id FROM students s, guardians_students gs, guardians g WHERE gs.guardian = g.id AND gs.student = s.id AND s.profile = $2 AND g.profile = $1', [guardian_profile_id, student_profile_id], function(err, result) {
+			 client.query('SELECT s.id FROM students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND s.profile = $2', [guardian_profile_id, student_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -134,7 +156,12 @@ studentsDAO.findWithRoomId = function(roomID) {
 		 });
 	 });
  };
- 
+ /** @method findWithSchoolAndStudentProfile
+ * @description Validate student to school
+ * @param school_id {id}
+ * @param student_profile_id {id}
+ * @return student {id}
+ */
  studentsDAO.findWithSchoolAndStudentProfile = function(school_id, profile_id) {
 	 return new Promise(function (resolve, reject) {
 		 pool.connect(function(err, client, done) {
@@ -151,6 +178,14 @@ studentsDAO.findWithRoomId = function(roomID) {
 			 });
 		 });
 	 });
+ };
+ /** @method findWithSchoolAndGuardianProfile
+ * @param school_id {id}
+ * @param guardian_profile_id {id}
+ * @return guardian {Array<Students>}
+ */
+ studentsDAO.findWithSchoolAndGuardianProfile = function(school_id, guardian_profile_id) {
+
  };
 
 

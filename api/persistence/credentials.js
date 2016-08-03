@@ -1,7 +1,5 @@
 /** @module persistence/credentials */
 
-var models = require('../models');
-var errors = require('../mechanisms/error');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
@@ -16,7 +14,7 @@ var credentialServices = {
 	 * @param account {Account}
 	 * @return Promise {Promise}
 	 */
-	logIn: function(device, token, account) {
+	logIn: function(device, token, account_id) {
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
@@ -26,7 +24,7 @@ var credentialServices = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res, rej) {
-						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account.id, device], function(err, result) {
+						client.query('UPDATE credentials SET (token) = ($1) WHERE account = $2 AND device = $3', [token, account_id, device], function(err, result) {
 							if (err) rej(err);
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);
@@ -35,11 +33,10 @@ var credentialServices = {
 				}).then(function(result) {
 				   return new Promise(function (res, rej) {
 					   if (result.rowCount === 0) { //No row was updated, meaning that we need to create one
-						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account.id, device, token], function(err, result) {
+						   client.query('INSERT INTO credentials (account, device, token) VALUES ($1, $2, $3)', [account_id, device, token], function(err, result) {
 							   if (err) rej(err);
-		 						else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
-		 						else if (result.name == "error") rej(result); //Some error occured : rejects
-							   else res(result);
+								 else if (result.name == "error") rej(result); //Some error occured : rejects
+								 else res(result);
 						   });
 					   } else {
 							 res(result);
@@ -87,34 +84,6 @@ var credentialServices = {
 					done();
 				});
 			});
-		});
-	},
-	loginEducator: function(email, password, device) {
-		return models.waterline.collections.user.findOne({email: email}).populate('roles', {
-			where: {
-				type: 'educator'
-			}
-		})
-		.then(function(user) {
-			if (user.password !== password) {
-				throw(errors.invalidParameters('Incorrect username or password'));
-			} else if (user.roles.length === 0) {
-				throw(errors.inexistentRegister('Inexistent role for user'));
-			} else if (user.roles.length !== 1) {
-				throw(errors.invalidParameters(user.roles));
-			} else {
-				return jwt.create({user: user.id, role: user.roles[0].id})
-				.then(function(token) {
-					return models.waterline.collections.device.findOrCreate({description:device}, {description:device, owner: user.id})
-					.then(function(device) {
-						device.credentials.add({token: token, active: true});
-						return device.save()
-						.then(function() {
-							return {token: token};
-						});
-					});
-				});
-			}
 		});
 	}
 };

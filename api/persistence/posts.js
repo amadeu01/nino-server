@@ -1,12 +1,7 @@
 /**
-* @module persistence
+* @module persistence/post
 */
 
-var models = require('../models');
-
-//errors and validator's module
-var errors = require('../mechanisms/error');
-var validator = require('validator');
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
@@ -16,7 +11,7 @@ var pool = require('../mechanisms/database.js').pool;
 var postsDAO = {
  /** @method create
   * @description Creates a new Post with author_id Profile as author
-  * @param post {Account} - Message, school, class, room, type
+  * @param post {Post} - Message, school, class, room, type
   *	@param author_id {profile_id}
   */
 	create: function(post, author_id) {
@@ -31,7 +26,6 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
 						});
@@ -42,7 +36,6 @@ var postsDAO = {
 						response.post = result;
 						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else {
 								response.author = author_id;
@@ -72,7 +65,12 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method createWithProfiles
+   * @description something
+   * @param post {Post} - Message, school, class, room, type
+   * @param author_id {profile_id}
+	 * @param profiles {Array<profiles_id>}
+   */
 	createWithProfiles: function(post, author_id, profiles) {
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -85,7 +83,6 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
 						});
@@ -96,7 +93,6 @@ var postsDAO = {
 						response.post = result;
 						client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [response.post.id, author_id], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else {
 								response.author = author_id;
@@ -105,18 +101,18 @@ var postsDAO = {
 						});
 					});
 				}).then(function(response) {
-					response.profiles = []
+					response.profiles = [];
 					return new Promise(function(res, rej) {
 						var done = 0;
 						var returned = false;
-						if (profiles.length == 0) res(response); //Case empty
+						if (profiles.length === 0) res(response); //Case empty
 						else {
 							for (var i in profiles) {
+								//TODO: don't make functions on within loop !!!
 								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], function(err, result) {
 									done++;
-									if (err) rej (err);
-									else if (result.rowCount === 0) {
-										rej (result); //Reject here - will stop transaction
+									if (err) {
+										rej (err);
 										returned = true;
 									}
 									else if (result.name == 'error') {
@@ -154,7 +150,11 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method markPostAsReadBy
+   * @description something
+   * @param profile_id {id}
+   * @param post_id {id}
+   */
 	markPostAsReadBy: function(profile_id, post_id) {
 		return new Promise(function(resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -167,7 +167,6 @@ var postsDAO = {
 					return new Promise(function(res, rej) {
 						client.query('INSERT INTO posts_reads (post, profile) VALUES ($1, $2) RETURNING profile', [post_id, profile_id], function(err, result) {
 							if (err) rej (err);
-							else if (result.rowCount === 0) rej (result); //Reject here - will stop transaction
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
 						});
@@ -194,7 +193,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method getPostReadByInfo
+   * @description something
+   * @param post_id {id}
+   */
 	getPostReadByInfo: function(post_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -211,7 +213,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostWithId
+	 * @description something
+	 * @param post_id {id}
+	 */
 	findPostWithId: function(post_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -229,7 +234,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithClassId
+	 * @description something
+	 * @param class_id {id}
+	 */
 	findPostsWithClassId: function(class_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -247,7 +255,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithProfileId
+	 * @description something
+	 * @param profile_id {id}
+	 */
 	findPostsWithProfileId: function(profile_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -265,7 +276,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithRoomId
+	 * @description something
+	 * @param room_id {id}
+	 */
 	findPostsWithRoomId: function(room_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -283,7 +297,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithSchoolId
+	 * @description something
+	 * @param school_id {id}
+	 */
 	findPostsWithSchoolId: function(school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -301,7 +318,10 @@ var postsDAO = {
 			});
 		});
 	},
-	
+	/** @method findPostsWithAuthorId
+	 * @description something
+	 * @param author_id {id}
+	 */
 	findPostsWithAuthorId: function(author_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -319,6 +339,6 @@ var postsDAO = {
 			});
 		});
 	}
-}
+};
 
 module.exports = postsDAO;

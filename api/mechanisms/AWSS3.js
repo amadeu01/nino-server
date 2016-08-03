@@ -33,6 +33,8 @@ awsMec.upload = function(file, name, bucket, size) {
 			if (err) reject(err);
 			else     resolve(data);
 		});
+	}).catch(function(err) {
+		reject(err);
 	});
 }
 
@@ -51,6 +53,8 @@ awsMec.download = function(name, bucket) {
 			Key: name
 		}).createReadStream();
 		resolve(imgStream);
+	}).catch(function(err) {
+		reject(err);
 	});
 }
 

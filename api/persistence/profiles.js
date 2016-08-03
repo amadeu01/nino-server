@@ -7,6 +7,9 @@ var pool = require('../mechanisms/database.js').pool;
 * @class
 */
 var profileServices = {
+	/** @method findWithId
+	* @param profile_id {id}
+	*/
 	findWithId: function(id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {

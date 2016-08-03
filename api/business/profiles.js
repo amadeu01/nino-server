@@ -1,206 +1,181 @@
 /** @module business/profiles */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var awss3 = require('../mechanisms/AWSS3.js');
 var activitiesDAO = require('../persistence/profiles.js');
-var errors = require('../mechanisms/error');
 var profilesDAO = require('../persistence/profiles.js');
 var credentialDAO = require('../persistence/credentials.js');
 var profiles = {};
 
-profiles.uploadProfilePicture = function(profile_id, part, device, rawToken, token) {
-	return new Promise(function(resolve, reject) {
-		credentialDAO.read(rawToken)
-		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
-			else {
-					awss3.uploadProfilePic(part, "pp_" + profile_id + ".png", part.byteCount)
-					.then(function(success) {
-						resolve( new response(200, success, null));
-					}).catch(function(err) {
-						reject(errors.internalError(err));
-					});
-			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
-		});
-	});
-};
 /** @method create
-* @param
+* @param profile {JSON}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.create = function(profile, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					profilesDAO.create(profile)
 					.then(function(profile_id) {
-						resolve( new response(200, profile_id, null));
+						resolve(responses.success(profile_id));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
 /** @method getMyProfile
-* @param
+* @param device {string}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.getMyProfile = function(device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					profilesDAO.findWithId(token.profile)
 					.then(function(profile) {
-						resolve( new response(200, profile, null));
+						resolve(responses.success(profile));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
 /** @method get
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.get = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					profilesDAO.findWithId(profile_id)
 					.then(function(profile) {
-						resolve( new response(200, profile, null));
+						resolve(responses.success(profile));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
 /** @method getProfilePicture
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.getProfilePicture = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
-					awss3.getProfilePicture(part, "pp_" + profile_id + ".png", part.byteCount)
-					.then(function(picture) {
-						resolve( new response(200, picture, null));
+					awss3.downloadProfilePic("pp_" + profile_id + ".png")
+					.then(function(response) {
+						resolve(response);
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.internalError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
 /** @method updatePicture
-* @param
+* @param profile_id {id}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
-profiles.updatePicture = function(profile_id, device, rawToken, token) {
+profiles.updateProfilePicture = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					awss3.updateProfilePic(part, "pp_" + profile_id + ".png", part.byteCount)
 					.then(function(success) {
-						resolve( new response(200, success, null));
+						resolve(responses.success(success));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.internalError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
 /** @method update
 * @param profileInfo {JSON}
+* @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.update = function(profileInfo, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
-					profilesDAO.upload(profileInfo)
+					profilesDAO.update(profileInfo)
 					.then(function(success) {
-						resolve( new response(200, success, null));
+						resolve(responses.success(success));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
 
 /** @method delete
 * @param profile_id {id}
+* @param device {sting}
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
-* @return
+* @return promise
 */
 profiles.delete = function(profile_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
-			if ((credential.device !== device)) reject(errors.invalidParameters("device"));
+			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 					profilesDAO.delete(profile_id)
 					.then(function(success) {
-						resolve( new response(200, success, null));
+						resolve(responses.success(success));
 					}).catch(function(err) {
-						reject(errors.internalError(err));
+						resolve(responses.persistenceError(err));
 					});
 			}
-		})
-		.catch(function(err) {
-			return(errors.internalError(err));
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };

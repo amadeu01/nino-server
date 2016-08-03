@@ -1,21 +1,15 @@
 /** @module persistence/rooms */
 
-
-var models = require('../models');
-
-//errors and validator's module
-var errors = require('../mechanisms/error');
-var validator = require('validator');
-
 var transaction = require('../mechanisms/transaction');
 var pool = require('../mechanisms/database.js').pool;
 
-/** @method create
- * @param room {JSON}
- * @param class_id {id}
- * @return Promise {Promise} resolves Room with ID
- */
+
 var roomServices = {
+	/** @method create
+	 * @param room {JSON}
+	 * @param class_id {id}
+	 * @return Promise {Promise} resolves Room with ID
+	 */
 	create: function(room, class_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -28,7 +22,6 @@ var roomServices = {
 					return new Promise(function(res,rej) {
 						client.query('INSERT INTO rooms (name, class, notificationGroup) VALUES ($1, $2, $3) RETURNING id',[room.name, class_id, room.notificationGroup], function(err, result) {
 							if (err) rej(err); //Error, reject to BO
-							else if (result.rowCount === 0) rej(result); //Nothing inserted, rejects so BO can handle
 							else if (result.name == "error") rej(result); //Some error occured : rejects
 							else res(result);	//Proceed to commit transaction
 						});
@@ -57,7 +50,7 @@ var roomServices = {
 	},
  /** @method findWithClassId
   * @description Find all rooms for a class
-  * @param classID {id}
+  * @param class_id {id}
   * @return class array {Array<Class>}
   */
 	findWithClassId: function(class_id) {
@@ -76,7 +69,58 @@ var roomServices = {
 				});
 			});
 		});
+	},
+	
+	findWithSchoolId: function(school_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT r.id, r.name FROM rooms r, schools s WHERE r.class = c.id AND c.school = s.id AND s.id = $1', [school_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+	
+	addEducator: function(educator_profile_id, room_id) {
+
+	},
+	removeEducatorFromRoom: function(educator_profile_id, room_id) {
+
+	},
+	update: function(roomInfo) {
+
+	},
+
+	delete: function(room_id) {
+
+	},
+	
+	findWithEmployeeProfileAndRoomId: function(employee_profile_id, room_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT r.id FROM rooms r, classes c, schools s, employees e, profiles p WHERE r.id = $2 AND p.id = $1 AND e.school = s.id AND e.profile = p.id AND c.school = s.id AND r.class = c.id', [employee_profile_id, room_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
 	}
+
 };
 
 module.exports = roomServices;

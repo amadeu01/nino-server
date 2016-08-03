@@ -1,10 +1,10 @@
 /** @module business/classes */
 
 var validator = require('validator');
-var response = require('../mechanisms/response.js') ;
+var responses = require('../mechanisms/responses.js');
 var classesDAO = require('../persistence/classes.js');
 var credentialDAO = require('../persistence/credentials.js');
-var errors = require('../mechanisms/error');
+var schoolsDAO = require('../persistence/schools.js');
 var classes = {};
 
 
@@ -12,6 +12,7 @@ var classes = {};
  * @description Create a new <tt>Class</tt> and adds it to a given <tt>School</tt>. Validates required parameters and returns a promisse, calling the DAO to write to the DB
  * @param class_name {string} class name
  * @param school {id}
+ * @param device {string}
  * @param rawToken {string} helps find user credential
  * @param token {JSON} all information decoded
  * @return response {Promise} resolving a response with result in data, if succeful, class_id
@@ -20,26 +21,28 @@ classes.createClassForSchool = function(class_name, school_id, device, rawToken,
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			var invalidParameters = [];
-			if ((credential.device !== device)) invalidParameters.push("device");
-			//if (!validator.isNumeric(school)) invalidParameters.push("school_id");
-			//if (!validator.isAlphanumeric(class_name, 'pt-PT')) invalidParameters.push("class_name");
-			if (invalidParameters.length > 0) reject(errors.invalidParameters(invalidParameters));
-			//TODO: can create class ? no, so reject
-			else {
-				var _class = {
-					name: class_name
-				};
-				return classesDAO.create(_class, school_id)
-				.then(function(class_id) {
-					//console.log(class_id);
-					resolve(new response(200, class_id, null));
-				}).catch(function(err){
-					//var data = err.message + " Create class for school";
-					reject(errors.internalError(err));
-				});
-			}
-    });
+			return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+			.then(function(id){
+				var invalidParameters = [];
+				if ((credential.device !== device)) invalidParameters.push("device");
+				if (invalidParameters.length > 0) resolve(responses.invalidParameters(invalidParameters));
+				else {
+					var _class = {
+						name: class_name
+					};
+					return classesDAO.create(_class, school_id)
+					.then(function(class_id) {
+						resolve(responses.success(class_id));
+					}).catch(function(err){
+						resolve(responses.persistenceError(err));
+					});
+				}
+			}).catch(function(err) {
+				resolve(response.invalidPermissions(err));
+			});
+		}).catch(function(err){
+			resolve(responses.persistenceError(err));
+		});
   });
 };
 /** @method getClassesForSchool
@@ -53,15 +56,20 @@ classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (credential.device !== device) reject(errors.invalidParameters("device"));
-			//if (!validator.isNumeric(school)) reject(errors.invalidParameters("school_id")); //Validates only string
-			//it can getting all classes ? token info ?
-			return classesDAO.findWithSchoolId(school_id)
-			.then(function(result){
-				resolve(new response(200, result, null));
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+			.then(function(ids){
+				return classesDAO.findWithSchoolId(school_id)
+				.then(function(result){
+					resolve(responses.success(result));
+				}).catch(function(err){
+					resolve(responses.persistenceError(err));
+				});
 			}).catch(function(err){
-				reject(errors.persistenceError(err));
+				resolve(response.invalidPermissions(err));
 			});
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -70,6 +78,7 @@ classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 * @description delete
 * @param school_id {id}
 * @param class_id {id}
+* @param device
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
@@ -77,15 +86,20 @@ classes.delete = function (school_id, class_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (credential.device !== device) reject(errors.invalidParameters("device"));
-
-			return classesDAO.delete(class_id)
-			.then(function(result){
-				console.log(result);
-				resolve(new response(200, result, null));
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+			.then(function(id){
+				return classesDAO.delete(class_id)
+				.then(function(result){
+					resolve(responses.success(result));
+				}).catch(function(err){
+					resolve(responses.persistenceError(err));
+				});
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				resolve(responses.invalidPermissions(err));
 			});
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
@@ -94,6 +108,7 @@ classes.delete = function (school_id, class_id, device, rawToken, token) {
 * @description update
 * @param school_id {id}
 * @param classInfo {JSON}
+* @param device
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
@@ -101,15 +116,20 @@ classes.update = function (school_id, classInfo, device, rawToken, token) {
 	return new Promise(function(resolve, reject){
 		return credentialDAO.read(rawToken)
 		.then(function(credential){
-			if (credential.device !== device) reject(errors.invalidParameters("device"));
-
-			return classesDAO.update(classInfo)
-			.then(function(result){
-				console.log(result);
-				resolve(new response(200, result, null));
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+			.then(function(ids){
+				return classesDAO.update(classInfo)
+				.then(function(result){
+					resolve(responses.success(result));
+				}).catch(function(err){
+					resolve(responses.persistenceError(err));
+				});
 			}).catch(function(err){
-				reject(errors.internalError(err));
+				resolve(responses.invalidPermissions(err));
 			});
+		}).catch(function(err) {
+			resolve(responses.persistenceError(err));
 		});
 	});
 };
