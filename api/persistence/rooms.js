@@ -78,7 +78,7 @@ var roomServices = {
 					reject(err); //Connection error, aborts already
 					return;
 				}
-				client.query('SELECT r.id, r.name FROM rooms r, schools s WHERE r.class = c.id AND c.school = s.id AND s.id = $1', [school_id], function(err, result) {
+				client.query('SELECT r.class, r.id, r.name FROM rooms r, schools s, classes c WHERE r.class = c.id AND c.school = s.id AND s.id = $1', [school_id], function(err, result) {
 					if (err) reject(err); //Error: rejects to BO
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects

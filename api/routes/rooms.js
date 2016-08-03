@@ -22,11 +22,10 @@ router.post('/classes/:class_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.class_id === undefined) missingParameters.push("class_id");
 		if (req.body.room_name === undefined) missingParameters.push("room_name");
-		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			var room = {name: req.body.room_name};
-			return roomsBO.createToClass(req.body.school_id, room, req.params.class_id, req.device, req.rawToken, req.token)
+			return roomsBO.createToClass(room, req.params.class_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				res.status(resp.code).json(resp.json);
 			}).catch(function(err) {
@@ -90,17 +89,16 @@ router.delete('/:room_id', function(req, res, next) {
 });
 
 /** @description Get rooms from class */
-router.get('/classes/:class_id/schools/:school_id', function(req, res, next) {
+router.get('/classes/:class_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 		if (req.params.class_id === undefined) missingParameters.push("class_id");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.getRoomFromClass(req.params.school_id, req.params.class_id, req.device, req.rawToken, req.token)
+			return roomsBO.getRoomFromClass(req.params.class_id, req.device, req.rawToken, req.token)
 			.then(function(response){
 				res.status(response.code).json(response.json);
 			}).catch(function(err) {

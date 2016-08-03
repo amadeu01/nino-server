@@ -75,18 +75,13 @@ schools.read_me = function(device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-			return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
-			.then(function(id){
-				return schoolsDAO.findWithProfileId(token.profile)
-				.then(function(school){
-					resolve(responses.success(school));
-				}).catch(function(err){
-					resolve(responses.persistenceError(err));
-				});
-			}).catch(function(err){
-				resolve(responses.invalidPermissions(err));
-			});
+		if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
+		return schoolsDAO.findWithProfileId(token.profile)
+		.then(function(school){
+			resolve(responses.success(school));
+		}).catch(function(err){
+			resolve(responses.persistenceError(err));
+		});
     }).catch(function(err){
 			resolve(responses.persistenceError(err));
 		});
