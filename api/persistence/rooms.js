@@ -70,6 +70,25 @@ var roomServices = {
 			});
 		});
 	},
+	
+	findWithSchoolId: function(school_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT r.id, r.name FROM rooms r, schools s WHERE r.class = c.id AND c.school = s.id AND s.id = $1', [school_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+	
 	addEducator: function(educator_profile_id, room_id) {
 
 	},

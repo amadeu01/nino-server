@@ -37,6 +37,35 @@ rooms.createToClass = function(school_id, room, class_id, device, rawToken, toke
   });
 };
 
+/** @method getRoomFromSchool
+* @param school_id {id}
+* @param device {string}
+* @param rawToken {string} helps find user credential
+* @param token {JSON} all information decoded
+* @return <p><b>Model</b> ```  ```
+*/
+rooms.getRoomFromSchool = function(school_id, device, rawToken, token) {
+  return new Promise(function(resolve, reject){
+    return credentialDAO.read(rawToken)
+    .then(function(credential){
+      if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      .then(function(ids){
+        return roomsDAO.findWithSchoolId(school_id)
+        .then(function(rooms){
+          resolve(responses.success(rooms));
+        }).catch(function(err){
+          resolve(responses.persistenceError(err));
+        });
+      }).catch(function(err){
+        resolve(responses.invalidPermissions(err));
+      });
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
+    });
+  });
+}
+
 /** @method getRoomFromClass
 * @param class_id {id}
 * @param device {string}

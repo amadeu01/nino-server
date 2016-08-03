@@ -1,3 +1,5 @@
+/** @module routes/rooms */
+
 var express = require('express');
 var router = express.Router();
 var responses = require('../mechanisms/responses.js');
@@ -99,6 +101,28 @@ router.get('/classes/:class_id/schools/:school_id', function(req, res, next) {
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 			return roomsBO.getRoomFromClass(req.params.school_id, req.params.class_id, req.device, req.rawToken, req.token)
+			.then(function(response){
+				res.status(response.code).json(response.json);
+			}).catch(function(err) {
+				res.status(err.code).json(err.json);
+			});
+		}
+	}).catch(function(err){
+		res.status(err.code).json(err.json);
+	});
+});
+
+/** @description Get rooms from class */
+router.get('/schools/:school_id', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.params.school_id === undefined) missingParameters.push("school_id");
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		else {
+			return roomsBO.getRoomFromSchool(req.params.school_id, req.device, req.rawToken, req.token)
 			.then(function(response){
 				res.status(response.code).json(response.json);
 			}).catch(function(err) {
