@@ -19,9 +19,9 @@ router.get('/rooms/:room_id/schools/school_id', function(req, res, next) {
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.room_id === undefined) missingParameters.push("room_id");
 		if (req.params.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));		
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.readForRoom(req.params.room_id, req.device, req.rawToken, req.token)
+			return studentsBO.readForRoom(req.params.school_id, req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -95,10 +95,10 @@ router.post('/:student_profile_id/guardians/:guardian_profile_id', function(req,
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.student_profile_id === undefined) missingParameters.push("student");
 		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian");
-
+		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.addForGuardian(req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			return studentsBO.addForGuardian(req.body.school_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -154,10 +154,10 @@ router.delete('/:student_profile_id/guardians/:guardian_profile_id', function(re
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.student_profile_id === undefined) missingParameters.push("student");
 		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian");
-
+		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.removeFromGuardian(req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			return studentsBO.removeFromGuardian(req.body.schoo_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				res.status(resp.code).json(resp.json);
 				resolve(resp);

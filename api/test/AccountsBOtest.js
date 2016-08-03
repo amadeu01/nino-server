@@ -372,7 +372,7 @@ suite('Account Profile and Credential BO', function () {
 			var room = {
 				name: room_name
 			};
-			return roomsBO.createToClass(room, class_id, device, rawToken, token)
+			return roomsBO.createToClass(school_id, room, class_id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -380,6 +380,7 @@ suite('Account Profile and Credential BO', function () {
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
 				room_id = res.json.data.room.id;
+				//console.log(res);
 				return fs.writeFile("./results/Results_for_CreateRoomId" + res.json.data.room.id + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
@@ -396,7 +397,7 @@ suite('Account Profile and Credential BO', function () {
 			var room = {
 				name: room_name
 			};
-			return roomsBO.createToClass(room, class_id, device, rawToken, token)
+			return roomsBO.createToClass(school_id, room, class_id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -420,7 +421,7 @@ suite('Account Profile and Credential BO', function () {
 
 		test('Should Read Room From Class', function() {
 			//console.log(token);
-			return roomsBO.getRoomFromClass(class_id, device, rawToken, token)
+			return roomsBO.getRoomFromClass(school_id, class_id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -709,7 +710,7 @@ suite('Account Profile and Credential BO', function () {
 		});
 
 		test('Should Get all students for room', function() {
-			return studentsBO.readForRoom(room_id, device, rawToken, token)
+			return studentsBO.readForRoom(school_id, room_id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -743,7 +744,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 1;
 
 
-			return guardiansBO.create(account, profile, student_id1.account, device, rawToken, token)
+			return guardiansBO.create(school_id, account, profile, student_id1.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -776,7 +777,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 0;
 
 
-			return guardiansBO.create(account, profile, student_id1.account, device, rawToken, token)
+			return guardiansBO.create(school_id, account, profile, student_id1.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -811,7 +812,7 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 1;
 
 
-			return guardiansBO.create(account, profile, student_id2.account, device, rawToken, token)
+			return guardiansBO.create(school_id, account, profile, student_id2.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -844,14 +845,14 @@ suite('Account Profile and Credential BO', function () {
 			profile.gender = 0;
 
 
-			return guardiansBO.create(account, profile, student_id2.account, device, rawToken, token)
+			return guardiansBO.create(school_id, account, profile, student_id2.account, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				//console.log(res.json.data);
+				console.log(res.json.data);
 				father_id1 = res.json.data;
 				return fs.writeFile("./results/Results_for_FatherStudentId" + student_id2.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
@@ -867,7 +868,7 @@ suite('Account Profile and Credential BO', function () {
 
 		test('Should Read guardian', function() {
 
-			return guardiansBO.read(mother_id.profile.id, device, rawToken, token)
+			return guardiansBO.read(school_id, mother_id.profile.id, device, rawToken, token)
 			.then(function(res){
 				var data = "Code: " + JSON.stringify(res.code) + "\n";
 				data += "##########################\n";
@@ -882,7 +883,8 @@ suite('Account Profile and Credential BO', function () {
 					//console.log("The file results was saved!");
 				});
 			}).catch(function(err){
-				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log(err.stack);
+				console.log("Deu Erro Lendo guadians data de estudante hue hue hue");
 				console.log(err.data);
 			});
 		});
@@ -896,7 +898,7 @@ suite('Account Profile and Credential BO', function () {
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				//console.log(res.json.data);
+				console.log(res.json.data);
 				return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id1.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
@@ -904,7 +906,7 @@ suite('Account Profile and Credential BO', function () {
 					//console.log("The file results was saved!");
 				});
 			}).catch(function(err){
-				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log("Deu Erro Lendo todos os guadians de estudante hue hue hue");
 				console.log(err.data);
 			});
 		});
@@ -917,7 +919,7 @@ suite('Account Profile and Credential BO', function () {
 				data += "JSON.data: " + JSON.stringify(res.json.data) + "\n";
 				data += "##########################\n";
 				data += "JSON.error: " + JSON.stringify(res.json.error) + "\n";
-				//console.log(res.json.data);
+				console.log(res.json.data);
 				return fs.writeFile("./results/Results_for_GetParentsStudentId" + student_id2.account + ".txt", data, 'utf8', function(err) {
 					if(err) {
 						return console.log(err);
@@ -925,7 +927,7 @@ suite('Account Profile and Credential BO', function () {
 					//console.log("The file results was saved!");
 				});
 			}).catch(function(err){
-				console.log("Deu Erro criando Pai de estudante hue hue hue");
+				console.log("Deu Erro Lendo todos os guadians de estudante hue hue hue");
 				console.log(err.data);
 			});
 		});

@@ -22,7 +22,8 @@ router.get('/me', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		
+		if (req.device === undefined) missingParameters.push("device");
+
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 
 		return schoolBO.read_me(req.device, req.rawToken, req.token)
@@ -38,7 +39,7 @@ router.get('/me', function(req, res, next) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
 	});
-})
+});
 
 /** @description Get School's info. */
 router.get('/:school_id', function(req, res, next) {

@@ -68,11 +68,11 @@ var schoolServices = {
 			});
 		});
 	},
-	
+
  /** @method findWithProfileId
   * @description Finds a school with a given Profile ID
   * @param profile_id {int}
-  * @return list of [id, name, email, telephone, address] from school {[School]}
+  * @return schools {Array<School>} list of [id, name, email, telephone, address] from school
   */
 	findWithProfileId: function(profile_id) {
 		return new Promise(function (resolve, reject) {
@@ -91,11 +91,11 @@ var schoolServices = {
 			});
 		});
 	},
-	
+
  /** @method findWithId
   * @description Finds a school with detemined ID
   * @param id {int}
-  * @return name, email, telephone, address from school {School}
+  * @return school {School} name, email, telephone, address from school
   */
 	findWithId: function(id) {
 		return new Promise(function (resolve, reject) {
@@ -136,7 +136,12 @@ var schoolServices = {
 			});
 		});
 	},
-
+	/** @method findWithEmployeeProfileAndSchool
+   * @description Finds a school with owner and school id
+   * @param profile_id {id}
+   * @param schoo_id {id}
+	 * @return id {JSON} employee id and school id
+   */
 	findWithEmployeeProfileAndSchool: function(profile_id, school_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {

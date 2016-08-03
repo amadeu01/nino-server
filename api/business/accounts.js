@@ -62,9 +62,7 @@ accounts.createNewUserTest = function(account, profile) {
 				//mail.sendUserConfirmation(account.email, {hash: account.hash});
 				resolve(responses.success(newUser));
 			}).catch(function(err) {
-				// console.log("Error:\n");
-				// console.log(err);
-				//var data = err.message + " Create User error";
+				//console.log(err);
 				resolve(responses.persistenceError(err));
 			});
 		}
