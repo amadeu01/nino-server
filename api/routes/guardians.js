@@ -158,7 +158,7 @@ router.get('/students/:student_profile_id', function(req, res, next) {
 		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
 
-			return guardiansBO.readForStudents(req.params.school_id, req.params.student_profile_id, req.device, req.rawToken, req.token)
+			return guardiansBO.readForStudents(req.params.student_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);

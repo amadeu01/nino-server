@@ -20,25 +20,25 @@ var mail = require('../mechanisms/mail.js');
 * @param token {JSON} all information decoded
 */
 guardians.create = function(school_id, account, profile, student_id, device, rawToken, token) {
-  return new Promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
-		  .then(function(id) {
-		    return studentsDAO.findWithSchoolAndStudentProfile(school_id, student_id);
-		  }).then(function(id){
-        account.hash = uid.sync(100);
-        guardiansDAO.create(account, profile, student_id)
+			else return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+		  	.then(function(id) {
+		    	return studentsDAO.findWithSchoolAndStudentProfile(school_id, student_id);
+			}).then(function(student){
+       			account.hash = uid.sync(100);
+        		guardiansDAO.create(account, profile, student.id)
 				.then(function(guardian_id) {
 					mail.sendUserConfirmation(account.email, {hash: account.hash});
 					resolve(responses.success(guardian_id));
 				}).catch(function(err) {
 					resolve(responses.persistenceError(err));
 				});
-      }).catch(function(err){
-        resolve(responses.invalidPermissions(err));
-      });
+			}).catch(function(err){
+      			resolve(responses.invalidPermissions(err));
+      		});
 		}).catch(function(err) {
 			resolve(responses.persistenceError(err));
 		});
@@ -58,17 +58,17 @@ guardians.readForStudents = function(student_profile_id, device, rawToken, token
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-			return schoolsDAO.findWithEmployeeProfileAndStudentProfile(token.profile, student_profile_id)
-      .then(function(id){
-					guardiansDAO.findWithStudentProfile(student_profile_id)
-					.then(function(students) {
-						resolve(responses.success(students));
-					}).catch(function(err) {
-						resolve(responses.persistenceError(err));
-					});
+			return studentsDAO.findWithEmployeeProfileAndStudentProfile(token.profile, student_profile_id)
+		    .then(function(id){
+				guardiansDAO.findWithStudentProfile(student_profile_id)
+				.then(function(students) {
+					resolve(responses.success(students));
+				}).catch(function(err) {
+					resolve(responses.persistenceError(err));
+				});
 			}).catch(function(err){
-        resolve(responses.invalidPermissions(err));
-      });
+        		resolve(responses.invalidPermissions(err));
+      		});
 		}).catch(function(err) {
 			resolve(responses.persistenceError(err));
 		});
