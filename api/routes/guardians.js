@@ -145,16 +145,15 @@ router.post('/', function(req, res, next) {
 });
 
 /** @description Get Guardians to a Student */
-router.get('/guardians/students/:student_profile_id/schools/:school_id', function(req, res, next) {
+router.get('/students/:student_profile_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
 		if (req.params.student_profile_id === undefined) missingParameters.push("student_profile_id");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
+		if (req.useragent.isBot === true ) reject(responses.isBot());
 
 		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {

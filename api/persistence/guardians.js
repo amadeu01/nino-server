@@ -99,6 +99,13 @@ guardiansDAO.create = function(account, profile, student_id) {
 // 	});
 // }; //TODO: amadeu, Olha aqui! Eu comentei pq nao faz sentido ter, nao tem guardians mais no db, só o profile e a tabela que linka um student com um profile pra ser guardian
 
+/** @method findWithStudentProfileId
+ * @description return guardian Information from Profile
+ * @param id {id}
+ * @return Promise {Promise}
+ * @deprecated
+ */
+
 guardiansDAO.findWithSchoolAndStudentProfileAndGuardianProfile = function(school_id, student_profile_id, guardian_profile_id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
@@ -121,14 +128,14 @@ guardiansDAO.findWithSchoolAndStudentProfileAndGuardianProfile = function(school
 * @param student_profile_id {id}
 * @return guardian {Array<Guardians>}
 */
-guardiansDAO.findWithSchoolAndStudentProfile = function(school_id, student_profile_id) {
+guardiansDAO.findWithStudentProfile = function(student_profile_id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT p.id, p.name, p.surname, p.gender FROM schools sc, students st, profiles p, guardians_profile_students gs WHERE sc.id = $1 AND st.profile = $2 AND st.school = sc.id AND gs.student = st.id AND p.id = gs.guardian_profile', [school_id, student_profile_id], function(err, result) {
+			client.query('SELECT p.id, p.name, p.surname, p.gender, p.birthdate FROM students st, profiles p, guardians_profile_students gs WHERE st.profile = $1 AND gs.student = st.id AND p.id = gs.guardian_profile', [student_profile_id], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects

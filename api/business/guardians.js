@@ -25,9 +25,9 @@ guardians.create = function(school_id, account, profile, student_id, device, raw
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
       return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
-	  .then(function(id) {
-	    return studentsDAO.findWithSchoolAndStudentProfile(school_id, student_id);
-	  }).then(function(id){
+		  .then(function(id) {
+		    return studentsDAO.findWithSchoolAndStudentProfile(school_id, student_id);
+		  }).then(function(id){
         account.hash = uid.sync(100);
         guardiansDAO.create(account, profile, student_id)
 				.then(function(guardian_id) {
@@ -53,14 +53,14 @@ guardians.create = function(school_id, account, profile, student_id, device, raw
 * @param token {JSON} all information decoded
 * @return guardians {Array<Guardian>}
 */
-guardians.readForStudents = function(school_id, student_profile_id, device, rawToken, token) {
+guardians.readForStudents = function(student_profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-			return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+			return schoolsDAO.findWithEmployeeProfileAndStudentProfile(token.profile, student_profile_id)
       .then(function(id){
-					guardiansDAO.findWithSchoolAndStudentProfile(school_id, student_profile_id)
+					guardiansDAO.findWithStudentProfile(student_profile_id)
 					.then(function(students) {
 						resolve(responses.success(students));
 					}).catch(function(err) {

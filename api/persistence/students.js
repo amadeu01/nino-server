@@ -187,6 +187,29 @@ studentsDAO.findWithRoomId = function(roomID) {
  studentsDAO.findWithSchoolAndGuardianProfile = function(school_id, guardian_profile_id) {
 
  };
+ 
+ /** @method findWithEmployeeProfileAndStudentProfile
+ * @param employee_profile_id {id}
+ * @param student_profile_id {id}
+ * @return Student {Array<Students>}
+ */
+ studentsDAO.findWithEmployeeProfileAndStudentProfile = function(employee_profile_id, student_profile_id) {
+	 return new Promise(function (resolve, reject) {
+		 pool.connect(function(err, client, done) {
+			 if (err) {
+				 reject(err); //Connection error, aborts already
+				 return;
+			 }
+			 client.query('SELECT s.id FROM students s, profiles p, employees e WHERE e.profile = $1 AND s.profile = $2 AND e.school = s.school', [employee_profile_id, student_profile_id], function(err, result) {
+				 if (err) reject(err); //Error: rejects to BO
+				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				 else if (result.name == "error") reject(result); //Some error occured : rejects
+				 else resolve(result.rows[0]); //Executed correctly
+				 done();
+			 });
+		 });
+	 });
+ };
 
 
 module.exports = studentsDAO;
