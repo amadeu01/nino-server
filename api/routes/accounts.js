@@ -130,21 +130,22 @@ router.get('/authentication/:hash', function(req, res, next) {
 */
 router.post('/authentication', function(req, res) {
 	return new Promise(function (resolve, reject) {
-		if (req.body.user === undefined) reject(responses.missingParameters('email'));
-		else if (req.body.password === undefined) reject(responses.missingParameters('password'));
-		var email = req.body.user;
-		var password = req.body.password;
-		var populate = req.query.populate;
+		if (req.body.user === undefined) resolve(responses.missingParameters('email'));
+		else if (req.body.password === undefined) resolve(responses.missingParameters('password'));
+		else {
+			var email = req.body.user;
+			var password = req.body.password;
+			var populate = req.query.populate;
 
-		return accountsBO.logIn(email, password, req.device, populate)
-		.then(function(resp) {
-			res.status(resp.code).json(resp.json);
-			resolve(resp);
-		}).catch(function(err){
-			var resp = responses.internalError(err);
-			res.status(resp.code).json(resp.json);
-			resolve(response);
-		});
+			return accountsBO.logIn(email, password, req.device, populate)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			})
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
 	}).catch(function(err){
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
@@ -160,7 +161,7 @@ router.delete('/authentication', function(req, res){
 		if (req.rawToken === undefined) reject(responses.missingParameters('rawToken'));
 		if (req.token === undefined) reject(responses.missingParameters('token'));
 
-		return accountsBO.logout(req.device, req.rawToken, req.token)
+		else return accountsBO.logout(req.device, req.rawToken, req.token)
 		.then(function(resp){
 			res.status(resp.code).json(resp.json);
 			resolve(resp);
