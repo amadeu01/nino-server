@@ -12,16 +12,15 @@ var numberValidate = function(req, res, next, id) {
 };
 
 /** @description get students for room */
-router.get('/rooms/:room_id/schools/school_id', function(req, res, next) {
+router.get('/rooms/:room_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.params.room_id === undefined) missingParameters.push("room_id");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.readForRoom(req.params.school_id, req.params.room_id, req.device, req.rawToken, req.token)
+			return studentsBO.readForRoom(req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				res.status(resp.code).json(resp.json);
 				resolve(resp);

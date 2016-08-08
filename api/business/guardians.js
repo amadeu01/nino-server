@@ -9,6 +9,7 @@ var uid = require('uid-safe');
 var credentialDAO = require('../persistence/credentials.js');
 var profileDAO = require('../persistence/profiles.js');
 var guardians = {};
+var mail = require('../mechanisms/mail.js');
 
 /** @method create
 * @param account
@@ -24,12 +25,13 @@ guardians.create = function(school_id, account, profile, student_id, device, raw
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
       return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
-			.then(function(id) {
-				return studentsDAO.findWithSchoolAndStudentProfile()
-			}).then(function(id){
+		  .then(function(id) {
+		    return studentsDAO.findWithSchoolAndStudentProfile(school_id, student_id);
+		  }).then(function(id){
         account.hash = uid.sync(100);
         guardiansDAO.create(account, profile, student_id)
 				.then(function(guardian_id) {
+					mail.sendUserConfirmation(account.email, {hash: account.hash});
 					resolve(responses.success(guardian_id));
 				}).catch(function(err) {
 					resolve(responses.persistenceError(err));

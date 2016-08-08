@@ -6,6 +6,7 @@ var studentsDAO = require('../persistence/students.js');
 var guardiansDAO = require('../persistence/guardians.js');
 var credentialDAO = require('../persistence/credentials.js');
 var schoolsDAO = require('../persistence/schools.js');
+var roomsDAO = require('../persistence/rooms.js'); 
 var students = {};
 
 /** @method create
@@ -44,12 +45,12 @@ students.create = function(profile, school_id, room_id, device, rawToken, token 
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-students.readForRoom = function(school_id, room_id, device, rawToken, token ) {
+students.readForRoom = function(room_id, device, rawToken, token ) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
       if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-			return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+			return roomsDAO.findWithEmployeeProfileAndRoomId(token.profile, room_id)
 			.then(function(id){
         return studentsDAO.findWithRoomId(room_id)
         .then(function(students){

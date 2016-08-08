@@ -3,6 +3,7 @@
 var validator = require('validator');
 var responses = require('../mechanisms/responses.js');
 var roomsDAO = require('../persistence/rooms.js');
+var classesDAO = require('../persistence/classes.js')
 var credentialDAO = require('../persistence/credentials.js');
 var schoolsDAO = require('../persistence/schools.js');
 var rooms = {};
@@ -15,12 +16,12 @@ var rooms = {};
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.createToClass = function(school_id, room, class_id, device, rawToken, token) {
+rooms.createToClass = function(room, class_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
       if (credential.device !== device) resolve(responses.invalidParameters("device"));
-      return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
+      return classesDAO.findWithEmployeeProfileAndClassId(token.profile, class_id)
       .then(function(ids){
         return roomsDAO.create(room, class_id)
         .then(function(room_id){
@@ -73,12 +74,12 @@ rooms.getRoomFromSchool = function(school_id, device, rawToken, token) {
 * @param token {JSON} all information decoded
 * @return <p><b>Model</b> ```  ```
 */
-rooms.getRoomFromClass = function(school_id, class_id, device, rawToken, token) {
+rooms.getRoomFromClass = function(class_id, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
       if (credential.device !== device) resolve(responses.invalidParameters("device"));
-      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      return classesDAO.findWithEmployeeProfileAndClassId(token.profile, class_id)
       .then(function(ids){
         return roomsDAO.findWithClassId(class_id)
         .then(function(rooms){
