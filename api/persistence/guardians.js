@@ -135,7 +135,7 @@ guardiansDAO.findWithStudentProfile = function(student_profile_id) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT p.id, p.name, p.surname, p.gender, p.birthdate FROM students st, profiles p, guardians_profile_students gs WHERE st.profile = $1 AND gs.student = st.id AND p.id = gs.guardian_profile', [student_profile_id], function(err, result) {
+			client.query('SELECT p.id, p.name, p.surname, p.gender, p.birthdate, a.email FROM students st, profiles p, guardians_profile_students gs, accounts a WHERE a.profile = p.id AND st.profile = $1 AND gs.student = st.id AND p.id = gs.guardian_profile', [student_profile_id], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
