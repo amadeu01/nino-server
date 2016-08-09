@@ -6,6 +6,8 @@ var awss3 = require('../mechanisms/AWSS3.js');
 var activitiesDAO = require('../persistence/profiles.js');
 var profilesDAO = require('../persistence/profiles.js');
 var credentialDAO = require('../persistence/credentials.js');
+var studentsDAO = require('../persistence/students.js');
+var guardiansDAO = require('../presistence/students.js');
 var profiles = {};
 
 /** @method create
@@ -135,18 +137,40 @@ profiles.updateProfilePicture = function(profile_id, device, rawToken, token) {
 * @param token {JSON} all information decoded
 * @return promise
 */
-profiles.update = function(profileInfo, device, rawToken, token) {
+profiles.update = function(profile_id, profileInfo, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
+				if (profile_id === token.profile) {
 					profilesDAO.update(profileInfo)
 					.then(function(success) {
 						resolve(responses.success(success));
 					}).catch(function(err) {
 						resolve(responses.persistenceError(err));
 					});
+				}
+				else studentsDAO.findWithEmployeeProfileAndStudentProfile(token.profile, profile_id)
+				.then(function(student) {
+					profilesDAO.update(profileInfo)
+					.then(function(success) {
+						resolve(responses.success(success));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
+					});
+				}).catch(function(err) {
+					return studentsDAO.findWithGuardianProfileAndStudentProfile(token.profile, profile_id);
+				}).then(function(student) {
+					profilesDAO.update(profileInfo)
+					.then(function(success) {
+						resolve(responses.success(success));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
+					});
+				}).catch(function(err) {
+					resolve(responses.invalidPermissions());
+				});
 			}
 		}).catch(function(err) {
 			resolve(responses.persistenceError(err));

@@ -11,7 +11,7 @@ var pool = require('../mechanisms/database.js').pool;
  * @param account {Account}
  * @return created IDs {id}
  */
-guardiansDAO.create = function(account, profile, student_id) {
+guardiansDAO.create = function(account, student_id) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -22,7 +22,7 @@ guardiansDAO.create = function(account, profile, student_id) {
 			.then(function() { //Creates Profile
 				return new Promise(function(res, rej) {
 					var response = {};
-					client.query('INSERT INTO profiles (name, surname, birthdate, gender) VALUES ($1, $2, $3, $4) RETURNING id', [profile.name, profile.surname, profile.birthdate, profile.gender], function(err, result) {
+					client.query('INSERT INTO profiles DEFAULT VALUES RETURNING id', [], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
@@ -74,6 +74,65 @@ guardiansDAO.create = function(account, profile, student_id) {
 		});
 	});
 };
+
+guardiansDAO.addStudentToGuardian = function(guardian_profile_id, student_id) {
+	return new Promise(function(resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			transaction.start(client)
+			.then(function(response) { //Create Guardian to Student
+				return new Promise(function(res, rej) {
+					client.query('INSERT INTO guardians_profile_students (guardian_profile, student) VALUES ($1, $2)', [guardian_profile_id, student_id], function(err, result) {
+						if (err) rej (err);
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
+							res({id: guardian_profile_id}); //Sends account and profile in response dictionary
+						}
+					});
+				});
+			}).then(function(result) { //End
+				return transaction.commit(client)
+				.then(function() {
+					done();
+					resolve(result); //Success! Resolve to BO
+				}).catch(function(err) {
+					done(err);
+					reject(err); //Reject other to BO
+				});
+			}).catch(function (err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					reject(err); //Successfully aborted, rejects to BO
+				}).catch(function(err2) {
+					done(err2);
+					reject(err2); // Reject another error to BO
+				});
+			});
+		});
+	});
+}
+
+guardiansDAO.findWithEmail = function(email) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('SELECT p.id FROM profiles p, guardians_profile_students gs, accounts a WHERE gs.guardian_profile = p.id AND a.profile = p.id AND a.email = $1', [email], function(err, result) {
+				if (err) reject(err);
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows[0]); //Returns what was found
+				done();
+			});
+		});
+	});
+}
 
 /** @method findWithProfileId
  * @description return guardian Information from Profile

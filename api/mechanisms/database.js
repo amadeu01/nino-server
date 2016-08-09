@@ -64,8 +64,8 @@ var createProfiles = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS profiles' +
 				'(id	SERIAL PRIMARY KEY,' +
-				 'name	VARCHAR NOT NULL,' +
-				 'surname	VARCHAR NOT NULL,' +
+				 'name	VARCHAR,' +
+				 'surname	VARCHAR,' +
 				 'profilePicture	VARCHAR,' +
 				 'birthdate	TIMESTAMPTZ,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 

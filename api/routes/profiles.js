@@ -129,8 +129,8 @@ router.put("/:profile_id", function(req, res, next) {
 				birthdate: req.body.birthdate,
 				gender: req.body.gender
 			};
-
-			return profileBO.update(profileInfo, req.device, req.rawToken, req.token)
+			if (Object.keys(profileInfo).length === 0) reject(responses.missingParameters("empty"));
+			else return profileBO.update(req.params.profile_id, profileInfo, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);
@@ -143,6 +143,37 @@ router.put("/:profile_id", function(req, res, next) {
 		res.status(err.code).json(err.json);
 	});
 });
+
+router.put("/me", function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+
+		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		else {
+			var profileInfo = {
+				name: req.body.name,
+				surname: req.body.surname,
+				birthdate: req.body.birthdate,
+				gender: req.body.gender
+			};
+			if (Object.keys(profileInfo).length === 0) reject(responses.missingParameters("empty"));
+			else return profileBO.update(req.token.profile, profileInfo, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				res.status(resp.code).json(resp.json);
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).catch(function(err){
+		//console.log(err);
+		res.status(err.code).json(err.json);
+	});
+})
+
 /** @description create a new Profile
 	Parameters:
 
@@ -229,7 +260,7 @@ router.put("/:profile_id/picture", function(req, res, next) {
 
 /**@description delete a profile
 */
-router.put("/:profile_id", function(req, res, next) {
+router.delete("/:profile_id", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");

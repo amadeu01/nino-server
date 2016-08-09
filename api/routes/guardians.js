@@ -111,8 +111,6 @@ router.post('/', function(req, res, next) {
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		if (req.body.email === undefined) missingParameters.push("email");
 		//else if (req.body.cellphone === undefined); //-- not needed now, we dont use it yet
-		if (req.body.name === undefined) missingParameters.push("name");
-		if (req.body.surname === undefined) missingParameters.push("surname");
 		if (req.body.student_profile_id === undefined) missingParameters.push("student_profile_id");
 		//if (req.body.birthdate === undefined) missingParameters.push("birthdate");  //TODO: No need to check for birthdate, optional
 		if (req.useragent.isBot === true ) reject(responses.isBot("Bot"));
@@ -122,16 +120,9 @@ router.post('/', function(req, res, next) {
 		//Provided that all the needed parameters are there, we call business to validate them
 			var account = {
 				email: req.body.email,
-				cellphone: req.body.cellphone
 			};
 
-			var profile = {
-				name: req.body.name,
-				surname: req.body.surname,
-				birthdate: req.body.birthdate,
-				gender: req.body.gender
-			};
-			return guardiansBO.create(req.body.school_id, account, profile, req.body.student_profile_id, req.device, req.rawToken, req.token)
+			return guardiansBO.create(req.body.school_id, account, req.body.student_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				res.status(resp.code).json(resp.json);
 				resolve(resp);

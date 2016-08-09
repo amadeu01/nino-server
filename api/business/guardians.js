@@ -19,7 +19,7 @@ var mail = require('../mechanisms/mail.js');
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-guardians.create = function(school_id, account, profile, student_id, device, rawToken, token) {
+guardians.create = function(school_id, account, student_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		credentialDAO.read(rawToken)
 		.then(function(credential){
@@ -28,13 +28,24 @@ guardians.create = function(school_id, account, profile, student_id, device, raw
 		  	.then(function(id) {
 		    	return studentsDAO.findWithSchoolAndStudentProfile(school_id, student_id);
 			}).then(function(student){
-       			account.hash = uid.sync(100);
-        		guardiansDAO.create(account, profile, student.id)
-				.then(function(guardian_id) {
-					mail.sendUserConfirmation(account.email, {hash: account.hash});
-					resolve(responses.success(guardian_id));
+				return guardiansDAO.findWithEmail(account.email)
+				.then(function(guardian_profile) {
+					guardiansDAO.addStudentToGuardian(guardian_profile.id, student_id)
+					.then(function(guardian) {
+						//TODO: Send email to notice guardian and verify if is confirmed
+						resolve(responses.success(guardian));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err);
+					});
 				}).catch(function(err) {
-					resolve(responses.persistenceError(err));
+					account.hash = uid.sync(100);
+					guardiansDAO.create(account, student.id)
+					.then(function(guardian_id) {
+						mail.sendUserConfirmation(account.email, {hash: account.hash});
+						resolve(responses.success(guardian_id));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
+					});
 				});
 			}).catch(function(err){
       			resolve(responses.invalidPermissions(err));
