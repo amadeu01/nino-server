@@ -35,7 +35,7 @@ guardians.create = function(school_id, account, student_id, device, rawToken, to
 						//TODO: Send email to notice guardian and verify if is confirmed
 						resolve(responses.success(guardian));
 					}).catch(function(err) {
-						resolve(responses.persistenceError(err);
+						resolve(responses.persistenceError(err));
 					});
 				}).catch(function(err) {
 					account.hash = uid.sync(100);

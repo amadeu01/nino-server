@@ -7,7 +7,7 @@ var activitiesDAO = require('../persistence/profiles.js');
 var profilesDAO = require('../persistence/profiles.js');
 var credentialDAO = require('../persistence/credentials.js');
 var studentsDAO = require('../persistence/students.js');
-var guardiansDAO = require('../presistence/students.js');
+var guardiansDAO = require('../persistence/students.js');
 var profiles = {};
 
 /** @method create

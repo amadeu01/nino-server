@@ -96,6 +96,7 @@ var createSchools = function(pool) {
 				 'logo	VARCHAR,' +
 				 'telephone	VARCHAR,' +
 				 'email	VARCHAR UNIQUE NOT NULL,' +
+				 'expiration	TIMESTAMP DEFAULT current_timestamp + interval \'1 year\',' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'name	VARCHAR)' 
