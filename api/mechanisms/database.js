@@ -321,9 +321,7 @@ var createDrafts = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' + 
 				 'message	VARCHAR,' +
 				 'attachment	VARCHAR,' +
-				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' + 
-				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
-				 'room	INTEGER REFERENCES rooms (id) ON DELETE CASCADE,' +
+				 'metadata	VARCHAR,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)'
@@ -347,9 +345,7 @@ var createPosts = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' + 
 				 'message	VARCHAR,' +
 				 'attachment	VARCHAR,' +
-				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' + 
-				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
-				 'room	INTEGER REFERENCES rooms (id) ON DELETE CASCADE,' +
+				 'metadata	VARCHAR,' +
 				 'date	TIMESTAMPTZ DEFAULT current_timestamp,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +

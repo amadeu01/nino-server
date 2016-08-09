@@ -144,7 +144,7 @@ profiles.update = function(profile_id, profileInfo, device, rawToken, token) {
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
 				if (profile_id === token.profile) {
-					profilesDAO.update(profileInfo)
+					profilesDAO.update(pprofile_id, rofileInfo)
 					.then(function(success) {
 						resolve(responses.success(success));
 					}).catch(function(err) {
@@ -153,7 +153,7 @@ profiles.update = function(profile_id, profileInfo, device, rawToken, token) {
 				}
 				else studentsDAO.findWithEmployeeProfileAndStudentProfile(token.profile, profile_id)
 				.then(function(student) {
-					profilesDAO.update(profileInfo)
+					profilesDAO.update(profile_id, profileInfo)
 					.then(function(success) {
 						resolve(responses.success(success));
 					}).catch(function(err) {
@@ -162,7 +162,7 @@ profiles.update = function(profile_id, profileInfo, device, rawToken, token) {
 				}).catch(function(err) {
 					return studentsDAO.findWithGuardianProfileAndStudentProfile(token.profile, profile_id);
 				}).then(function(student) {
-					profilesDAO.update(profileInfo)
+					profilesDAO.update(profile_id, profileInfo)
 					.then(function(success) {
 						resolve(responses.success(success));
 					}).catch(function(err) {

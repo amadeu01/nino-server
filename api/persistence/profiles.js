@@ -26,6 +26,48 @@ var profileServices = {
 				});
 			});
 		});
+	},
+
+	update: function(profile_id, profile) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Encaminha pro BO
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('UPDATE profiles SET (name, surname, birthdate, gender) = (COALESCE($1, name), COALESCE($2, surname), COALESCE($3, birthdate), COALESCE($4, gender)) WHERE id = $5 RETURNING id',[profile.name, profile.surname, profile.birthdate, profile.gender, profile_id], function(err, result) {
+							if (err) rej(err);
+							else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
+							else if (result.name == "error") rej(result); //Some error occured : rejects
+							else {
+								res(result.rows[0]);
+							} //Updated one row, user confirmed! - proceed
+						});
+					});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result); //Ended transaction and resolved to BO
+					}).catch(function(err) {
+						done(err);
+						reject(err); //Error on transaction, reject to BO
+					});
+				}).catch(function(err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err); //Reject error to BO
+					}).catch(function(err2) {
+						done(err2);
+						reject(err2); //Reject other error to BO
+					});
+				});
+			});
+		});	
 	}
 };
 
