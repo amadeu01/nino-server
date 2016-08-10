@@ -31,6 +31,29 @@ var createAccounts = function(pool) {
 	});
 };
 
+var createContents = function(pool) {
+	return new Promise(function(resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+			   	reject (err);
+				return;
+			}
+			client.query('CREATE TABLE IF NOT EXISTS contents' +
+					'(id	SERIAL PRIMARY KEY,' +
+					 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
+					 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
+					 'key	VARCHAR UNIQUE NOT NULL,' +
+					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+					 'CHECK ((school IS NOT NULL AND profile IS NULL) OR (school IS NULL AND profile IS NOT NULL)))'
+			, function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			})
+		});
+	});
+}
+
 var createCredentials = function(pool) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
@@ -635,7 +658,7 @@ var db = {
 			}).then(function(done) {
 				return Promise.all([createCredentials(pool), createSchools(pool)]);
 			}).then(function(done) {
-				return Promise.all([createActivities(pool), createMenus(pool), createEmployees(pool)]);
+				return Promise.all([createActivities(pool), createMenus(pool), createEmployees(pool), createContents(pool)]);
 			}).then(function(done) {
 				return createClasses(pool);
 			}).then(function(done) {
