@@ -47,6 +47,9 @@ module.exports = {
 	missingParameters: function(data) {
 		return new Response(400, data, 202);
 	},
+	badForm: function(date) {
+		return new Response(400, data, 204);
+	},
 
 	//Token related errors
 	/**@method */
@@ -75,7 +78,7 @@ module.exports = {
 			switch (err.code) {
 				case 23502:
 					return new Response(400, err.detail, 202);
-				case 23505:
+				case 23505: //Some field already exists
 					return new Response(400, err.detail, 203); //New code here
 				default:
 					return new Response(500, err.detail, 201); //Default, unknown error

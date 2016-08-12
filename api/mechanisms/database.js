@@ -43,6 +43,7 @@ var createContents = function(pool) {
 					 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
 					 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
 					 'key	VARCHAR UNIQUE NOT NULL,' +
+					 'access	INTEGER NOT NULL DEFAULT 0,' +			
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
 					 'CHECK ((school IS NOT NULL AND profile IS NULL) OR (school IS NULL AND profile IS NOT NULL)))'
 			, function(err, result) {
@@ -89,7 +90,7 @@ var createProfiles = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'name	VARCHAR,' +
 				 'surname	VARCHAR,' +
-				 'profilePicture	VARCHAR,' +
+				 'picture	VARCHAR,' +
 				 'birthdate	TIMESTAMPTZ,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +

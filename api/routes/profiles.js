@@ -1,3 +1,5 @@
+/** @module routes/profiles */
+
 var express = require('express');
 var router = express.Router();
 var responses = require('../mechanisms/responses.js');
