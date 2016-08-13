@@ -26,7 +26,7 @@ contentsDAO.createContent = function(profile, school, key, upload) {
 				return new Promise(function(res, rej) {
 					upload()
 					.then(function(up_result) {
-						res(s3: up_result, content: result);
+						res({s3: up_result, content: result});
 					}).catch(function(up_fail) {
 						rej(up_fail);
 					});
@@ -54,7 +54,7 @@ contentsDAO.createContent = function(profile, school, key, upload) {
 	});
 }
 
-contentsDAO.deleteContentWithKey = function(key, delete) {
+contentsDAO.deleteContentWithKey = function(key, deleteOnS3) {
 	return new Promise(function(resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -72,9 +72,9 @@ contentsDAO.deleteContentWithKey = function(key, delete) {
 				});
 			}).then(function(result) {
 				return new Promise(function(res, rej) {
-					delete()
+					deleteOnS3()
 					.then(function(up_result) {
-						res(s3: up_result, content: result);
+						res({s3: up_result, content: result});
 					}).catch(function(up_fail) {
 						rej(up_fail);
 					});
@@ -120,4 +120,4 @@ contentsDAO.getContentWithKey = function(key) {
 	});
 }
 
-module.exports = accountsDAO;
+module.exports = contentsDAO;

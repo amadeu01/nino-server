@@ -76,7 +76,7 @@ contents.downloadContent = function(key, device, rawToken, token) {
 contents.deleteContent = function(key, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		
-		var delete = function() {
+		var deleteContent = function() {
 			contentsDAO.deleteContentWithKey(key, function() {awss3.deleteContent(key)})
 			.then(function(success) {
 				resolve(success);
@@ -94,7 +94,7 @@ contents.deleteContent = function(key, device, rawToken, token) {
 				//VALIDATE PERMISSIONS
 				contentsDAO.getContentWithKey(key, remove)
 				.then(function(success) {
-					delete();
+					deleteContent();
 				}).catch(function(error) {
 					resolve(responses.persistenceError(err));
 				});

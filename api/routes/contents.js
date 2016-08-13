@@ -7,7 +7,7 @@ var contentsBO = require('../business/contents.js');
 var multiparty = require('multiparty');
 
 /**@description downloads a file */
-routes.get("/:key", function(req, res, next) {
+router.get("/:key", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
@@ -35,7 +35,7 @@ routes.get("/:key", function(req, res, next) {
 });
 
 /**@description uploads a file */
-routes.post("/", function(req, res, next) {
+router.post("/", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
@@ -98,7 +98,7 @@ routes.post("/", function(req, res, next) {
 });
 
 /**@description deletes a file */
-routes.delete("/:key", function(req, res, next) {
+router.delete("/:key", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
