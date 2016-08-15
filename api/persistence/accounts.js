@@ -106,6 +106,25 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 		});
 	});
 };
+
+accountsDAO.getHash = function(email) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Connection error, aborts already
+				return;
+			}
+			client.query('SELECT hash FROM accounts WHERE email = $1', [confirmationHash], function(err, result) {
+				if (err) reject(err); //Error: rejects to BO
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve({account: result.rows[0]}); //Executed correctly
+				done();
+			});
+		});
+	});
+}
+
 /** @method recoverAccount
 * @param email {string}
 * @return Promise {Promise}
