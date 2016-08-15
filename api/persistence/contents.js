@@ -30,7 +30,7 @@ contentsDAO.createContent = function(profile, school, key, upload) {
 					}).catch(function(up_fail) {
 						rej(up_fail);
 					});
-				})
+				});
 			}).then(function(result) {
 				return transaction.commit(client)
 				.then(function() {
@@ -52,7 +52,7 @@ contentsDAO.createContent = function(profile, school, key, upload) {
 			});
 		});
 	});
-}
+};
 
 contentsDAO.deleteContentWithKey = function(key, deleteOnS3) {
 	return new Promise(function(resolve, reject) {
@@ -78,7 +78,7 @@ contentsDAO.deleteContentWithKey = function(key, deleteOnS3) {
 					}).catch(function(up_fail) {
 						rej(up_fail);
 					});
-				})
+				});
 			}).then(function(result) {
 				return transaction.commit(client)
 				.then(function() {
@@ -100,7 +100,7 @@ contentsDAO.deleteContentWithKey = function(key, deleteOnS3) {
 			});
 		});
 	});
-}
+};
 
 contentsDAO.getContentWithKey = function(key) {
 	return new Promise(function (resolve, reject) {
@@ -118,6 +118,6 @@ contentsDAO.getContentWithKey = function(key) {
 			});
 		});
 	});
-}
+};
 
 module.exports = contentsDAO;

@@ -107,23 +107,24 @@ var postsDAO = {
 						var returned = false;
 						if (profiles.length === 0) res(response); //Case empty
 						else {
+							var insertDone = function(err, result) {
+								done++;
+								if (err) {
+									rej (err);
+									returned = true;
+								}
+								else if (result.name == 'error') {
+									rej(result); //Some error occured : rejects
+									returned = true;
+								}
+								else {
+									response.profiles.push(result.rows[0].profile);
+									if (done == profiles.length && !returned) res(response);
+								}
+							};
 							for (var i in profiles) {
 								//TODO: don't make functions on within loop !!!
-								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], function(err, result) {
-									done++;
-									if (err) {
-										rej (err);
-										returned = true;
-									}
-									else if (result.name == 'error') {
-										rej(result); //Some error occured : rejects
-										returned = true;
-									}
-									else {
-										response.profiles.push(result.rows[0].profile);
-										if (done == profiles.length && !returned) res(response);
-									}
-								});
+								client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [response.post.id, profiles[i]], insertDone);
 								if (returned) break;
 							}
 						}

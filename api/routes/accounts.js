@@ -114,7 +114,7 @@ router.get('/authentication/:hash', function(req, res, next) {
 	}).catch(function(err) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
-	});;
+	});
 });
 
 /**
@@ -129,7 +129,7 @@ router.post('/authentication', function(req, res) {
 			resolve(resp);
 		}).catch(function(err) {
 			reject(err);
-		})
+		});
 	}).then(function(resp) {
 		res.status(resp.code).json(resp.json);
 	}).catch(function(err){

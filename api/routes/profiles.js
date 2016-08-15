@@ -97,7 +97,7 @@ router.put("/me", function(req, res, next) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
 	});
-})
+});
 
 /** @description create a new Profile
 	Parameters:

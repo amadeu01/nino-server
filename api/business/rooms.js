@@ -3,7 +3,7 @@
 var validator = require('validator');
 var responses = require('../mechanisms/responses.js');
 var roomsDAO = require('../persistence/rooms.js');
-var classesDAO = require('../persistence/classes.js')
+var classesDAO = require('../persistence/classes.js');
 var credentialDAO = require('../persistence/credentials.js');
 var schoolsDAO = require('../persistence/schools.js');
 var rooms = {};
@@ -65,7 +65,7 @@ rooms.getRoomFromSchool = function(school_id, device, rawToken, token) {
       resolve(responses.persistenceError(err));
     });
   });
-}
+};
 
 /** @method getRoomFromClass
 * @param class_id {id}

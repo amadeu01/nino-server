@@ -114,7 +114,7 @@ guardiansDAO.addStudentToGuardian = function(guardian_profile_id, student_id) {
 			});
 		});
 	});
-}
+};
 
 guardiansDAO.findWithEmail = function(email) {
 	return new Promise(function (resolve, reject) {
@@ -132,7 +132,7 @@ guardiansDAO.findWithEmail = function(email) {
 			});
 		});
 	});
-}
+};
 
 /** @method findWithProfileId
  * @description return guardian Information from Profile

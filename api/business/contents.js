@@ -15,13 +15,13 @@ contents.uploadContent = function(profile, school, part, device, rawToken, token
 		var upload = function() {
 			var key = uid.sync(100) + part.filename.split('.').pop(); // Generates random key for that file			
 		
-			contentsDAO.createContent(profile, school, key, function(){return awss3.uploadContent(part, key, part.byteCount)})
+			contentsDAO.createContent(profile, school, key, function(){return awss3.uploadContent(part, key, part.byteCount);})
 			.then(function(result) {
 				resolve(responses.success(result));
 			}).catch(function(err, done) {
 				resolve(responses.persistenceError(err));
 			});
-		}
+		};
 		
 		credentialDAO.read(rawToken)
 		.then(function(credential){
@@ -40,7 +40,7 @@ contents.uploadContent = function(profile, school, part, device, rawToken, token
 			resolve(responses.persistenceError(err));
 		});
 	});
-}
+};
 
 contents.downloadContent = function(key, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
@@ -51,7 +51,7 @@ contents.downloadContent = function(key, device, rawToken, token) {
 			}).catch(function(err) {
  				resolve(responses.internalError(err));
  			});
-		}
+		};
 		credentialDAO.read(rawToken)
 		.then(function(credential){
 			//TODO: Validate User Permissions
@@ -71,19 +71,19 @@ contents.downloadContent = function(key, device, rawToken, token) {
  			resolve(responses.persistenceError(err));
  		});
 	});
-}
+};
 
 contents.deleteContent = function(key, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
 		
 		var deleteContent = function() {
-			contentsDAO.deleteContentWithKey(key, function() {awss3.deleteContent(key)})
+			contentsDAO.deleteContentWithKey(key, function() {awss3.deleteContent(key);})
 			.then(function(success) {
 				resolve(success);
 			}).catch(function(err) {
  				resolve(responses.internalError(err));
  			});
-		}
+		};
 		
 		credentialDAO.read(rawToken)
 		.then(function(credential){
@@ -105,6 +105,6 @@ contents.deleteContent = function(key, device, rawToken, token) {
  			resolve(responses.persistenceError(err));
  		});
 	});
-}
+};
 
 module.exports = contents;

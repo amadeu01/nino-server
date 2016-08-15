@@ -54,6 +54,7 @@ suite('Account Profile and Credential BO', function () {
 
 	setup(function (done) {
 		done();
+		console.log("Starting tests");
 	});
 
 	teardown(function () {

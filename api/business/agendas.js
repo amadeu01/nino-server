@@ -20,17 +20,17 @@ agendas.createAgendaForClass = function(agenda, class_id, device, rawtoken, toke
 		for (var i in agenda) {
 			var localInvalid = [];
 			if (!validator.isAlphanumeric(agenda[i].title, 'pt-PT')) localInvalid.push("title");
-			if (agenda[i].rows.length == 0) localInvalid.push("rows");
+			if (agenda[i].rows.length === 0) localInvalid.push("rows");
 			else {
 				for (var j in agenda[i].rows) {
 					var internalInvalid = [];
 					if (isNaN(agenda[i].rows[j].type)) internalInvalid.push("type");
 					
-					if (internalInvalid.length > 0) localInvalid.push(j: internalInvalid);
+					if (internalInvalid.length > 0) localInvalid.push({j: internalInvalid});
 				}
 			}
 			
-			if (localInvalid.length > 0) invalidParameters.push(i: localInvalid);
+			if (localInvalid.length > 0) invalidParameters.push({i: localInvalid});
 		}
 		if (invalidParameters.length > 0) reject(responses.missingParameters(invalidParameters));
 		
