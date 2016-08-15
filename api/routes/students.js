@@ -17,20 +17,20 @@ router.get('/rooms/:room_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.readForRoom(req.params.room_id, req.device, req.rawToken, req.token)
+			studentsBO.readForRoom(req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -42,22 +42,20 @@ router.get('/:student_profile_id/guardians/:guardian_profile_id', function(req, 
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.student_id === undefined) missingParameters.push("student");
-		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian");
-
-		if (missingParameters.length > 0) reject(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(errors.missingParameters(missingParameters));
 		else {
-			return studentsBO.readForGuardian(req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			studentsBO.readForGuardian(req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -68,21 +66,20 @@ router.get('/guardians/:guardian_profile_id/schools/:school_id', function(req, r
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.readForGuardian(req.params.school_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			studentsBO.readForGuardian(req.params.school_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -92,23 +89,21 @@ router.post('/:student_profile_id/guardians/:guardian_profile_id', function(req,
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.student_profile_id === undefined) missingParameters.push("student");
-		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.addForGuardian(req.body.school_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			studentsBO.addForGuardian(req.body.school_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 /** @description  Create student to school */
@@ -117,13 +112,12 @@ router.post('/schools/:school_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
 		if (req.body.room_id === undefined) missingParameters.push("room_id");
 		if (req.body.name === undefined) missingParameters.push("name");
 		if (req.body.surname === undefined) missingParameters.push("surname");
 		if (req.body.birthdate === undefined) missingParameters.push("birthdate");
 		if (req.body.gender === undefined) missingParameters.push("gender");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
 			var student_profile = {
 				name: req.body.name,
@@ -131,18 +125,18 @@ router.post('/schools/:school_id', function(req, res, next) {
 				birthdate: req.body.birthdate,
 				gender: req.body.gender
 			};
-
-			return studentsBO.create(student_profile, req.params.school_id, req.body.room_id, req.device, req.rawToken, req.token)
+			studentsBO.create(student_profile, req.params.school_id, req.body.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 /** @description  Remove Students for Guardian */
@@ -151,23 +145,21 @@ router.delete('/:student_profile_id/guardians/:guardian_profile_id', function(re
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.student_profile_id === undefined) missingParameters.push("student");
-		if (req.params.guardian_profile_id === undefined) missingParameters.push("guardian");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return studentsBO.removeFromGuardian(req.body.schoo_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			studentsBO.removeFromGuardian(req.body.schoo_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
-
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 

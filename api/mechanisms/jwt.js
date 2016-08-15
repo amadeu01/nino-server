@@ -50,7 +50,7 @@ module.exports = {
 	  return new Promise(function (resolve, reject) {
 	    jwt.verify(token, jwtSecret, function(err, decoded) {
 	      if (err) {
-					reject(responses.invalidCredential(JSON.stringify(err)));
+					reject(err);
 	      } else {
 					resolve(decoded);
 	      }

@@ -20,20 +20,22 @@ router.post('/classes/:class_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.class_id === undefined) missingParameters.push("class_id");
 		if (req.body.room_name === undefined) missingParameters.push("room_name");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
 			var room = {name: req.body.room_name};
-			return roomsBO.createToClass(room, req.params.class_id, req.device, req.rawToken, req.token)
+			roomsBO.createToClass(room, req.params.class_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 
 });
@@ -44,24 +46,26 @@ router.put('/:room_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
 		if (req.body.room_name === undefined) missingParameters.push("room_name");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
 			var roomInfo = {
 				id: req.params.room_id,
 				name: req.body.room_name
 			};
-			return roomsBO.update(req.body.school_id, roomInfo, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			roomsBO.update(req.body.school_id, roomInfo, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -71,20 +75,22 @@ router.delete('/:room_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
 		if (req.body.class_id === undefined) missingParameters.push("class_id");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.delete(req.body.school_id, req.params.room_id, req.body.class_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			roomsBO.delete(req.body.school_id, req.params.room_id, req.body.class_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -95,40 +101,44 @@ router.get('/classes/:class_id', function(req, res, next) {
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-		if (req.params.class_id === undefined) missingParameters.push("class_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.getRoomFromClass(req.params.class_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			roomsBO.getRoomFromClass(req.params.class_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
-/** @description Get rooms from class */
+/** @description Get rooms from school */
 router.get('/schools/:school_id', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (req.device === undefined) missingParameters.push("device");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.getRoomFromSchool(req.params.school_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			roomsBO.getRoomFromSchool(req.params.school_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -138,20 +148,21 @@ router.post('/:room_id/educators/:educator_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
-		if (req.params.educator_id === undefined) missingParameters.push("educator_id");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.addEducatorToRoom(req.body.school_id, req.params.educator_id, req.params.room_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			roomsBO.addEducatorToRoom(req.body.school_id, req.params.educator_id, req.params.room_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 
 });
@@ -162,20 +173,21 @@ router.delete('/:room_id/educators/:educator_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
-		if (req.params.educator_id === undefined) missingParameters.push("educator_id");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.removeEducatorFromRoom(req.body.school_id, req.params.educator_id, req.params.room_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			roomsBO.removeEducatorFromRoom(req.body.school_id, req.params.educator_id, req.params.room_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -185,20 +197,21 @@ router.post('/:room_id/students/:student_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
-		if (req.params.student_id === undefined) missingParameters.push("student_id");
 		if (req.body.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.addStudentToRoom(req.body.schoo_id, req.params.student_id, req.params.room_id, req.device, req.rawToken, req.token)
+			roomsBO.addStudentToRoom(req.body.schoo_id, req.params.student_id, req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -208,19 +221,20 @@ router.delete('/:room_id/students/:student_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.room_id === undefined) missingParameters.push("room_id");
-		if (req.params.student_id === undefined) missingParameters.push("student_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return roomsBO.removeStudentFromRoom(req.body.school_id, req.params.student_id, req.params.room_id, req.device, req.rawToken, req.token)
+			roomsBO.removeStudentFromRoom(req.body.school_id, req.params.student_id, req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
+				resolve(resp);
 			}).catch(function(err) {
-				res.status(err.code).json(err.json);
+				reject(err);
 			});
 		}
-	}).catch(function(err){
-		res.status(err.code).json(err.json);
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 

@@ -28,18 +28,20 @@ router.get('/schools/:school_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.params.school_id === undefined) missingParameters.push("school_id");
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return classesBO.getClassesForSchool(req.params.school_id, req.device, req.rawToken, req.token)
+			classesBO.getClassesForSchool(req.params.school_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
-				resolve(classes);
+				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -55,17 +57,20 @@ router.post('/schools/:school_id', function(req, res, next) {
 		if (req.token === undefined) missingParameters.push('token');
 		if (req.rawToken === undefined) missingParameters.push('rawToken');
 		if (req.body.class_name === undefined) missingParameters.push('Class_name');
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return classesBO.createClassForSchool(req.body.class_name, req.params.school_id, req.device, req.rawToken, req.token)
+			classesBO.createClassForSchool(req.body.class_name, req.params.school_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
-				res.status(resp.code).json(resp.json);
-				resolve(response);
+				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(err.json);
 				reject(err);
 			});
 		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -76,8 +81,7 @@ router.put('/:class_id', function(req, res, next) {
 		if (req.token === undefined) missingParameters.push('token');
 		if (req.rawToken === undefined) missingParameters.push('rawToken');
 		if (req.body.school_id === undefined) missingParameters.push('school_id');
-		if (req.params.class_id === undefined) missingParameters.push('class_id');
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
 			var classInfo = {
 				class_id: req.params.class_id,
@@ -85,12 +89,17 @@ router.put('/:class_id', function(req, res, next) {
 				menu: req.body.menu
 			};
 			return classesBO.update(req.body.school_id, classInfo, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(code.json);
+				reject(err);
 			});
 		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 
@@ -101,16 +110,20 @@ router.delete('/:class_id', function(req, res, next) {
 		if (req.token === undefined) missingParameter.push('token');
 		if (req.rawToken === undefined) missingParameter.push('rawToken');
 		if (req.body.school_id === undefined) missingParameters.push('school_id');
-		if (req.params.class_id === undefined) missingParameters.push('class_id');
-		if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			return classesBO.delete(req.body.school_id, req.params.class_id, req.device, req.rawToken, req.token)
-			.then(function(response){
-				res.status(response.code).json(response.json);
+			classesBO.delete(req.body.school_id, req.params.class_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
 			}).catch(function(err){
-				res.status(err.code).json(code.json);
+				reject(err);
 			});
 		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
 	});
 });
 

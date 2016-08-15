@@ -42,9 +42,8 @@ router.post('/', function(req, res, next) {
 		if (req.body.email === undefined) missingParameters.push("email");
 		if (req.body.name === undefined) missingParameters.push("name");
 		if (req.body.surname === undefined) missingParameters.push("surname");
-		if (req.useragent.isBot === true ) reject(responses.isBot());
-
-		else if (missingParameters.length > 0) reject(responses.missingParameters(missingParameters));
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
 		//Provided that all the needed parameters are there, we call business to validate them
 			var account = {
@@ -60,14 +59,13 @@ router.post('/', function(req, res, next) {
 			};
 			return accountsBO.createNewUser(account, profile)
 			.then(function(resp) {
-				res.status(resp.code).json(resp.json);
 				resolve(resp);
 			}).catch(function(err) {
-				var resp = responses.internalError(err);
-				res.status(resp.code).json(resp.json);
-				resolve(response);
+				reject(err);
 			});
 		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
 	}).catch(function(err){
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
@@ -79,21 +77,19 @@ router.post('/', function(req, res, next) {
 */
 router.post('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
-		else if (req.body.password === undefined) reject(responses.missingParameters("password"));
-		var device = req.useragent.platform + " " + req.useragent.os;
-		var hashConfirmation = req.params.hash;
-		var password = req.body.password;
-
-		return accountsBO.confirmAccount(hashConfirmation, device, password)
+		var missingParameters = [];
+		if (req.device === indefined) missingParameters.push("device");
+		if (req.body.password === undefined) missingParameters.push("password");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else accountsBO.confirmAccount(req.params.hash, req.device, req.body.password)
 		.then(function(resp){
-			res.status(resp.code).json(resp.json);
 			resolve(resp);
 		}).catch(function(err) {
-			var resp = responses.internalError(err);
-			res.status(resp.code).json(resp.json);
-			resolve(response);
+			reject(err);
 		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
 	}).catch(function(err) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
@@ -106,23 +102,19 @@ router.post('/authentication/:hash', function(req, res, next) {
 */
 router.get('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
-		if (req.useragent.isBot === true ) reject(new response(400, "Bot", 1));
-		var hashConfirmation = req.params.hash;
-
-		return accountsBO.findWithHash(hashConfirmation)
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else accountsBO.findWithHash(req.params.hash)
 		.then(function(resp){
-			res.status(resp.code).json(resp.json);
 			resolve(resp);
 		}).catch(function(err) {
-			var resp = responses.internalError(err);
-			res.status(resp.code).json(resp.json);
-			resolve(response);
-		}).catch(function(err) {
-			var resp = responses.internalError(err);
-			res.status(resp.code).json(resp.json);
-			resolve(response);
+			reject(err);
 		});
-	});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});;
 });
 
 /**
@@ -132,18 +124,12 @@ router.post('/authentication', function(req, res) {
 	return new Promise(function (resolve, reject) {
 		if (req.body.user === undefined) resolve(responses.missingParameters('email'));
 		else if (req.body.password === undefined) resolve(responses.missingParameters('password'));
-		else {
-			var email = req.body.user;
-			var password = req.body.password;
-			var populate = req.query.populate;
-
-			return accountsBO.logIn(email, password, req.device, populate)
-			.then(function(resp) {
-				resolve(resp);
-			}).catch(function(err) {
-				reject(err);
-			})
-		}
+		else accountsBO.logIn(req.body.user, req.body.password, req.device)
+		.then(function(resp) {
+			resolve(resp);
+		}).catch(function(err) {
+			reject(err);
+		})
 	}).then(function(resp) {
 		res.status(resp.code).json(resp.json);
 	}).catch(function(err){
@@ -157,19 +143,16 @@ router.post('/authentication', function(req, res) {
 */
 router.delete('/authentication', function(req, res){
 	return new Promise (function (resolve, reject){
-
-		if (req.rawToken === undefined) reject(responses.missingParameters('rawToken'));
-		if (req.token === undefined) reject(responses.missingParameters('token'));
-
-		else return accountsBO.logout(req.device, req.rawToken, req.token)
+		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
+		if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else accountsBO.logout(req.device, req.rawToken, req.token)
 		.then(function(resp){
-			res.status(resp.code).json(resp.json);
 			resolve(resp);
 		}).catch(function(err){
-			var resp = responses.internalError(err);
-			res.status(resp.code).json(resp.json);
-			resolve(response);
+			reject(err);
 		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
 	}).catch(function(err) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);

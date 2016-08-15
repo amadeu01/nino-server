@@ -9,6 +9,7 @@ var useragent = require('express-useragent');
 var app = express();
 module.exports = app;
 
+var responses = require('./mechanisms/responses.js');
 var accounts = require('./routes/accounts');
 var activities = require('./routes/activities');
 var classes = require('./routes/classes');
@@ -66,13 +67,18 @@ app.use(function(req, res, next) {
 		req.rawToken = token;
 		jwt.validate(token)
 		.then(function(decoded) {
-			//console.log(decoded);
 			req.token = decoded;
 	    next();
 		})
 		.catch(function(error) {
-			//console.log(error);
-			next();
+			var resp;
+			if (error.name === "TokenExpiredError") {
+				resp = responses.expiredCredential(error.expiredAt);
+			} else {
+				resp = responses.invalidCredential(error.message);
+			}
+			res.status(resp.code).json(resp.json);
+			//Failed to decode jwt, returns error
 		});
   } else {
 		next();
@@ -80,13 +86,13 @@ app.use(function(req, res, next) {
 });
 
 app.use('/accounts', accounts);
-app.use('/activities', activities);
+// app.use('/activities', activities);
 app.use('/classes', classes);
 app.use('/drafts', drafts);
 app.use('/employees', employees);
-app.use('/events', events);
+// app.use('/events', events);
 app.use('/guardians', guardians);
-app.use('/menus', menus);
+// app.use('/menus', menus);
 app.use('/posts', posts);
 app.use('/profiles', profiles);
 app.use('/rooms', rooms);

@@ -83,7 +83,7 @@ router.post("/", function(req, res, next) {
 					resolve(result);
 				})
 				.catch(function(err) {
-					resolve(err);
+					reject(err);
 				});
 			});
 			
