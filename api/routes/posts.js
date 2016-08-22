@@ -107,6 +107,32 @@ router.delete('/:post_id', function(req, res, next) {
 
 /** @description get post's for profile
 */
+router.get("/schools/:school_id/profiles/:profiles_id", function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+			postsBO.readForSchoolAndProfile(req.params.school_id, req.params.profile_id, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+
+/** @description get post's for profile
+*/
 router.get("/profiles/:profiles_id", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
@@ -115,7 +141,7 @@ router.get("/profiles/:profiles_id", function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			profileBO.readForProfile(req.params.school_id, req.params.profile_id, req.device, req.rawToken, req.token)
+			postsBO.readForProfile(req.params.profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {
@@ -140,7 +166,7 @@ router.get("/:post_id/read", function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			profileBO.readForProfile(req.params.school_id, req.params.post_id, req.device, req.rawToken, req.token)
+			postsBO.readForProfile(req.params.post_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {
@@ -165,7 +191,7 @@ router.put("/:post_id/read", function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			profileBO.readForProfile(req.params.school_id, req.params.post_id, req.token.profile, req.device, req.rawToken, req.token)
+			postsBO.readForProfile(req.params.post_id, req.token.profile, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {

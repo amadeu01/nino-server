@@ -22,12 +22,12 @@ profiles.create = function(profile, device, rawToken, token) {
 		.then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
 			else {
-					profilesDAO.create(profile)
-					.then(function(profile_id) {
-						resolve(responses.success(profile_id));
-					}).catch(function(err) {
-						resolve(responses.persistenceError(err));
-					});
+				profilesDAO.create(profile)
+				.then(function(profile_id) {
+					resolve(responses.success(profile_id));
+				}).catch(function(err) {
+					resolve(responses.persistenceError(err));
+				});
 			}
 		}).catch(function(err) {
 			resolve(responses.persistenceError(err));

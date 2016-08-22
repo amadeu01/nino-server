@@ -81,7 +81,7 @@ var postsDAO = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res, rej) {
-						client.query('INSERT INTO posts (message, attachment, metadata, type) VALUES ($1, $2, $3, $4) RETURNING id', [post.message, post.attachment, post.metadata, post.type], function(err, result) {
+						client.query('INSERT INTO posts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id', [post.message, post.attachment, post.school, post.metadata, post.type], function(err, result) {
 							if (err) rej (err);
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
@@ -235,18 +235,33 @@ var postsDAO = {
 			});
 		});
 	},
-	/** @method findPostsWithClassId
-	 * @description something
-	 * @param class_id {id}
-	 */
-	findPostsWithClassId: function(class_id) {
+	
+	findPostsWithProfileAndSchool : function(query) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
 					reject(err);
 					return;
 				}
-				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.class = $1', [class_id], function(err, result) {
+				client.query('SELECT p.message, p.metadata, p.attachment, p.type, p.date FROM posts p, posts_profiles pp WHERE pp.profile = $1, pp.post = p.id, p.school = $2 ORDER BY p.date DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows[0]); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+	
+	findPostsWithProfileId: function(profile_id, limit, offset) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT p.message, p.metadata, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1 ORDER BY p.date DESC LIMIT $2 OFFSET $3', [profile_id, limit, offset], function(err, result) {
 					if (err) reject(err);
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -256,48 +271,7 @@ var postsDAO = {
 			});
 		});
 	},
-	/** @method findPostsWithProfileId
-	 * @description something
-	 * @param profile_id {id}
-	 */
-	findPostsWithProfileId: function(profile_id) {
-		return new Promise(function (resolve, reject) {
-			pool.connect(function(err, client, done) {
-				if (err) {
-					reject(err);
-					return;
-				}
-				client.query('SELECT p.message, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1', [profile_id], function(err, result) {
-					if (err) reject(err);
-					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
-					else if (result.name == "error") reject(result); //Some error occured : rejects
-					else resolve(result.rows); //Returns what was found
-					done();
-				});
-			});
-		});
-	},
-	/** @method findPostsWithRoomId
-	 * @description something
-	 * @param room_id {id}
-	 */
-	findPostsWithRoomId: function(room_id) {
-		return new Promise(function (resolve, reject) {
-			pool.connect(function(err, client, done) {
-				if (err) {
-					reject(err);
-					return;
-				}
-				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.room = $1', [room_id], function(err, result) {
-					if (err) reject(err);
-					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
-					else if (result.name == "error") reject(result); //Some error occured : rejects
-					else resolve(result.rows); //Returns what was found
-					done();
-				});
-			});
-		});
-	},
+	
 	/** @method findPostsWithSchoolId
 	 * @description something
 	 * @param school_id {id}

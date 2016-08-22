@@ -4,6 +4,8 @@ var validator = require('validator');
 var responses = require('../mechanisms/responses.js');
 var postsDAO = require('../persistence/posts.js');
 var credentialDAO = require('../persistence/credentials.js');
+var schoolsDAO = require('../persistence/schools.js');
+var studentsDAO = require('../persistence/students.js');
 var posts = {};
 
 /** @method create
@@ -16,17 +18,46 @@ posts.create = function(post, author_id, profiles, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      if (profiles.length > 0 ) {
-        return postsDAO.createWithProfiles(post, author_id, profiles)
-        .then(function(result){
-          resolve(responses.success(result));
-        }).catch(function(err){
-          resolve(responses.persistenceError(err));
-        });
-      } else {
-		resolve(responses.invalidParameters("profiles"));
-		return; 
-      }
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, post.school_id)
+			.then(function(resp) {
+	      if (profiles.length > 0 ) {
+					var done = 0;
+					var returned = false;
+					var validationThen = function(resp) {
+						done ++;
+						if (done === profiles.length && !returned) {
+							returned = true;
+							createThePost();
+						}
+					};
+					var validationCatch = function(err) {
+						if (!returned) {
+							returned = true;
+							resolve(responses.invalidPermissions(err));
+						}
+					};
+	        var createThePost = function() {
+		        postsDAO.createWithProfiles(post, author_id, profiles)
+		        .then(function(result){
+		          resolve(responses.success(result));
+		        }).catch(function(err){
+		          resolve(responses.persistenceError(err));
+		        });
+					};
+					
+					for (var i in profiles) {
+						studentsDAO.findWithSchoolAndStudentProfile(post.school_id, profile[i])
+						.then(validationThen)
+						.catch(validationCatch);
+					}
+	      } else {
+					resolve(responses.invalidParameters("profiles"));
+					return; 
+	      }
+			}).catch(function(err) {
+				resolve(responses.invalidPermissions(err));
+			});
     }).catch(function(err){
       resolve(responses.persistenceError(err));
     });
@@ -43,7 +74,8 @@ posts.update = function(post, author_id, profiles, device, rawToken, token) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      if (profiles.length > 0 ) {
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+      else if (profiles.length > 0 ) {
         return postsDAO.updateWithProfiles(post, author_id, profiles)
         .then(function(result){
           resolve(responses.success(result));
@@ -95,64 +127,45 @@ posts.delete = function(post_id, author_id, profiles, device, rawToken, token) {
  * @param token {JSON} all information decoded
  * @return promise {Promise} returns posts' id and author's id
  */
-posts.readForProfile = function(school_id, profile_id, device, rawToken, token) {
+
+posts.readForSchoolAndProfile = function(school_id, profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return postsDAO.findPostsWithProfileId(profile_id)
-      .then(function(result){
-        resolve(responses.success(result));
-      }).catch(function(err){
-        resolve(responses.persistenceError(err));
-      });
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+      .then(function(resp) {
+				postsDAO.findPostsWithProfileAndSchool(school_id, profile_id)
+	      .then(function(result){
+	        resolve(responses.success(result));
+	      }).catch(function(err){
+	        resolve(responses.persistenceError(err));
+	      });
+			}).catch(function(err) {
+				resolve(responses.invalidPermissions(err));
+			});
     }).catch(function(err){
       resolve(responses.persistenceError(err));
     });
   });
 };
 
-/** @method readForRoom
- * @param school_id {id}
- * @param room_id {id}
- * @param device {string}
- * @param rawToken {string} helps find user credential
- * @param token {JSON} all information decoded
- * @return promise {Promise} returns posts' id and author's id
- */
-posts.readForRoom = function(school_id, room_id, device, rawToken, token) {
+posts.readForProfile = function(profile_id, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
-      return postsDAO.findPostsWithRoomId(room_id)
-      .then(function(result){
-        resolve(responses.success(result));
-      }).catch(function(err){
-        resolve(responses.persistenceError(err));
-      });
-    }).catch(function(err){
-      resolve(responses.persistenceError(err));
-    });
-  });
-};
-
-/** @method readForClass
- * @param school_id {id}
- * @param class_id {id}
- * @param device {string}
- * @param rawToken {string} helps find user credential
- * @param token {JSON} all information decoded
- * @return promise {Promise} returns posts' id and author's id
- */
-posts.readForClass = function(school_id, class_id, device, rawToken, token) {
-  return new Promise(function(resolve, reject) {
-    return credentialDAO.read(rawToken)
-    .then(function(credential){
-      return postsDAO.findPostsWithClassId(class_id)
-      .then(function(result){
-        resolve(responses.success(result));
-      }).catch(function(err){
-        resolve(responses.persistenceError(err));
-      });
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else studentsDAO.findWithGuardianProfileAndStudentProfile(token.profile, profile_id)
+			.then(function(resp) {
+	      postsDAO.findPostsWithProfileId(profile_id)
+	      .then(function(result){
+	        resolve(responses.success(result));
+	      }).catch(function(err){
+	        resolve(responses.persistenceError(err));
+	      });
+			}).catch(function(err) {
+				resolve(responses.invalidPermissions(err));
+			});
     }).catch(function(err){
       resolve(responses.persistenceError(err));
     });

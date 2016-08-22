@@ -343,8 +343,9 @@ var createDrafts = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS drafts' +
 				'(id	SERIAL PRIMARY KEY,' + 
-				 'message	VARCHAR,' +
+				 'message	VARCHAR NOT NULL,' +
 				 'attachment	VARCHAR,' +
+				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE NOT NULL,' +
 				 'metadata	VARCHAR,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
@@ -367,8 +368,9 @@ var createPosts = function(pool) {
 			}
 			client.query('CREATE TABLE IF NOT EXISTS posts' +
 				'(id	SERIAL PRIMARY KEY,' + 
-				 'message	VARCHAR,' +
+				 'message	VARCHAR NOT NULL,' +
 				 'attachment	VARCHAR,' +
+				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE NOT NULL,'
 				 'metadata	VARCHAR,' +
 				 'date	TIMESTAMPTZ DEFAULT current_timestamp,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
