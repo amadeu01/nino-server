@@ -78,7 +78,7 @@ router.post('/', function(req, res, next) {
 router.post('/authentication/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
-		if (req.device === indefined) missingParameters.push("device");
+		if (req.device === undefined) missingParameters.push("device");
 		if (req.body.password === undefined) missingParameters.push("password");
 		if (req.useragent.isBot === true ) resolve(responses.isBot());
 		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));

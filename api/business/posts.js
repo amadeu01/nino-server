@@ -24,12 +24,8 @@ posts.create = function(post, author_id, profiles, device, rawToken, token) {
           resolve(responses.persistenceError(err));
         });
       } else {
-        return postsDAO.create(post, author_id)
-        .then(function(result){
-          resolve(responses.success(result));
-        }).catch(function(err){
-          resolve(responses.persistenceError(err));
-        });
+		resolve(responses.invalidParameters("profiles"));
+		return; 
       }
     }).catch(function(err){
       resolve(responses.persistenceError(err));
