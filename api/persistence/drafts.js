@@ -89,7 +89,7 @@ drafts.createWithProfiles = function(draft, author_id ,profiles) {
 	});
 };
 
-drafts.findWithProfileAndSchool(query) {
+drafts.findWithProfileAndSchool = function(query) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
