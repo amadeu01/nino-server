@@ -60,7 +60,6 @@ drafts.createWithProfiles = function(draft, author_id ,profiles) {
 							}
 						};
 						for (var i in profiles) {
-							//TODO: don't make functions on within loop !!!
 							client.query('INSERT INTO drafts_profiles (draft, profile) VALUES ($1, $2) RETURNING profile', [response.draft.id, profiles[i]], insertDone);
 							if (returned) break;
 						}

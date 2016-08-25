@@ -5,7 +5,8 @@ var responses = require('../mechanisms/responses.js');
 var activitiesDAO = require('../persistence/drafts.js');
 var schoolsDAO = require('../persistence/schools.js');
 var studentsDAO = require('../persistence/students.js');
-
+var credentialDAO = require('../persistence/credentials.js');
+var draftsDAO = require('../persistence/drafts.js');
 var drafts = {};
 
 drafts.create = function(draft, author_id, profiles, device, rawToken, token) {
@@ -13,7 +14,7 @@ drafts.create = function(draft, author_id, profiles, device, rawToken, token) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
 			if (credential.device !== device) resolve(responses.invalidParameters("device"));
-			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, draft.school_id)
+			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, draft.school)
 				//TODO validate profiles
 			.then(function(resp) {
 	      if (profiles.length > 0 ) {
@@ -42,7 +43,7 @@ drafts.create = function(draft, author_id, profiles, device, rawToken, token) {
 					};
 					
 					for (var i in profiles) {
-						studentsDAO.findWithSchoolAndStudentProfile(post.school_id, profile[i])
+						studentsDAO.findWithSchoolAndStudentProfile(draft.school, profiles[i])
 						.then(validationThen)
 						.catch(validationCatch);
 					}

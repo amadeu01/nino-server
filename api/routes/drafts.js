@@ -27,7 +27,6 @@ router.post('/', function(req, res, next) {
 		else {
 			var draft = {
 				message: req.body.message,
-				shchool: req.body.school,
 				attachment: req.body.attachment,
 				type: req.body.type,
 				metadata: req.body.metadata,
