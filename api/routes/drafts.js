@@ -47,7 +47,7 @@ router.post('/', function(req, res, next) {
 	});
 });
 
-router.get('schools/:school_id/profiles/:profile_id', function(req, res) {
+router.get('/schools/:school_id/profiles/:profile_id', function(req, res) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");

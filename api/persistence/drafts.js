@@ -95,11 +95,11 @@ drafts.findWithProfileAndSchool = function(query) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT d.message, d.metadata, d.attachment, d.type, d.date FROM drafts d, drafts_profiles dp WHERE dp.profile = $1, dp.draft = d.id, d.school = $2 ORDER BY d.date DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
+			client.query('SELECT d.id, d.message, d.metadata, d.attachment, d.type FROM drafts d, drafts_profiles dp WHERE dp.profile = $1 AND dp.draft = d.id AND d.school = $2 ORDER BY d.createdAt DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
-				else resolve(result.rows[0]); //Returns what was found
+				else resolve(result.rows); //Returns what was found
 				done();
 			});
 		});

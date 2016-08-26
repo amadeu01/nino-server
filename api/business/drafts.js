@@ -62,14 +62,14 @@ drafts.create = function(draft, author_id, profiles, device, rawToken, token) {
 
 drafts.findWithProfileAndSchool = function(query, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
-    return credentialDAO.read(rawToken)
+    credentialDAO.read(rawToken)
     .then(function(credential){
 			if (credential.device !== device) resolve(responses.invalidParameters("device"));
 			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, query.school_id)
 			.then(function(resp) {
 				draftsDAO.findWithProfileAndSchool(query)
 				.then(function(resp) {
-					resolve(responses.success(result));
+					resolve(responses.success(resp));
 				}).catch(function(err) {
 					resolve(responses.persistenceError(err));
 				});
