@@ -158,7 +158,7 @@ drafts.postDraft = function(draft_id, school_id) {
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('SELECT d.message, d.attachment, d.metadata, d.type, (SELECT array_to_string(array_agg(profile), \',\') AS profiles FROM drafts_profiles dp WHERE dp.draft = d.id) AS profiles, (SELECT array_to_string(array_agg(author), \',\') AS authors FROM drafts_authors da WHERE da.draft = d.id) AS authors FROM drafts d WHERE d.id = $1 AND d.school = $2', [draft_id, school_id], function(err, result) {
+					client.query('SELECT d.school, d.message, d.attachment, d.metadata, d.type, (SELECT array_to_string(array_agg(profile), \',\') AS profiles FROM drafts_profiles dp WHERE dp.draft = d.id) AS profiles, (SELECT array_to_string(array_agg(author), \',\') AS authors FROM drafts_authors da WHERE da.draft = d.id) AS authors FROM drafts d WHERE d.id = $1 AND d.school = $2', [draft_id, school_id], function(err, result) {
 						if (err) rej(err);
 						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -166,7 +166,78 @@ drafts.postDraft = function(draft_id, school_id) {
 							res(result.rows[0]);
 						}
 					});
-					//TODO: Delete draft and relationships and create post
+				});
+			}).then(function(draft) {
+				return new Promise(function(res, rej) {
+					client.query('INSERT INTO posts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
+						if (err) rej (err);
+						else if (result.name == 'error') rej(result); //Some error occured : rejects
+						else {
+							var post = draft;
+							post.id = result.rows[0].id;
+							res(post);
+						}
+					});
+				});
+			}).then(function(post) {
+				return new Promise(function(res, rej) {
+					var done = 0;
+					var returned = false;
+					if (post.authors.length === 0) res(post); //Case empty
+					else {
+						var insertDone = function(err, result) {
+							done++;
+							if (err) {
+								rej (err);
+								returned = true;
+							}
+							else if (result.name == 'error') {
+								rej(result); //Some error occured : rejects
+								returned = true;
+							}
+							else if (done == post.authors.length && !returned) res(post);
+						};
+						for (var i in post.authors) {
+							//TODO: don't make functions on within loop !!!
+							client.query('INSERT INTO posts_authors (post, author) VALUES ($1, $2)', [post.id, post.authors[i]], insertDone);
+							if (returned) break;
+						}
+					}
+				});
+			}).then(function(post) { 
+				return new Promise(function(res, rej) {
+					var done = 0;
+					var returned = false;
+					if (post.profiles.length === 0) res(post); //Case empty
+					else {
+						var insertDone = function(err, result) {
+							done++;
+							if (err) {
+								rej (err);
+								returned = true;
+							}
+							else if (result.name == 'error') {
+								rej(result); //Some error occured : rejects
+								returned = true;
+							}
+							else if (done == post.profiles.length && !returned) res(post);
+						};
+						for (var i in post.profiles) {
+							//TODO: don't make functions on within loop !!!
+							client.query('INSERT INTO posts_profiles (post, profile) VALUES ($1, $2) RETURNING profile', [post.id, post.profiles[i]], insertDone);
+							if (returned) break;
+						}
+					}
+				});
+			}).then(function(result) {
+				return new Promise(function(res, rej) {
+					client.query('DELETE FROM drafts WHERE id = $1 AND school = $2', [draft_id, school_id], function(err, result) {
+						if (err) rej (err);
+						else if (result.name == 'error') rej(result); //Some error occured : rejects
+						else {
+							res(result);
+						}
+					});
 				});
 			}).then(function(result) {
 				return transaction.commit(client)
