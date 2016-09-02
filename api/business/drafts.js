@@ -82,4 +82,48 @@ drafts.findWithProfileAndSchool = function(query, device, rawToken, token) {
 	});
 };
 
+drafts.updateDraft = function(draft_id, new_draft, school_id, device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+    credentialDAO.read(rawToken)
+    .then(function(credential){
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+			.then(function(resp) {
+				draftsDAO.updateDraft(draft_id, new_draft, school_id)
+				.then(function(resp) {
+					resolve(responses.success(resp));
+				}).catch(function(err) {
+					resolve(responses.persistenceError(err));
+				});
+			}).catch(function(err) {
+				resolve(responses.invalidPermissions(err));
+			});
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
+    });
+	});
+};
+
+drafts.postDraft = function(draft_id, school_id, device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+    credentialDAO.read(rawToken)
+    .then(function(credential){
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
+			.then(function(resp) {
+				draftsDAO.postDraft(draft_id, school_id)
+				.then(function(resp) {
+					resolve(responses.success(resp));
+				}).catch(function(err) {
+					resolve(responses.persistenceError(err));
+				});
+			}).catch(function(err) {
+				resolve(responses.invalidPermissions(err));
+			});
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
+    });
+	});
+};
+
 module.exports = drafts;

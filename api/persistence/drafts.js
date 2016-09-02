@@ -104,6 +104,91 @@ drafts.findWithProfileAndSchool = function(query) {
 			});
 		});
 	});
+};
+
+drafts.updateDraft = function(draft_id, new_draft, school_id) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Encaminha pro BO
+				return;
+			}
+			transaction.start(client)
+			.then(function() {
+				return new Promise(function(res, rej) {
+					client.query('UPDATE drafts SET (message, metadata, attachment) = (COALESCE($1, message), COALESCE($2, metadata), COALESCE($3, attachment)) WHERE id = $4 AND school = $5',[new_draft.message, new_draft.metadata, new_draft.attachment, draft_id, school_id], function(err, result) {
+						if (err) rej(err);
+						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
+							res(result.rows[0]);
+						} //Updated one row, user confirmed! - proceed
+					});
+				});
+			}).then(function(result) {
+				return transaction.commit(client)
+				.then(function() {
+					done();
+					resolve(result); //Ended transaction and resolved to BO
+				}).catch(function(err) {
+					done(err);
+					reject(err); //Error on transaction, reject to BO
+				});
+			}).catch(function(err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					reject(err); //Reject error to BO
+				}).catch(function(err2) {
+					done(err2);
+					reject(err2); //Reject other error to BO
+				});
+			});
+		});
+	});	
+};
+
+drafts.postDraft = function(draft_id, school_id) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Encaminha pro BO
+				return;
+			}
+			transaction.start(client)
+			.then(function() {
+				return new Promise(function(res, rej) {
+					client.query('SELECT d.message, d.attachment, d.metadata, d.type, (SELECT array_to_string(array_agg(profile), \',\') AS profiles FROM drafts_profiles dp WHERE dp.draft = d.id) AS profiles, (SELECT array_to_string(array_agg(author), \',\') AS authors FROM drafts_authors da WHERE da.draft = d.id) AS authors FROM drafts d WHERE d.id = $1 AND d.school = $2', [draft_id, school_id], function(err, result) {
+						if (err) rej(err);
+						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
+							res(result.rows[0]);
+						}
+					});
+					//TODO: Delete draft and relationships and create post
+				});
+			}).then(function(result) {
+				return transaction.commit(client)
+				.then(function() {
+					done();
+					resolve(result); //Ended transaction and resolved to BO
+				}).catch(function(err) {
+					done(err);
+					reject(err); //Error on transaction, reject to BO
+				});
+			}).catch(function(err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					reject(err); //Reject error to BO
+				}).catch(function(err2) {
+					done(err2);
+					reject(err2); //Reject other error to BO
+				});
+			});
+		});
+	});	
 }
 
 module.exports = drafts;

@@ -73,8 +73,60 @@ router.get('/schools/:school_id/profiles/:profile_id', function(req, res) {
 	}).catch(function(err) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
-	})
+	});
 });
 
+router.put('/:draft_id', function(req, res) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.school === undefined) missingParameters.push("school");
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+			var new_draft = {};
+			if (req.body.message !== undefined) new_draft.message = req.body.message;
+			if (req.body.attachment !== undefined) new_draft.attachment = req.body.attachment;
+			if (req.body.metadata !== undefined) new_draft.metadata = req.body.metadata;
+			
+			draftsBO.updateDraft(req.params.draft_id, new_draft, req.body.school, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+router.post('/:draft_id', function(req, res) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.school === undefined) missingParameters.push("school");
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+			draftsBO.postDraft(req.params.draft_id, req.body.school, req.device, req,rawToken, req.token)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
 
 module.exports = router;
