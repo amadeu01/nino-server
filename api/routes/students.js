@@ -139,16 +139,15 @@ router.post('/schools/:school_id', function(req, res, next) {
 		res.status(resp.code).json(resp.json);
 	});
 });
-/** @description  Remove Students for Guardian */
+/** @description  Remove Students from Guardian */
 router.delete('/:student_profile_id/guardians/:guardian_profile_id', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.body.school_id === undefined) missingParameters.push("school_id");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			studentsBO.removeFromGuardian(req.body.schoo_id, req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			studentsBO.removeFromGuardian(req.params.student_profile_id, req.params.guardian_profile_id, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				resolve(resp);
 			}).catch(function(err){

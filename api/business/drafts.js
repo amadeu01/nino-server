@@ -89,7 +89,7 @@ drafts.updateDraft = function(draft_id, new_draft, school_id, device, rawToken, 
 			if (credential.device !== device) resolve(responses.invalidParameters("device"));
 			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
 			.then(function(resp) {
-				draftsDAO.updateDraft(draft_id, new_draft, school_id)
+				draftsDAO.updateDraft(draft_id, new_draft, school_id, token.profile)
 				.then(function(resp) {
 					resolve(responses.success(resp));
 				}).catch(function(err) {

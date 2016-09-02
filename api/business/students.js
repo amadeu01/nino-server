@@ -135,14 +135,19 @@ students.addForGuardian = function(school_id, student_profile_id, guardian_profi
 * @param rawToken {string} helps find user credential
 * @param token {JSON} all information decoded
 */
-students.removeFromGuardian = function(school_id, student_id, guardian_id, device, rawToken, token ) {
+students.removeFromGuardian = function(student_profile_id, guardian_profile_id, device, rawToken, token ) {
   return new Promise(function(resolve, reject){
     return credentialDAO.read(rawToken)
     .then(function(credential){
       if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-      return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
-      .then(function(id){
-
+      else studentsDAO.findWithEmployeeProfileAndStudentProfile(token.profile, student_profile_id)
+      .then(function(student_id){
+				studentsDAO.removeStudentFromGuardianProfile(student_id, guardian_profile_id)
+				.then(function(result) {
+					resolve(responses.success(result));
+				}).catch(function(err) {
+					resolve(responses.persistenceError(err));
+				});
       }).catch(function(err){
         resolve(responses.invalidPermissions(err));
       });

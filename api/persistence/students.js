@@ -211,5 +211,22 @@ studentsDAO.findWithRoomId = function(roomID) {
 	 });
  };
 
+ studentsDAO.removeStudentFromGuardianProfile = function(student_id, guardian_profile_id) {
+	 return new Promise(function (resolve, reject) {
+		 pool.connect(function(err, client, done) {
+			 if (err) {
+				 reject(err); //Connection error, aborts already
+				 return;
+			 }
+			 client.query('DELETE FROM guardians_profile_students WHERE guardian_profile = $1 AND student = $2', [guardian_profile_id, student_id], function(err, result) {
+				 if (err) reject(err); //Error: rejects to BO
+				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				 else if (result.name == "error") reject(result); //Some error occured : rejects
+				 else resolve(result.rows[0]); //Executed correctly
+				 done();
+			 });
+		 });
+	 });
+ }
 
 module.exports = studentsDAO;

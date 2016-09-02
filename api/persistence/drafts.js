@@ -106,7 +106,7 @@ drafts.findWithProfileAndSchool = function(query) {
 	});
 };
 
-drafts.updateDraft = function(draft_id, new_draft, school_id) {
+drafts.updateDraft = function(draft_id, new_draft, school_id, author_id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -123,6 +123,23 @@ drafts.updateDraft = function(draft_id, new_draft, school_id) {
 						else {
 							res(result.rows[0]);
 						} //Updated one row, user confirmed! - proceed
+					});
+				});
+			}).then(function(result) {
+				return new Promise(function(res, rej) {
+					client.query('SELECT id FROM drafts_authors WHERE draft = $1 AND author = $2', [draft_id, author_id], function(err, result) {
+						if (err) rej(err);
+						else if (result.name == "error") rej(result);
+						else res(result);
+					});
+				});
+			}).then(function(result) {
+				return new Promise(function(res, rej) {
+					if (result.rowCount !== 0) res(result); //This author already exists
+					else client.query('INSERT INTO drafts_authors (draft, author) VALUES ($1, $2)', [draft_id, author_id], function(err, result) {
+						if (err) rej(err);
+						else if (result.name == "error") rej(result);
+						else res(result);
 					});
 				});
 			}).then(function(result) {
