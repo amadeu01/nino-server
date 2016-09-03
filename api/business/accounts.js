@@ -21,9 +21,7 @@ accounts.createNewUser = function(account, profile) {
 	return new Promise(function(resolve, reject) {
 		var invalidParameters = [];
 		if (!validator.isEmail(account.email)) invalidParameters.push("email");
-		if (!validator.isAlpha(profile.name, 'pt-PT')) invalidParameters.push("name");
-		if (!validator.isAlpha(profile.surname, 'pt-PT')) invalidParameters.push("surname");
-		else if (invalidParameters.length > 0) reject(responses.missingParameters(invalidParameters));
+		else if (invalidParameters.length > 0) resolve(responses.missingParameters(invalidParameters));
 		else {
 			account.hash = uid.sync(100);
 			return accountsDAO.createNewUser(account, profile)
