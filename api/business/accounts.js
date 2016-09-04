@@ -75,7 +75,7 @@ accounts.createNewUserTest = function(account, profile) {
  */
 accounts.confirmAccount = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
-		var salt = ninoCrypto.genSaltSync();
+		var salt = ninoCrypto.createSalt();
 		password = ninoCrypto.hash(password, salt);
 		return accountsDAO.confirmAccount(confirmationHash, password, salt)
 		.then(function(userInfo) {
