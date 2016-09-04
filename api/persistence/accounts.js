@@ -65,7 +65,7 @@ accountsDAO.createNewUser = function(account, profile) {
 * @param confirmationHash {string} hash when the model is created on the data.
 * @return Promise {Promise} if successful, returns responde wih account information.
 */
-accountsDAO.confirmAccount = function(confirmationHash, password) {
+accountsDAO.confirmAccount = function(confirmationHash, password, salt) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
 			if (err) {
@@ -75,7 +75,7 @@ accountsDAO.confirmAccount = function(confirmationHash, password) {
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('UPDATE accounts SET (confirmed, password) = ($1, $2) WHERE hash = $3 RETURNING id, profile',[true, password, confirmationHash], function(err, result) {
+					client.query('UPDATE accounts SET (confirmed, password, salt) = ($1, $2, $3) WHERE hash = $4 RETURNING id, profile',[true, password, salt, confirmationHash], function(err, result) {
 						if (err) rej(err);
 						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
 						else if (result.name == "error") rej(result); //Some error occured : rejects
@@ -170,7 +170,7 @@ accountsDAO.logIn = function(email) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT a.email, a.password, a.cellphone, a.profile, a.id, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p WHERE a.profile = p.id AND a.email = $1 AND a.confirmed = $2', [email, true], function(err, result) {
+			client.query('SELECT a.salt, a.email, a.password, a.cellphone, a.profile, a.id, p.name, p.surname, p.birthdate, p.gender FROM accounts a, profiles p WHERE a.profile = p.id AND a.email = $1 AND a.confirmed = $2', [email, true], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects

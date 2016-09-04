@@ -8,6 +8,7 @@ var jwt = require('../mechanisms/jwt.js');
 var uid = require('uid-safe');
 var mail = require('../mechanisms/mail.js');
 var accounts = {};
+var ninoCrypto = require("../mechanisms/crypto.js");
 
 
 /** @method createNewUser
@@ -76,7 +77,9 @@ accounts.createNewUserTest = function(account, profile) {
  */
 accounts.confirmAccount = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
-		return accountsDAO.confirmAccount(confirmationHash, password)
+		var salt = ninoCrypto.genSaltSync();
+		password = ninoCrypto.hash(password, salt);
+		return accountsDAO.confirmAccount(confirmationHash, password, salt)
 		.then(function(userInfo) {
 			var tokenData = {
 				profile: userInfo.profile,
@@ -169,7 +172,8 @@ accounts.logIn = function(email, password, device) {
 			};
 			return accountsDAO.logIn(email)
 			.then(function(account) {
-				if (password !== account.password) {
+				var hashed = ninoCrypto.hash(password, account.salt);
+				if (!ninoCrypto.slowCompare(hashed, account.password)) {
 					resolve(responses.inexistentRegister());
 					return;
 				}
@@ -188,7 +192,7 @@ accounts.logIn = function(email, password, device) {
 					resolve(responses.internalError(err));
 				});
 			}).catch(function(err){
-				resolve(responses.persistenceError(err));
+				resolve(responses.inexistentRegister(err));
 			});
 		}
 	});

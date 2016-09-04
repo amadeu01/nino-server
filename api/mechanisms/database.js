@@ -15,6 +15,7 @@ var createAccounts = function(pool) {
 					 'email	VARCHAR UNIQUE NOT NULL,' +
 					 'password	VARCHAR,' + 
 					 'cellphone	VARCHAR,' +
+					 'salt	VARCHAR,' +
 					 'hash	VARCHAR UNIQUE NOT NULL,' +
 					 'passwordHash	VARCHAR UNIQUE,' +
 					 'confirmed	BOOLEAN NOT NULL DEFAULT false,' + 
