@@ -15,16 +15,7 @@ secure.createSalt = function() {
 }
 
 secure.hash = function(password, salt) {
-	return crypto.pbkdf2Sync(password, salt, 1000, 512, 'sha512')
+	return crypto.pbkdf2Sync(password, salt, 1000, 512, 'sha512').toString('hex');
 }
-
-var a = secure.createSalt();
-var b = secure.hash("bacon",a);
-var c = secure.hash("vegan",a);
-
-
-console.log(secure.slowCompare(c,c));
-console.log(secure.slowCompare(b,b));
-console.log(secure.slowCompare(b,c));
 
 module.exports = secure;
