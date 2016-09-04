@@ -57,7 +57,7 @@ router.post('/', function(req, res, next) {
 				birthdate: req.body.birthdate,
 				gender: req.body.gender
 			};
-			return accountsBO.createNewUser(account, profile)
+			accountsBO.createNewUser(account, profile)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {
