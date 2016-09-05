@@ -42,12 +42,13 @@
 
 var config = {
 	user: 'nino',
+	password: 'chupaagendakids',
 	database: 'nino',
-	password: 'nino',
+	host: 'ninoapp-production.cwtfdu1insah.sa-east-1.rds.amazonaws.com',
 	port: 5432,
 	max: 10,
 	idleTimeoutMillis: 30000,
-};
+}
 
 var fs = require('fs');
 var path = require("path");
