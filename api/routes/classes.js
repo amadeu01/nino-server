@@ -45,6 +45,30 @@ router.get('/schools/:school_id', function(req, res, next) {
 	});
 });
 
+
+router.get('/:class_id', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push('token');
+		if (req.rawToken === undefined) missingParameters.push('rawToken');
+		if (req.device === undefined) missingParameters.push("device");
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+			classesBO.getClass(req.params.class_id, req.device, req.rawToken, req.token)
+			.then(function(resp){
+				resolve(resp);
+			}).catch(function(err){
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
 /**
 * @description Create a class for a school
 * @param class {string}

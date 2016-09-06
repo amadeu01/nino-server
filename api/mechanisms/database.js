@@ -21,6 +21,7 @@ var createAccounts = function(pool) {
 					 'confirmed	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'active BOOLEAN NOT NULL DEFAULT true,' + 
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+					 'modified TIMESTAMP DEFULT current_timestamp,' +
 					 'lost BOOLEAN NOT NULL DEFAULT false)', 
 			function(err, result) {
 				done();
@@ -45,6 +46,7 @@ var createContents = function(pool) {
 					 'key	VARCHAR UNIQUE NOT NULL,' +
 					 'access	INTEGER NOT NULL DEFAULT 0,' +			
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+				   'modified TIMESTAMP DEFULT current_timestamp,' +
 					 'CHECK ((school IS NOT NULL AND profile IS NULL) OR (school IS NULL AND profile IS NOT NULL)))', 
 			function(err, result) {
 				done();
@@ -69,6 +71,7 @@ var createCredentials = function(pool) {
 					 'notifiable	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'notificationID	VARCHAR,' + 
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+					 'modified TIMESTAMP DEFULT current_timestamp,' +
 					 'token	VARCHAR NOT NULL)', 
 			function(err, result) {
 				done();
@@ -94,6 +97,7 @@ var createProfiles = function(pool) {
 				 'birthdate	TIMESTAMPTZ,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'gender	INTEGER)' , 
 			function(err, result) {
 				done();
@@ -123,6 +127,7 @@ var createSchools = function(pool) {
 				 'expiration	TIMESTAMP DEFAULT current_timestamp + interval \'1 year\',' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'name	VARCHAR)' ,
 			function(err, result) {
 				done();
@@ -147,6 +152,7 @@ var createClasses = function(pool) {
 				 'active	BOOLEAN NOT NULL DEFAULT true,' + 
 				 'agenda	INTEGER DEFAULT 0,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'menu	INTEGER REFERENCES menus (id) ON DELETE SET NULL)', 
 			function(err, result) {
 				done();
@@ -170,6 +176,7 @@ var createRooms = function(pool) {
 				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE NOT NULL,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'notificationGroup	VARCHAR)', 
 			function(err, result) {
 				done();
@@ -193,6 +200,7 @@ var createStudents = function(pool) {
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE SET NULL)', 
 			function(err, result) {
 				done();
@@ -214,6 +222,7 @@ var createEmployees = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL)',
 			function(err, result) {
 				done();
@@ -236,6 +245,7 @@ var createMenus = function(pool) {
 				 'school INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'description	VARCHAR NOT NULL)', 
 			function(err, result) {
 				done();
@@ -259,6 +269,7 @@ var createActivities = function(pool) {
 				 'description	VARCHAR NOT NULL,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE)', 
 			function(err, result) {
 				done();
@@ -325,6 +336,7 @@ var createEvents = function(pool) {
 				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
 				 'date	TIMESTAMPTZ,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'description	VARCHAR NOT NULL)', 
 			function(err, result) {
 				done();
@@ -350,6 +362,7 @@ var createDrafts = function(pool) {
 				 'metadata	VARCHAR,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)', 
 			function(err, result) {
 				done();
@@ -376,6 +389,7 @@ var createPosts = function(pool) {
 				 'date	TIMESTAMPTZ DEFAULT current_timestamp,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
+			   'modified TIMESTAMP DEFULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)', 
 			function(err, result) {
 				done();
@@ -652,6 +666,267 @@ var createSchoolsCoordinators = function(pool) {
 	});
 };
 
+var createFunctionModifiedTimestamp = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE OR REPLACE FUNCTION update_modified_column()' +
+				'RETURNS TRIGGER AS $$' +
+				'BEGIN' +
+				'NEW.modified = now();' +
+				'RETURN NEW;' +
+				'END;' +
+				'$$ language \'plpgsql\';', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampAccounts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_accounts_modtime BEFORE UPDATE ON accounts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampContents = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_contents_modtime BEFORE UPDATE ON contents FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampProfiles = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_profiles_modtime BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampSchools = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_schools_modtime BEFORE UPDATE ON schools FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampClasses = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_classes_modtime BEFORE UPDATE ON classes FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampRooms = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_rooms_modtime BEFORE UPDATE ON rooms FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampMenus = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_menus_modtime BEFORE UPDATE ON menus FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampActivities = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_activities_modtime BEFORE UPDATE ON activities FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampEvents = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_events_modtime BEFORE UPDATE ON events FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampDrafts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_drafts_modtime BEFORE UPDATE ON drafts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampPosts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_posts_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampCredentials = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_credentials_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampStudents = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_students_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
+var triggerTimestampEmployees = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('CREATE TRIGGER update_employees_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+};
+
 var db = {
 	createTables: function() {
 		return new Promise(function (resolve, reject) {
@@ -670,6 +945,10 @@ var db = {
 				return Promise.all([createDrafts(pool), createPosts(pool), createEvents(pool), createStudents(pool),  createAgendasSectionsRows(pool)]);
 			}).then(function(done) {
 				return Promise.all([createActivitiesClasses(pool), createClassesEducators(pool), createDraftsAuthors(pool), createDraftsProfiles(pool), createEducatorRooms(pool), createEventsConfirmations(pool), createGuardiansProfileStudents(pool), createPostsProfiles(pool), createPostsAuthors(pool), createPostsReads(pool), createSchoolsPedagogues(pool), createSchoolsEducators(pool), createSchoolsNutritionists(pool), createSchoolsCoordinators(pool)]);
+			}).then(function(done) {
+				return createFunctionModifiedTimestamp(pool);
+			}).then(function(done) {
+				return Promise.all([triggerTimestampAccounts(pool), triggerTimestampContents(pool), triggerTimestampProfiles(pool), triggerTimestampSchools(pool), triggerTimestampClasses(pool), triggerTimestampRooms(pool), triggerTimestampMenus(pool), triggerTimestampActivities(pool), triggerTimestampEvents(pool), triggerTimestampDrafts(pool), triggerTimestampPosts(pool), triggerTimestampCredentials(pool), triggerTimestampStudents(pool), triggerTimestampEmployees(pool)]);
 			}).then(function(success) {
 				resolve(success);
 			})

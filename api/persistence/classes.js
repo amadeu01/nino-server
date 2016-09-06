@@ -88,6 +88,24 @@ var classServices = {
 
 	},
 	
+	findWithId: function(class_id) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT id, name, school FROM classes WHERE id = $1', [class_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+	
 	findWithEmployeeProfileAndClassId: function(employee_profile_id, class_id) {
 		return new Promise(function (resolve, reject) {
 			//console.log("findWithSchoolId");
