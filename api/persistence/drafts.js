@@ -18,7 +18,7 @@ drafts.createWithProfiles = function(draft, author_id ,profiles) {
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO drafts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
+					client.query('INSERT INTO drafts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id, createdAt', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else res(result.rows[0]);
@@ -127,7 +127,7 @@ drafts.updateDraft = function(draft_id, new_draft, school_id, author_id) {
 				});
 			}).then(function(result) {
 				return new Promise(function(res, rej) {
-					client.query('SELECT id FROM drafts_authors WHERE draft = $1 AND author = $2', [draft_id, author_id], function(err, result) {
+					client.query('SELECT author FROM drafts_authors WHERE draft = $1 AND author = $2', [draft_id, author_id], function(err, result) {
 						if (err) rej(err);
 						else if (result.name == "error") rej(result);
 						else res(result);
@@ -186,7 +186,7 @@ drafts.postDraft = function(draft_id, school_id) {
 				});
 			}).then(function(draft) {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO posts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
+					client.query('INSERT INTO posts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id, createdAt', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {

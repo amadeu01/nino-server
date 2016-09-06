@@ -24,7 +24,7 @@ var postsDAO = {
 				transaction.start(client)
 				.then(function() {
 					return new Promise(function(res, rej) {
-						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
+						client.query('INSERT INTO posts (message, school, class, room, type, attachment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, createdAt', [post.message, post.school, post.class, post.room, post.type, post.attachment], function(err, result) {
 							if (err) rej (err);
 							else if (result.name == 'error') rej(result); //Some error occured : rejects
 							else res(result.rows[0]);
