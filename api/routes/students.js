@@ -37,14 +37,14 @@ router.get('/rooms/:room_id', function(req, res, next) {
 /** @description  Get Students for Guardian
  * @deprecated
  */
-router.get('/:student_profile_id/guardians/:guardian_profile_id', function(req, res, next) {
+router.get('/guardians/me', function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
 		if (missingParameters.length > 0) resolve(errors.missingParameters(missingParameters));
 		else {
-			studentsBO.readForGuardian(req.params.guardian_profile_id, req.device, req.rawToken, req.token)
+			studentsBO.readForGuardian(undefined, req.token.profile, req.device, req.rawToken, req.token)
 			.then(function(resp){
 				resolve(resp);
 			}).catch(function(err){

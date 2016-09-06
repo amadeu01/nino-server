@@ -74,6 +74,23 @@ classes.getClassesForSchool = function(school_id, device, rawToken, token) {
 	});
 };
 
+classes.getClass = function(class_id, device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+		return credentialDAO.read(rawToken)
+		.then(function(credential){
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else classesDAO.findWithId(class_id)
+			.then(function(theClass) {
+				resolve(responses.success(theClass));
+			}).catch(function(err) {
+				resolve(responses.persistenceError(err));
+			})
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
+    });
+	});
+}
+
 /** @method delete
 * @description delete
 * @param school_id {id}
