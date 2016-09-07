@@ -75,30 +75,34 @@ accounts.createNewUserTest = function(account, profile) {
  */
 accounts.confirmAccount = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
-		var salt = ninoCrypto.createSalt();
-		password = ninoCrypto.hash(password, salt);
-		return accountsDAO.confirmAccount(confirmationHash, password, salt)
-		.then(function(userInfo) {
-			var tokenData = {
-				profile: userInfo.profile,
-				device: device,
-				account: userInfo.id
-			};
-			return jwt.create(tokenData)
-			.then(function(token) {
-				return credentialDAO.logIn(device, token, userInfo.id)
-				.then(function(result) {
-					var res = {token: token};
-					resolve(responses.success(res));
-				}).catch(function(err) {
-					resolve(responses.persistenceError(err));
+		if (password.length < 8) resolve(responses.invalidParameters("password"));
+		else if (password.match(/[0-9]+/) === null) resolve(responses.invalidParameters("password"));
+		else {
+			var salt = ninoCrypto.createSalt();
+			password = ninoCrypto.hash(password, salt);
+			return accountsDAO.confirmAccount(confirmationHash, password, salt)
+			.then(function(userInfo) {
+				var tokenData = {
+					profile: userInfo.profile,
+					device: device,
+					account: userInfo.id
+				};
+				return jwt.create(tokenData)
+				.then(function(token) {
+					return credentialDAO.logIn(device, token, userInfo.id)
+					.then(function(result) {
+						var res = {token: token};
+						resolve(responses.success(res));
+					}).catch(function(err) {
+						resolve(responses.persistenceError(err));
+					});
+				}).catch(function(err){
+					resolve(responses.internalError(err));
 				});
 			}).catch(function(err){
-				resolve(responses.internalError(err));
+				resolve(responses.persistenceError(err));
 			});
-		}).catch(function(err){
-			resolve(responses.persistenceError(err));
-		});
+		}
 	});
 };
 
