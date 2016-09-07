@@ -3,18 +3,21 @@
 * @module mechanisms/jwt
 */
 
+var fs = require('fs');
 var jwt = require('jsonwebtoken');
 var responses = require('./responses.js');
 
-var privateKey = fs.readFileSync('jwt.key');
-var publicKey = fs.readFileSync('jwt.key.pub');
+var privateKey = fs.readFileSync(__dirname + '/jwt.key');
+var publicKey = fs.readFileSync(__dirname + '/jwt.key.pub.pem');
 
 var signOptions = {
-	expiresIn: 3600 //1 hour
+	expiresIn: 3600, //1 hour
+	algorithm: 'RS256'
 }
 
 var verifyOptions = {
-	clockTolerance: 300
+	clockTolerance: 300,
+	algorithms: ['RS256']
 }
 
 module.exports = {
@@ -56,6 +59,7 @@ module.exports = {
 	  return new Promise(function (resolve, reject) {
 	    jwt.verify(token, publicKey, verifyOptions, function(err, decoded) {
 	      if (err) {
+			console.log(err);
 					reject(err);
 	      } else {
 					resolve(decoded);
