@@ -883,7 +883,7 @@ var triggerTimestampCredentials = function(pool) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TRIGGER update_credentials_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			client.query('CREATE TRIGGER update_credentials_modtime BEFORE UPDATE ON credentials FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
 			function(err, result) {
 				done();
 				if (err) reject(err);
@@ -900,7 +900,7 @@ var triggerTimestampStudents = function(pool) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TRIGGER update_students_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			client.query('CREATE TRIGGER update_students_modtime BEFORE UPDATE ON students FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
 			function(err, result) {
 				done();
 				if (err) reject(err);
@@ -917,7 +917,7 @@ var triggerTimestampEmployees = function(pool) {
 				reject(err);
 				return;
 			}
-			client.query('CREATE TRIGGER update_employees_modtime BEFORE UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
+			client.query('CREATE TRIGGER update_employees_modtime BEFORE UPDATE ON employees FOR EACH ROW EXECUTE PROCEDURE update_modified_column();', 
 			function(err, result) {
 				done();
 				if (err) reject(err);
