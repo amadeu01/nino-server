@@ -21,7 +21,7 @@ var createAccounts = function(pool) {
 					 'confirmed	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'active BOOLEAN NOT NULL DEFAULT true,' + 
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-					 'modified TIMESTAMP DEFULT current_timestamp,' +
+					 'modified TIMESTAMP DEFAULT current_timestamp,' +
 					 'lost BOOLEAN NOT NULL DEFAULT false)', 
 			function(err, result) {
 				done();
@@ -46,7 +46,7 @@ var createContents = function(pool) {
 					 'key	VARCHAR UNIQUE NOT NULL,' +
 					 'access	INTEGER NOT NULL DEFAULT 0,' +			
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-				   'modified TIMESTAMP DEFULT current_timestamp,' +
+				   'modified TIMESTAMP DEFAULT current_timestamp,' +
 					 'CHECK ((school IS NOT NULL AND profile IS NULL) OR (school IS NULL AND profile IS NOT NULL)))', 
 			function(err, result) {
 				done();
@@ -71,7 +71,7 @@ var createCredentials = function(pool) {
 					 'notifiable	BOOLEAN NOT NULL DEFAULT false,' + 
 					 'notificationID	VARCHAR,' + 
 					 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-					 'modified TIMESTAMP DEFULT current_timestamp,' +
+					 'modified TIMESTAMP DEFAULT current_timestamp,' +
 					 'token	VARCHAR NOT NULL)', 
 			function(err, result) {
 				done();
@@ -97,7 +97,7 @@ var createProfiles = function(pool) {
 				 'birthdate	TIMESTAMPTZ,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'gender	INTEGER)' , 
 			function(err, result) {
 				done();
@@ -127,7 +127,7 @@ var createSchools = function(pool) {
 				 'expiration	TIMESTAMP DEFAULT current_timestamp + interval \'1 year\',' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'name	VARCHAR)' ,
 			function(err, result) {
 				done();
@@ -152,7 +152,7 @@ var createClasses = function(pool) {
 				 'active	BOOLEAN NOT NULL DEFAULT true,' + 
 				 'agenda	INTEGER DEFAULT 0,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'menu	INTEGER REFERENCES menus (id) ON DELETE SET NULL)', 
 			function(err, result) {
 				done();
@@ -176,7 +176,7 @@ var createRooms = function(pool) {
 				 'class INTEGER REFERENCES classes (id) ON DELETE CASCADE NOT NULL,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'notificationGroup	VARCHAR)', 
 			function(err, result) {
 				done();
@@ -200,7 +200,7 @@ var createStudents = function(pool) {
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'room	INTEGER REFERENCES rooms (id) ON DELETE SET NULL)', 
 			function(err, result) {
 				done();
@@ -222,7 +222,7 @@ var createEmployees = function(pool) {
 				'(id	SERIAL PRIMARY KEY,' +
 				 'profile	INTEGER REFERENCES profiles (id) ON DELETE CASCADE,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE SET NULL)',
 			function(err, result) {
 				done();
@@ -245,7 +245,7 @@ var createMenus = function(pool) {
 				 'school INTEGER REFERENCES schools (id) ON DELETE CASCADE,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'description	VARCHAR NOT NULL)', 
 			function(err, result) {
 				done();
@@ -269,7 +269,7 @@ var createActivities = function(pool) {
 				 'description	VARCHAR NOT NULL,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'school	INTEGER REFERENCES schools (id) ON DELETE CASCADE)', 
 			function(err, result) {
 				done();
@@ -336,7 +336,7 @@ var createEvents = function(pool) {
 				 'class	INTEGER REFERENCES classes (id) ON DELETE CASCADE,' +
 				 'date	TIMESTAMPTZ,' +
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'description	VARCHAR NOT NULL)', 
 			function(err, result) {
 				done();
@@ -362,7 +362,7 @@ var createDrafts = function(pool) {
 				 'metadata	VARCHAR,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)', 
 			function(err, result) {
 				done();
@@ -389,7 +389,7 @@ var createPosts = function(pool) {
 				 'date	TIMESTAMPTZ DEFAULT current_timestamp,' +
 				 'active BOOLEAN NOT NULL DEFAULT true,' + 
 				 'createdAt TIMESTAMP DEFAULT current_timestamp,' +
-			   'modified TIMESTAMP DEFULT current_timestamp,' +
+			   'modified TIMESTAMP DEFAULT current_timestamp,' +
 				 'type	INTEGER NOT NULL)', 
 			function(err, result) {
 				done();
@@ -676,8 +676,8 @@ var createFunctionModifiedTimestamp = function(pool) {
 			client.query('CREATE OR REPLACE FUNCTION update_modified_column()' +
 				'RETURNS TRIGGER AS $$' +
 				'BEGIN' +
-				'NEW.modified = now();' +
-				'RETURN NEW;' +
+				'	NEW.modified = now();' +
+				'	RETURN NEW;' +
 				'END;' +
 				'$$ language \'plpgsql\';', 
 			function(err, result) {
