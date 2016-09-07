@@ -19,10 +19,9 @@ router.get('/:room_id', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.body.room_name === undefined) missingParameters.push("room_name");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			roomBO.getRoom(req.params.room_id, req.device, req.rawToken, req.token)
+			roomsBO.getRoom(req.params.room_id, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {
