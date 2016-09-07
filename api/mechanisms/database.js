@@ -927,6 +927,261 @@ var triggerTimestampEmployees = function(pool) {
 	});
 };
 
+var dropIfExistsAccounts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_accounts_modtime ON accounts', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsAccounts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_accounts_modtime ON accounts', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsContents = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_contents_modtime ON contents', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsProfiles = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_profiles_modtime ON profiles', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsSchools = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_schools_modtime ON schools', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsClasses = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_classes_modtime ON classes', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsRooms = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_rooms_modtime ON rooms', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsMenus = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_menus_modtime ON menus', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsActivities = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_activities_modtime ON activities', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsEvents = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_events_modtime ON events', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsDrafts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_drafts_modtime ON drafts', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsPosts = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_posts_modtime ON posts', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsCredentials = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_credentials_modtime ON credentials', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsStudents = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_students_modtime ON students', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
+var dropIfExistsEmployees = function(pool) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('DROP TRIGGER IF EXISTS update_employees_modtime ON employees', 
+			function(err, result) {
+				done();
+				if (err) reject(err);
+				else resolve(result);
+			});
+		});
+	});
+}
+
 var db = {
 	createTables: function() {
 		return new Promise(function (resolve, reject) {
@@ -947,6 +1202,8 @@ var db = {
 				return Promise.all([createActivitiesClasses(pool), createClassesEducators(pool), createDraftsAuthors(pool), createDraftsProfiles(pool), createEducatorRooms(pool), createEventsConfirmations(pool), createGuardiansProfileStudents(pool), createPostsProfiles(pool), createPostsAuthors(pool), createPostsReads(pool), createSchoolsPedagogues(pool), createSchoolsEducators(pool), createSchoolsNutritionists(pool), createSchoolsCoordinators(pool)]);
 			}).then(function(done) {
 				return createFunctionModifiedTimestamp(pool);
+			}).then(function(done) {
+				return Promise.all([dropIfExistsAccounts(pool), dropIfExistsContents(pool), dropIfExistsProfiles(pool), dropIfExistsSchools(pool), dropIfExistsClasses(pool), dropIfExistsRooms(pool), dropIfExistsMenus(pool), dropIfExistsActivities(pool), dropIfExistsEvents(pool), dropIfExistsDrafts(pool), dropIfExistsPosts(pool), dropIfExistsCredentials(pool), dropIfExistsStudents(pool), dropIfExistsEmployees(pool)]);
 			}).then(function(done) {
 				return Promise.all([triggerTimestampAccounts(pool), triggerTimestampContents(pool), triggerTimestampProfiles(pool), triggerTimestampSchools(pool), triggerTimestampClasses(pool), triggerTimestampRooms(pool), triggerTimestampMenus(pool), triggerTimestampActivities(pool), triggerTimestampEvents(pool), triggerTimestampDrafts(pool), triggerTimestampPosts(pool), triggerTimestampCredentials(pool), triggerTimestampStudents(pool), triggerTimestampEmployees(pool)]);
 			}).then(function(success) {
