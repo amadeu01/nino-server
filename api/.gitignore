@@ -4,6 +4,7 @@ nino-doc
 *.key
 *.csr
 *.crt
+*.pub
 clear_db.sh
 dbclean.txt
 results
