@@ -225,7 +225,7 @@ var postsDAO = {
 					reject(err);
 					return;
 				}
-				client.query('SELECT message, type, date, attachment FROM posts WHERE posts.id = $1', [post_id], function(err, result) {
+				client.query('SELECT id, message, type, date, attachment FROM posts WHERE posts.id = $1', [post_id], function(err, result) {
 					if (err) reject(err);
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -261,7 +261,7 @@ var postsDAO = {
 					reject(err);
 					return;
 				}
-				client.query('SELECT p.message, p.metadata, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1 ORDER BY p.date DESC LIMIT $2 OFFSET $3', [profile_id, limit, offset], function(err, result) {
+				client.query('SELECT p.id, p.message, p.metadata, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1 ORDER BY p.date DESC LIMIT $2 OFFSET $3', [profile_id, limit, offset], function(err, result) {
 					if (err) reject(err);
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
