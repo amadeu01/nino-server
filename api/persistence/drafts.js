@@ -246,13 +246,13 @@ drafts.postDraft = function(draft_id, school_id) {
 						}
 					}
 				});
-			}).then(function(result) {
+			}).then(function(post) {
 				return new Promise(function(res, rej) {
 					client.query('DELETE FROM drafts WHERE id = $1 AND school = $2', [draft_id, school_id], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
-							res(result);
+							res(post);
 						}
 					});
 				});
@@ -260,7 +260,7 @@ drafts.postDraft = function(draft_id, school_id) {
 				return transaction.commit(client)
 				.then(function() {
 					done();
-					resolve(result); //Ended transaction and resolved to BO
+					resolve({post: result}); //Ended transaction and resolved to BO
 				}).catch(function(err) {
 					done(err);
 					reject(err); //Error on transaction, reject to BO
