@@ -133,7 +133,7 @@ router.get("/schools/:school_id/profiles/:profiles_id", function(req, res, next)
 
 /** @description get post's for profile
 */
-router.get("/profiles/:profiles_id", function(req, res, next) {
+router.get("/profiles/:profile_id", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");

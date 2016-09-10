@@ -78,8 +78,8 @@ students.readForGuardian = function(school_id, guardian_profile_id, device, rawT
     return credentialDAO.read(rawToken)
     .then(function(credential){
       if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-      if (guardian_id === token.profile) { //guardian can take information about own kids
-        return studentsDAO.findWithSchoolAndGuardianProfile(school_id, guardian_profile_id)
+      if (guardian_profile_id === token.profile) { //guardian can take information about own kids
+        return studentsDAO.findWithGuardianProfileId(guardian_profile_id)
         .then(function(students){
           resolve(responses.success(students));
         }).catch(function(err){

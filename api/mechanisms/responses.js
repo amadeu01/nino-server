@@ -41,6 +41,7 @@ module.exports = {
 	},
 	/**@method */
 	internalError: function(data) {
+		console.log("ERROR>>" + data + "<<");
 		return new Response(500, data, 201);
 	},
 	/**@method */
@@ -77,16 +78,18 @@ module.exports = {
 		if (err.name == 'error') {
 			switch (err.code) {
 				case 23502:
-					return new Response(400, err.detail, 202);
+					return new Response(400, "missing_parameter", 202);
 				case 23505: //Some field already exists
-					return new Response(400, err.detail, 203); //New code here
+					return new Response(400, "duplicate", 203); //New code here
 				default:
-					return new Response(500, err.detail, 201); //Default, unknown error
+					console.log("ERROR>>" + data + "<<");
+					return new Response(500, "unknown", 201); //Default, unknown error
 			}
 		} else if (err.rowCount === 0){
 			return new Response(200, err.rows, 0);
 		} else {
-			return new Response(500, err.detail, 201); //Default, unknown error
+			console.log("ERROR>>" + data + "<<");
+			return new Response(500, "unknown", 201); //Default, unknown error
 		}
 	}
 };

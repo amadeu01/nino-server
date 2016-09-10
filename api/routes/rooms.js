@@ -13,6 +13,28 @@ var numberValidate = function(req, res, next, id) {
 	}
 };
 
+/** @description Get a Room */
+router.get('/:room_id', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.token === undefined) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+			roomsBO.getRoom(req.params.room_id, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+})
 
 /** @description Create a new room to class */
 router.post('/classes/:class_id', function(req, res, next) {
@@ -37,7 +59,6 @@ router.post('/classes/:class_id', function(req, res, next) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
 	});
-
 });
 
 /** @description Update room information */

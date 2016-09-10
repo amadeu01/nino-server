@@ -84,8 +84,8 @@ drafts.findWithProfileAndSchool = function(query, device, rawToken, token) {
 
 drafts.updateDraft = function(draft_id, new_draft, school_id, device, rawToken, token) {
 	return new Promise(function(resolve, reject) {
-    credentialDAO.read(rawToken)
-    .then(function(credential){
+    		credentialDAO.read(rawToken)
+    		.then(function(credential){
 			if (credential.device !== device) resolve(responses.invalidParameters("device"));
 			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
 			.then(function(resp) {

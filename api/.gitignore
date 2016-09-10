@@ -2,8 +2,10 @@ node_modules
 .tmp
 nino-doc
 *.key
+*.pem
 *.csr
 *.crt
+*.pub
 clear_db.sh
 dbclean.txt
 results

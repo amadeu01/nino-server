@@ -89,7 +89,7 @@ app.use('/accounts', accounts);
 // app.use('/activities', activities);
 app.use('/classes', classes);
 app.use('/drafts', drafts);
-app.use('/employees', employees);
+// app.use('/employees', employees);
 // app.use('/events', events);
 app.use('/guardians', guardians);
 // app.use('/menus', menus);
@@ -98,7 +98,7 @@ app.use('/profiles', profiles);
 app.use('/rooms', rooms);
 app.use('/schools', schools);
 app.use('/students', students);
-app.use('/contents', contents);
+// app.use('/contents', contents);
 
 
 // catch 404 and forward to error handler

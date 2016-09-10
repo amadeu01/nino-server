@@ -9,6 +9,23 @@ var schoolsDAO = require('../persistence/schools.js');
 var rooms = {};
 
 
+rooms.getRoom = function(room_id, device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+		return credentialDAO.read(rawToken)
+		.then(function(credential){
+			if (credential.device !== device) resolve(responses.invalidParameters("device"));
+			else roomsDAO.findWithId(room_id)
+			.then(function(room) {
+				resolve(responses.success(room));
+			}).catch(function(err) {
+				resolve(responses.persistenceError(err));
+			})
+    }).catch(function(err){
+      resolve(responses.persistenceError(err));
+    });
+	});
+};
+
 /** @method createToClass
 * @param room {JSON} <b>Model</b> ``` room = {name: room_name} ```
 * @param class_id {id}
@@ -21,7 +38,7 @@ rooms.createToClass = function(room, class_id, device, rawToken, token) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
       if (credential.device !== device) resolve(responses.invalidParameters("device"));
-      return classesDAO.findWithEmployeeProfileAndClassId(token.profile, class_id)
+      else classesDAO.findWithEmployeeProfileAndClassId(token.profile, class_id)
       .then(function(ids){
         return roomsDAO.create(room, class_id)
         .then(function(room_id){

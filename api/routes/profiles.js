@@ -38,6 +38,36 @@ router.get("/me", function(req, res, next) {
 	});
 });
 
+router.put("/me", function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.token === undefined ) missingParameters.push("token");
+		if (req.rawToken === undefined) missingParameters.push("rawToken");
+		if (req.device === undefined) missingParameters.push("device");
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+			var profileInfo = {
+				name: req.body.name,
+				surname: req.body.surname,
+				birthdate: req.body.birthdate,
+				gender: req.body.gender
+			};
+			if (Object.keys(profileInfo).length === 0) resolve(responses.missingParameters("empty"));
+			else profileBO.update(req.token.profile, profileInfo, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
 /**@description update profile */
 router.put("/:profile_id", function(req, res, next) {
 	return new Promise(function(resolve, reject){
@@ -55,36 +85,6 @@ router.put("/:profile_id", function(req, res, next) {
 			};
 			if (Object.keys(profileInfo).length === 0) resolve(responses.missingParameters("empty"));
 			else profileBO.update(req.params.profile_id, profileInfo, req.device, req.rawToken, req.token)
-			.then(function(resp) {
-				resolve(resp);
-			}).catch(function(err) {
-				reject(err);
-			});
-		}
-	}).then(function(resp) {
-		res.status(resp.code).json(resp.json);
-	}).catch(function(err) {
-		var resp = responses.internalError(err);
-		res.status(resp.code).json(resp.json);
-	});
-});
-
-router.put("/me", function(req, res, next) {
-	return new Promise(function(resolve, reject){
-		var missingParameters = [];
-		if (req.token === undefined ) missingParameters.push("token");
-		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (req.device === undefined) missingParameters.push("device");
-		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
-		else {
-			var profileInfo = {
-				name: req.body.name,
-				surname: req.body.surname,
-				birthdate: req.body.birthdate,
-				gender: req.body.gender
-			};
-			if (Object.keys(profileInfo).length === 0) resolve(responses.missingParameters("empty"));
-			else profileBO.update(req.token.profile, profileInfo, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {

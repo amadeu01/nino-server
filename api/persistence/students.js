@@ -78,7 +78,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				reject(err); //Connection error, aborts already
 				return;
 			}
-			client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender FROM profiles p, students s WHERE s.room = $1 AND s.profile = p.id', [roomID], function(err, result) {
+			client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.createdAt FROM profiles p, students s WHERE s.room = $1 AND s.profile = p.id', [roomID], function(err, result) {
 				if (err) reject(err); //Error: rejects to BO
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -101,7 +101,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room FROM profiles p, students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_profile_id], function(err, result) {
+			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.createdAt, s.room FROM profiles p, students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND p.id = s.profile', [guardian_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -123,7 +123,7 @@ studentsDAO.findWithRoomId = function(roomID) {
  				 reject(err); //Connection error, aborts already
  				 return;
  			 }
- 			 client.query('SELECT s.id, s.school, s.room FROM profiles p, students s WHERE p.id = $1 AND p.id = s.profile', [profile_id], function(err, result) {
+ 			 client.query('SELECT s.id, s.school, s.room, s.createdAt FROM profiles p, students s WHERE p.id = $1 AND p.id = s.profile', [profile_id], function(err, result) {
  				 if (err) reject(err); //Error: rejects to BO
  				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
  				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -146,7 +146,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT s.id FROM students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND s.profile = $2', [guardian_profile_id, student_profile_id], function(err, result) {
+			 client.query('SELECT s.id, s.createdAt FROM students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND s.profile = $2', [guardian_profile_id, student_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -169,7 +169,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT s.id FROM students s, profiles p WHERE s.school = $1 AND s.profile = p.id AND p.id = $2', [school_id, profile_id], function(err, result) {
+			 client.query('SELECT s.id, s.createdAt FROM students s, profiles p WHERE s.school = $1 AND s.profile = p.id AND p.id = $2', [school_id, profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -185,7 +185,21 @@ studentsDAO.findWithRoomId = function(roomID) {
  * @return guardian {Array<Students>}
  */
  studentsDAO.findWithSchoolAndGuardianProfile = function(school_id, guardian_profile_id) {
-
+	 return new Promise(function (resolve, reject) {
+		 pool.connect(function(err, client, done) {
+			 if (err) {
+				 reject(err); //Connection error, aborts already
+				 return;
+			 }
+			 client.query('SELECT p.id, p.name, p.surname, p.birthdate, p.gender, s.school, s.room, s.createdAt FROM profiles p, students s, guardians_profile_students gs WHERE gs.guardian_profile = $1 AND gs.student = s.id AND p.id = s.profile AND s.school = $2', [guardian_profile_id, school_id], function(err, result) {
+				 if (err) reject(err); //Error: rejects to BO
+				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				 else if (result.name == "error") reject(result); //Some error occured : rejects
+				 else resolve(result.rows); //Executed correctly
+				 done();
+			 });
+		 });
+	 });
  };
  
  /** @method findWithEmployeeProfileAndStudentProfile
@@ -200,7 +214,7 @@ studentsDAO.findWithRoomId = function(roomID) {
 				 reject(err); //Connection error, aborts already
 				 return;
 			 }
-			 client.query('SELECT s.id FROM students s, profiles p, employees e WHERE e.profile = $1 AND s.profile = $2 AND e.school = s.school', [employee_profile_id, student_profile_id], function(err, result) {
+			 client.query('SELECT s.id, s.createdAt FROM students s, profiles p, employees e WHERE e.profile = $1 AND s.profile = $2 AND e.school = s.school', [employee_profile_id, student_profile_id], function(err, result) {
 				 if (err) reject(err); //Error: rejects to BO
 				 else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				 else if (result.name == "error") reject(result); //Some error occured : rejects

@@ -48,16 +48,11 @@ schools.read = function(school_id, device, rawToken, token) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
 			if ((credential.device !== device)) resolve(responses.invalidParameters("device"));
-			return schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
-			.then(function(id){
-				return schoolsDAO.findWithId(school_id)
-				.then(function(school){
-					resolve(responses.success(school));
-				}).catch(function(err){
-					resolve(responses.persistenceError(err));
-				});
+			else schoolsDAO.findWithId(school_id)
+			.then(function(school){
+				resolve(responses.success(school));
 			}).catch(function(err){
-				resolve(responses.invalidPermissions(err));
+				resolve(responses.persistenceError(err));
 			});
     }).catch(function(err){
 			resolve(responses.persistenceError(err));

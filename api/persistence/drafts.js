@@ -18,7 +18,7 @@ drafts.createWithProfiles = function(draft, author_id ,profiles) {
 			transaction.start(client)
 			.then(function() {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO drafts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
+					client.query('INSERT INTO drafts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id, createdAt', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else res(result.rows[0]);
@@ -95,7 +95,7 @@ drafts.findWithProfileAndSchool = function(query) {
 				reject(err);
 				return;
 			}
-			client.query('SELECT d.id, d.message, d.metadata, d.attachment, d.type FROM drafts d, drafts_profiles dp WHERE dp.profile = $1 AND dp.draft = d.id AND d.school = $2 ORDER BY d.createdAt DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
+			client.query('SELECT d.id, d.message, d.metadata, d.attachment, d.type, d.createdAt, d.modified FROM drafts d, drafts_profiles dp WHERE dp.profile = $1 AND dp.draft = d.id AND d.school = $2 ORDER BY d.modified DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
 				if (err) reject(err);
 				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 				else if (result.name == "error") reject(result); //Some error occured : rejects
@@ -127,7 +127,7 @@ drafts.updateDraft = function(draft_id, new_draft, school_id, author_id) {
 				});
 			}).then(function(result) {
 				return new Promise(function(res, rej) {
-					client.query('SELECT id FROM drafts_authors WHERE draft = $1 AND author = $2', [draft_id, author_id], function(err, result) {
+					client.query('SELECT author FROM drafts_authors WHERE draft = $1 AND author = $2', [draft_id, author_id], function(err, result) {
 						if (err) rej(err);
 						else if (result.name == "error") rej(result);
 						else res(result);
@@ -186,7 +186,7 @@ drafts.postDraft = function(draft_id, school_id) {
 				});
 			}).then(function(draft) {
 				return new Promise(function(res, rej) {
-					client.query('INSERT INTO posts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
+					client.query('INSERT INTO posts (message, attachment, school, metadata, type) VALUES ($1, $2, $3, $4, $5) RETURNING id, createdAt', [draft.message, draft.attachment, draft.school, draft.metadata, draft.type], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
@@ -246,13 +246,13 @@ drafts.postDraft = function(draft_id, school_id) {
 						}
 					}
 				});
-			}).then(function(result) {
+			}).then(function(post) {
 				return new Promise(function(res, rej) {
 					client.query('DELETE FROM drafts WHERE id = $1 AND school = $2', [draft_id, school_id], function(err, result) {
 						if (err) rej (err);
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
-							res(result);
+							res(post);
 						}
 					});
 				});
@@ -260,7 +260,7 @@ drafts.postDraft = function(draft_id, school_id) {
 				return transaction.commit(client)
 				.then(function() {
 					done();
-					resolve(result); //Ended transaction and resolved to BO
+					resolve({post: result}); //Ended transaction and resolved to BO
 				}).catch(function(err) {
 					done(err);
 					reject(err); //Error on transaction, reject to BO

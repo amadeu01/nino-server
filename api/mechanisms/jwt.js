@@ -3,9 +3,22 @@
 * @module mechanisms/jwt
 */
 
+var fs = require('fs');
 var jwt = require('jsonwebtoken');
 var responses = require('./responses.js');
-var jwtSecret = 'neveperocoftwvamoninow'; //TODO: generate SHA key
+
+var privateKey = fs.readFileSync(__dirname + '/jwt.key');
+var publicKey = fs.readFileSync(__dirname + '/jwt.key.pub.pem');
+
+var signOptions = {
+	expiresIn: 3600, //1 hour
+	algorithm: 'RS256'
+}
+
+var verifyOptions = {
+	clockTolerance: 300,
+	algorithms: ['RS256']
+}
 
 module.exports = {
 	/**
@@ -14,9 +27,7 @@ module.exports = {
 	* @return promise {Promise} Returns promise with token
 	*/
 	create: function(tokenData) {
-		var token = jwt.sign(tokenData, jwtSecret, {
-      expiresIn: 14400 // expires in 24 hours
-    });
+		var token = jwt.sign(tokenData, privateKey, signOptions);
 		return new Promise(function(resolve, reject) {resolve(token);});
 	},
 	/**
@@ -26,15 +37,13 @@ module.exports = {
 	*/
 	renew: function(token) {
 		return new Promise(function (resolve, reject) {
-	    jwt.verify(token, jwtSecret, function(err, decoded) {
+	    jwt.verify(token, publicKey, verifyOptions, function(err, decoded) {
 	      if (err) {
-					reject(responses.invalidCredential(JSON.stringify(err)));
+					reject(responses.invalidCredential(err));
 	      } else {
 					delete decoded.iat;
 					delete decoded.exp;
-					var newToken = jwt.sign(decoded, jwtSecret, {
-			      expiresIn: 14400 // expires in 24 hours
-			    });
+					var newToken = jwt.sign(decoded, privateKey, signOptions);
 					resolve(newToken);
 	      }
 	    });
@@ -48,8 +57,9 @@ module.exports = {
 	*/
 	validate: function(token, client) {
 	  return new Promise(function (resolve, reject) {
-	    jwt.verify(token, jwtSecret, function(err, decoded) {
+	    jwt.verify(token, publicKey, verifyOptions, function(err, decoded) {
 	      if (err) {
+			console.log(err);
 					reject(err);
 	      } else {
 					resolve(decoded);

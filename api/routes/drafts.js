@@ -114,7 +114,7 @@ router.post('/:draft_id', function(req, res) {
 		if (req.body.school === undefined) missingParameters.push("school");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			draftsBO.postDraft(req.params.draft_id, req.body.school, req.device, req,rawToken, req.token)
+			draftsBO.postDraft(req.params.draft_id, req.body.school, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {
