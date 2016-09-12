@@ -236,6 +236,24 @@ var postsDAO = {
 		});
 	},
 	
+	findPostsWithProfileAndSchoolAndType : function(query) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT p.id, p.message, p.metadata, p.attachment, p.type, p.date FROM posts p, posts_profiles pp WHERE pp.profile = $1 AND pp.post = p.id AND p.school = $2 AND p.type = $5 ORDER BY p.date DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset, query.type], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
+
 	findPostsWithProfileAndSchool : function(query) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
@@ -243,25 +261,25 @@ var postsDAO = {
 					reject(err);
 					return;
 				}
-				client.query('SELECT p.message, p.metadata, p.attachment, p.type, p.date FROM posts p, posts_profiles pp WHERE pp.profile = $1, pp.post = p.id, p.school = $2 ORDER BY p.date DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
+				client.query('SELECT p.id, p.message, p.metadata, p.attachment, p.type, p.date FROM posts p, posts_profiles pp WHERE pp.profile = $1 AND pp.post = p.id AND p.school = $2 ORDER BY p.date DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset], function(err, result) {
 					if (err) reject(err);
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects
-					else resolve(result.rows[0]); //Returns what was found
+					else resolve(result.rows); //Returns what was found
 					done();
 				});
 			});
 		});
 	},
 	
-	findPostsWithProfileId: function(profile_id, limit, offset) {
+	findPostsWithProfileId: function(query) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
 				if (err) {
 					reject(err);
 					return;
 				}
-				client.query('SELECT p.id, p.message, p.metadata, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1 ORDER BY p.date DESC LIMIT $2 OFFSET $3', [profile_id, limit, offset], function(err, result) {
+				client.query('SELECT p.id, p.message, p.metadata, p.type, p.date, p.attachment FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.profile = $1 ORDER BY p.date DESC LIMIT $2 OFFSET $3', [query.profile_id, query.limit, query.offset], function(err, result) {
 					if (err) reject(err);
 					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
 					else if (result.name == "error") reject(result); //Some error occured : rejects

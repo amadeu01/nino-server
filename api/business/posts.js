@@ -128,36 +128,45 @@ posts.delete = function(post_id, author_id, profiles, device, rawToken, token) {
  * @return promise {Promise} returns posts' id and author's id
  */
 
-posts.readForSchoolAndProfile = function(school_id, profile_id, device, rawToken, token) {
-  return new Promise(function(resolve, reject) {
-    return credentialDAO.read(rawToken)
-    .then(function(credential){
+posts.readForSchoolAndProfile = function(query, device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+		return credentialDAO.read(rawToken)
+		.then(function(credential){
 			if (credential.device !== device) resolve(responses.invalidParameters("device"));
-			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, school_id)
-      .then(function(resp) {
-				postsDAO.findPostsWithProfileAndSchool(school_id, profile_id)
-	      .then(function(result){
-	        resolve(responses.success(result));
-	      }).catch(function(err){
-	        resolve(responses.persistenceError(err));
-	      });
+			else schoolsDAO.findWithEmployeeProfileAndSchool(token.profile, query.school_id)
+			.then(function(resp) {
+				if(query.type !== undefined) {
+					postsDAO.findPostsWithProfileAndSchoolAndType(query)
+					.then(function(result){
+						resolve(responses.success(result));
+					}).catch(function(err){
+						resolve(responses.persistenceError(err));
+					});
+				} else {
+					postsDAO.findPostsWithProfileAndSchool(query)
+					.then(function(result){
+						resolve(responses.success(result));
+					}).catch(function(err){
+						resolve(responses.persistenceError(err));
+					});
+				}
 			}).catch(function(err) {
 				resolve(responses.invalidPermissions(err));
 			});
-    }).catch(function(err){
-      resolve(responses.persistenceError(err));
-    });
-  });
+		}).catch(function(err){
+			resolve(responses.persistenceError(err));
+		});
+	});
 };
 
-posts.readForProfile = function(profile_id, device, rawToken, token) {
+posts.readForProfile = function(query, device, rawToken, token) {
   return new Promise(function(resolve, reject) {
     return credentialDAO.read(rawToken)
     .then(function(credential){
 			if (credential.device !== device) resolve(responses.invalidParameters("device"));
-			else studentsDAO.findWithGuardianProfileAndStudentProfile(token.profile, profile_id)
+			else studentsDAO.findWithGuardianProfileAndStudentProfile(token.profile, query.profile_id)
 			.then(function(resp) {
-	      postsDAO.findPostsWithProfileId(profile_id)
+	      postsDAO.findPostsWithProfileId(query)
 	      .then(function(result){
 	        resolve(responses.success(result));
 	      }).catch(function(err){

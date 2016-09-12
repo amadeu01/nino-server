@@ -58,8 +58,9 @@ router.get('/schools/:school_id/profiles/:profile_id', function(req, res) {
 			var query = {
 				profile_id: req.params.profile_id,
 				school_id: req.params.school_id,
-				offset: req.body.params | 0,
-				limit: req.body.limit | 10 
+				offset: req.query.offset | 0,
+				limit: req.query.limit | 10, 
+				type: req.query.type
 			}
 			draftsBO.findWithProfileAndSchool(query, req.device, req.rawToken, req.token)
 			.then(function(resp) {
