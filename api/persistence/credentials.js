@@ -85,7 +85,30 @@ var credentialServices = {
 				});
 			});
 		});
-	}
+	},
+	
+	/** @method logout
+	 *	@description Read a <tt>Credential</tt> provided a <tt>Token</tt>
+	 *	@param token <Token>
+	 *	@return credential <Credential>
+	 */
+	logout: function(device, token) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('DELETE FROM credentials WHERE device = $1 AND token = $2', [device, token], function(err, result) {
+					if (err) reject (err);
+					else if (result.rowCount === 0) reject (result); //Reject here - will stop transaction
+					else if (result.name == "error") reject (result); //Some error occured : rejects
+					else resolve (result.rows[0]);
+					done();
+				});
+			})
+		});
+	},
 };
 
 module.exports = credentialServices;
