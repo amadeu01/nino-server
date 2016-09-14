@@ -14,7 +14,7 @@ messages.postMessage = function(post, author, target) {
 		schoolsDAO.findWithEmail(author)
 		.then(function(school) {
 			roomsDAO.findWithSchoolAndName(school.id, target.split("@")[0].split(".")[0])
-			.then(function(rooms)) {
+			.then(function(rooms) {
 				if (rooms.length > 1) {
 					resolve(responses.invalidParameters("multiple_rooms_found"));
 				} else {
@@ -35,11 +35,10 @@ messages.postMessage = function(post, author, target) {
 						resolve(responses.persistenceError(err));
 					})
 				}
-			}.catch(function(err) {
+			}).catch(function(err) {
 				resolve(responses.inexistentRegister("room_not_found"));
 			})
-		})
-		.catch(function(err) {
+		}).catch(function(err) {
 			resolve(responses.inexistentRegister("school_not_found"));
 		})
 	});

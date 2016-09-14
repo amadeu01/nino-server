@@ -24,6 +24,7 @@ var rooms = require('./routes/rooms');
 var schools = require('./routes/schools');
 var students = require('./routes/students');
 var contents = require('./routes/contents');
+var messages = require('./routes/messages');
 
 var jwt = require('./mechanisms/jwt');
 
@@ -103,6 +104,7 @@ app.use('/rooms', rooms);
 app.use('/schools', schools);
 app.use('/students', students);
 // app.use('/contents', contents);
+// app.use('/messages', messages);
 
 
 // catch 404 and forward to error handler

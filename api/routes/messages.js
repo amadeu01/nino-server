@@ -4,10 +4,18 @@ var express = require('express');
 var router = express.Router();
 var responses = require('../mechanisms/responses.js');
 var messagesBO = require('../business/messages.js');
+var dns = require('dns');
 var app = express();
 
 router.post('/', function(req, res, next) {
-	console.log(req.headers);
+	var ip = req.connection.remoteAddress;
+	console.log(ip);
+	var ipv4 = ip.match(/([0-9]{3}\.[0-9]{3}\.[0-9]{3}\.[0-9]{3})/)[0]
+	console.log(ipv4);
+	dns.reverse(ipv4, function(err, hostnames) {
+		console.log(err);
+		console.log(hostnames);
+	});
 	res.send("ok");
 	return;
 	return new Promise(function(resolve, reject) {
