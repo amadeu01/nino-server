@@ -136,6 +136,25 @@ var schoolServices = {
 			});
 		});
 	},
+	
+	findWithEmail: function(email) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT id, owner FROM schools WHERE email = $2', [email], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows[0]); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+	
 	/** @method findWithEmployeeProfileAndSchool
    * @description Finds a school with owner and school id
    * @param profile_id {id}
