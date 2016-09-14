@@ -144,13 +144,34 @@ router.post('/authentication', function(req, res) {
 router.delete('/authentication', function(req, res){
 	return new Promise (function (resolve, reject){
 		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
-		if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else if (req.token === undefined) resolve(responses.missingParameters('token'));
 		else accountsBO.logout(req.device, req.rawToken, req.token)
 		.then(function(resp){
 			resolve(resp);
 		}).catch(function(err){
 			reject(err);
 		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+ * @description Set the status for notifications on a specific device
+ */
+router.put('/notifications/me', function(req, res) {
+	return new Promise (function(resolve, reject) {
+		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
+		else if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else accountsBO.updateNotifications(req.body.token, req.device, req.rawToken, req.token)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
 	}).then(function(resp) {
 		res.status(resp.code).json(resp.json);
 	}).catch(function(err) {
