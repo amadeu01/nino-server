@@ -89,6 +89,24 @@ var roomServices = {
 		});
 	},
 	
+	findWithSchoolAndName: function(school_id, name) {
+		return new Promise(function (resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err); //Connection error, aborts already
+					return;
+				}
+				client.query('SELECT r.id FROM rooms r, classes c, schools s WHERE s.id = $1 AND r.name = $2 AND r.class = c.id AND c.school = s.id', [school_id], function(err, result) {
+					if (err) reject(err); //Error: rejects to BO
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Executed correctly
+					done();
+				});
+			});
+		});
+	},
+	
 	findWithId: function(room_id) {
 		return new Promise(function (resolve, reject) {
 			pool.connect(function(err, client, done) {
