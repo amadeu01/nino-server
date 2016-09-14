@@ -54,6 +54,10 @@ app.use(function(req, res, next) {
 
 // Gets user
 app.use(function(req, res, next) {
+	if (req.url === "/messages"){
+		next();
+		return;
+	}
 	var device = req.useragent.platform + " " + req.useragent.os;
 	if (device) {
 		req.device = device;
