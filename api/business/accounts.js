@@ -9,6 +9,7 @@ var uid = require('uid-safe');
 var mail = require('../mechanisms/mail.js');
 var accounts = {};
 var ninoCrypto = require("../mechanisms/crypto.js");
+var sns = require("../mechanisms/AWSSNS.js");
 
 
 /** @method createNewUser
@@ -253,6 +254,28 @@ accounts.logout = function(device, rawToken, token) {
 		}).catch(function(err){
 			resolve(responses.persistenceError(err));
 		});
+	});
+};
+
+accounts.updateNotifications = function(deviceToken, device, rawToken, token) {
+	return new Promise(function(resolve, reject) {
+		if (deviceToken) {
+			sns.createDevPlatformEndpoint(deviceToken)
+			.then(function(snsID) {
+				return credentialsDAO.updateNotification(true, snsID.EndpointArn, device, rawToken);
+			}).then(function(response){
+				resolve(responses.success(response));
+			}).catch(function(err){
+				resolve(responses.persistenceError(err));
+			});
+		} else {
+			credentialsDAO.updateNotification(false, null, device, rawToken)
+			.then(function(response){
+				resolve(responses.success(response));
+			}).catch(function(err){
+				resolve(responses.persistenceError(err));
+			});
+		}
 	});
 };
 
