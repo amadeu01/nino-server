@@ -106,6 +106,24 @@ drafts.findWithProfileAndSchool = function(query) {
 	});
 };
 
+drafts.findWithProfileAndSchoolAndType = function(query) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			client.query('SELECT d.id, d.message, d.metadata, d.attachment, d.type, d.createdAt, d.modified FROM drafts d, drafts_profiles dp WHERE dp.profile = $1 AND dp.draft = d.id AND d.school = $2 AND d.type = $5 ORDER BY d.modified DESC LIMIT $3 OFFSET $4', [query.profile_id, query.school_id, query.limit, query.offset, query.type], function(err, result) {
+				if (err) reject(err);
+				else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+				else if (result.name == "error") reject(result); //Some error occured : rejects
+				else resolve(result.rows); //Returns what was found
+				done();
+			});
+		});
+	});
+}
+
 drafts.updateDraft = function(draft_id, new_draft, school_id, author_id) {
 	return new Promise(function (resolve, reject) {
 		pool.connect(function(err, client, done) {
@@ -191,6 +209,8 @@ drafts.postDraft = function(draft_id, school_id) {
 						else if (result.name == 'error') rej(result); //Some error occured : rejects
 						else {
 							var post = draft;
+							post.profiles = post.profiles.split(',');
+							post.authors = post.authors.split(',');
 							post.id = result.rows[0].id;
 							res(post);
 						}

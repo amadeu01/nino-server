@@ -107,7 +107,7 @@ router.delete('/:post_id', function(req, res, next) {
 
 /** @description get post's for profile
 */
-router.get("/schools/:school_id/profiles/:profiles_id", function(req, res, next) {
+router.get("/schools/:school_id/profiles/:profile_id", function(req, res, next) {
 	return new Promise(function(resolve, reject){
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
@@ -115,7 +115,14 @@ router.get("/schools/:school_id/profiles/:profiles_id", function(req, res, next)
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			postsBO.readForSchoolAndProfile(req.params.school_id, req.params.profile_id, req.device, req.rawToken, req.token)
+			var query = {
+                                profile_id: req.params.profile_id,
+                                school_id: req.params.school_id,
+                                offset: req.query.offset | 0,
+                                limit: req.query.limit | 10,
+                                type: req.query.type
+                        }
+			postsBO.readForSchoolAndProfile(query, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {
@@ -141,7 +148,13 @@ router.get("/profiles/:profile_id", function(req, res, next) {
 		if (req.device === undefined) missingParameters.push("device");
 		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
-			postsBO.readForProfile(req.params.profile_id, req.device, req.rawToken, req.token)
+			var query = {
+                                profile_id: req.params.profile_id,
+                                offset: req.query.offset | 0,
+                                limit: req.query.limit | 10,
+                                type: req.query.type
+                        }
+			postsBO.readForProfile(query, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {

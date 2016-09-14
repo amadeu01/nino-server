@@ -86,7 +86,7 @@ module.exports = {
 					return new Response(500, "unknown", 201); //Default, unknown error
 			}
 		} else if (err.rowCount === 0){
-			return new Response(200, err.rows, 0);
+			return new Response(200, {data: []}, null);
 		} else {
 			console.log("ERROR>>" + data + "<<");
 			return new Response(500, "unknown", 201); //Default, unknown error

@@ -75,8 +75,7 @@ accounts.createNewUserTest = function(account, profile) {
  */
 accounts.confirmAccount = function(confirmationHash, device, password) {
 	return new Promise(function(resolve, reject){
-		if (password.length < 8) resolve(responses.invalidParameters("password"));
-		else if (password.match(/[0-9]+/) === null) resolve(responses.invalidParameters("password"));
+		if (password.length < 8) resolve(responses.invalidParameters("password_len"));
 		else {
 			var salt = ninoCrypto.createSalt();
 			password = ninoCrypto.hash(password, salt);
