@@ -7,6 +7,7 @@ var schoolsDAO = require('../persistence/schools.js');
 var studentsDAO = require('../persistence/students.js');
 var credentialDAO = require('../persistence/credentials.js');
 var draftsDAO = require('../persistence/drafts.js');
+var postsBO = require('../business/posts.js');
 var drafts = {};
 
 drafts.create = function(draft, author_id, profiles, device, rawToken, token) {
@@ -122,6 +123,7 @@ drafts.postDraft = function(draft_id, school_id, device, rawToken, token) {
 			.then(function(resp) {
 				draftsDAO.postDraft(draft_id, school_id)
 				.then(function(resp) {
+					postsBO.notifyTargetsOfPost(resp.post.id);
 					resolve(responses.success(resp));
 				}).catch(function(err) {
 					resolve(responses.persistenceError(err));
