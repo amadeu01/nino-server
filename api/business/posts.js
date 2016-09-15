@@ -6,6 +6,7 @@ var postsDAO = require('../persistence/posts.js');
 var credentialDAO = require('../persistence/credentials.js');
 var schoolsDAO = require('../persistence/schools.js');
 var studentsDAO = require('../persistence/students.js');
+var sns = require('../mechanisms/AWSSNS.js'); 
 var posts = {};
 
 /** @method create
@@ -40,6 +41,7 @@ posts.create = function(post, author_id, profiles, device, rawToken, token) {
 	        var createThePost = function() {
 		        postsDAO.createWithProfiles(post, author_id, profiles)
 		        .then(function(result){
+							posts.notifyTargetsOfPost(result.post.id);
 		          resolve(responses.success(result));
 		        }).catch(function(err){
 		          resolve(responses.persistenceError(err));
@@ -253,6 +255,30 @@ posts.markWhoRead = function(school_id, post_id, reader_profile_id, device, rawT
     });
   });
 };
+
+posts.notifyTargetsOfPost = function(post_id) {
+	postsDAO.getPostTargets(post_id)
+	.then(function(targets) {
+		var findThen = function(devices) {
+			sns.notifyNewPostToDevices(devices, "Voce tem um novo post.")
+			.then(function(resp) {
+				console.log(resp);
+			}).catch(function(err) {
+				console.log(err);
+			});
+		};
+		var findCatch = function(err) {
+			console.log("ERR>>",err);
+		};
+		for (var i in targets) {
+			credentialDAO.findNotificationIDForStudentsGuardians(targets[i])
+			.then(findThen)
+			.catch(findCatch);
+		};
+	}).catch(function(err) {
+		console.log("ERR>>",err);
+	}) 
+}
 
 
 

@@ -149,6 +149,23 @@ var credentialServices = {
 			});
 		});
 	},
+	
+	findNotificationIDForStudentsGuardians: function(student_profile_id) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT c.notificationID FROM credentials c, accounts a, profiles p, guardians_profile_students gps, students s WHERE s.id = gps.student AND gps.guardian_profile = p.id AND a.profile = p.id AND c.account = a.id AND s.profile = $1 AND c.notifiable = $2', [student_profile_id, true], function(err, result) {
+					if (err) reject (err);
+					else if (result.name == "error") reject (result); //Some error occured : rejects
+					else resolve (result.rows);
+					done();
+				});
+			})
+		});
+	},
 };
 
 module.exports = credentialServices;
