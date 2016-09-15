@@ -166,7 +166,7 @@ router.put('/notifications/me', function(req, res) {
 	return new Promise (function(resolve, reject) {
 		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
 		else if (req.token === undefined) resolve(responses.missingParameters('token'));
-		else accountsBO.updateNotifications(req.body.token, req.device, req.rawToken, req.token)
+		else accountsBO.updateNotifications(req.body.deviceToken, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
 			}).catch(function(err) {

@@ -262,14 +262,17 @@ accounts.updateNotifications = function(deviceToken, device, rawToken, token) {
 		if (deviceToken) {
 			sns.createDevPlatformEndpoint(deviceToken)
 			.then(function(snsID) {
-				return credentialsDAO.updateNotification(true, snsID.EndpointArn, device, rawToken);
-			}).then(function(response){
-				resolve(responses.success(response));
-			}).catch(function(err){
-				resolve(responses.persistenceError(err));
+				credentialDAO.updateNotification(true, snsID.EndpointArn, device, rawToken)
+				.then(function(response){
+					resolve(responses.success(response));
+				}).catch(function(err){
+					resolve(responses.persistenceError(err));
+				});
+			}).catch(function(err) {
+				resolve(responses.internalError(err));
 			});
 		} else {
-			credentialsDAO.updateNotification(false, null, device, rawToken)
+			credentialDAO.updateNotification(false, null, device, rawToken)
 			.then(function(response){
 				resolve(responses.success(response));
 			}).catch(function(err){

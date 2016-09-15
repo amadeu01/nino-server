@@ -4,6 +4,7 @@
 */
 
 var aws = require('aws-sdk');
+aws.config.update({region:'sa-east-1'});
 
 var sns = new aws.SNS();
 
@@ -13,14 +14,32 @@ awsMec.sendToGroup = function(group_id) {
 	
 };
 
-awsMec.notifyNewPostToDevices = function(device_list) {
+awsMec.notifyNewPostToDevices = function(device_listi, message) {
 	return new Promise(function(resolve, reject) {
 		var failure = 0;
 		var success = 0;
 		for (var i in device_list) {
 			var params = {
-			  Message: 'Voce tem um post novo', /* required */
-			  TargetArn: device_list[i]
+				Message: {
+					default: message,
+					APNS_SANDBOX: {
+						aps: {
+							alert: message
+						}
+					},
+					APNS: {
+						aps: {
+							alert: message
+						}
+					},
+					GCM: {
+						data: {
+							message: message
+						}
+					}
+				}, /* required */
+				TargetArn: device_list[i],
+				MessageStructure: "json"
 			};
 			sns.publish(params, function(err, data) {
 			  if (err) {
