@@ -69,6 +69,76 @@ accounts.createNewUserTest = function(account, profile) {
 	});
 };
 
+/** @method recoverAccount 
+ * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
+ * @param hash {string}
+ * @param device {string} it defines from which plataform and os the request come from
+ * @param password {string} 
+ */
+accounts.recoverAccount = function(hash, device, password) {
+	return new Promise(function(resolve, reject) {
+		if (hash == null) reject(responses.missingParameters('hash'));
+		else if (password.length < 8) resolve(responses.invalidParameters("password_len"))
+		else {
+			var splited = hash.split('-');
+			var timestamp = splited[splited.length - 1];
+			var now = new Date().getTime();
+
+			if (now - timestamp < 86400000) { //Check if more than one day has passed
+				var salt = ninoCrypto.createSalt();
+				password = ninoCrypto.hash(password, salt);
+				return accountsDAO.recoverAccount(hash, password, salt)
+				.then(function(userInfo) {
+					var tokenData = {
+						profile: userInfo.profile,
+						device: device,
+						account: userInfo.id
+					};
+					return jwt.create(tokenData)
+					.then(function(token) {
+						return credentialDAO.logIn(device, token, userInfo.id)
+						.then(function(result) {
+							var res = {token: token};
+							resolve(responses.success(res));
+						}).catch(function(err) {
+							resolve(responses.persistenceError(err));
+						});
+					}).catch(function(err){
+						resolve(responses.internalError(err));
+					});
+				}).catch(function(err){
+					resolve(responses.persistenceError(err));
+				});
+			} else resolve(responses.invalidParameters("hash_timeout"));
+		}
+	});
+}
+
+/** @method setLostAccount 
+ * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
+ * @param hash {string}
+ * @param device {string} it defines from which plataform and os the request come from
+ * @param password {string} 
+ */
+accounts.setLostAccount = function(email, device) {
+	return new Promise(function(resolve, reject) {
+		if (!validator.isEmail(email)) resolve(responses.invalidParameters("email"));
+		else {
+			var hash = uid.sync(100);
+			var now = new Date().getTime();
+			var nHash = hash + '-' + now;
+			return accountsDAO.setLostAccount(email, nHash)
+			.then(function(account) {
+				mail.sendUserRecover(email, {hash: nHash});	
+				resolve(responses.success());
+			}).catch(function(err) {
+				resolve(responses.persistenceError(err));
+			});
+		}
+	});	
+}
+
+
 /** @method confirmAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param confirmationHash {string}
@@ -257,20 +327,24 @@ accounts.logout = function(device, rawToken, token) {
 	});
 };
 
-accounts.updateNotifications = function(deviceToken, device, rawToken, token) {
+accounts.updateNotifications = function(deviceToken, device, rawToken, token, isiOS, isAndroid, host) {
 	return new Promise(function(resolve, reject) {
 		if (deviceToken) {
-			sns.createDevPlatformEndpoint(deviceToken)
-			.then(function(snsID) {
-				credentialDAO.updateNotification(true, snsID.EndpointArn, device, rawToken)
-				.then(function(response){
-					resolve(responses.success(response));
-				}).catch(function(err){
-					resolve(responses.persistenceError(err));
-				});
-			}).catch(function(err) {
-				resolve(responses.internalError(err));
-			});
+			if (isiOS) {
+				if (host === "development.ninoapp.com.br:5000") {
+					sns.createDevPlatformEndpoint(deviceToken)
+					.then(function(snsID) {
+						credentialDAO.updateNotification(true, snsID.EndpointArn, device, rawToken)
+						.then(function(response){
+							resolve(responses.success(response));
+						}).catch(function(err){
+							resolve(responses.persistenceError(err));
+						});
+					}).catch(function(err) {
+						resolve(responses.internalError(err));
+					});
+				}
+			}
 		} else {
 			credentialDAO.updateNotification(false, null, device, rawToken)
 			.then(function(response){

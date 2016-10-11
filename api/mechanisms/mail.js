@@ -22,6 +22,29 @@ var data = {
 *@class
 */
 var MailgunServices = {
+
+	sendUserRecover: function(userMail, parameters) {
+		var promise = new Promise( function(resolve, reject) {
+			app.render('recover_email', parameters, function(error, html) {
+				if (error) reject(error);
+				var message = {
+				  from: 'Nino <naoresponda@ninoapp.com.br>',
+				  to: userMail,
+				  subject: 'Recuperacao de Senha',
+				  html: html
+				};
+				mailgun.messages().send(message, function (error, message) {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(message);
+					}
+				});
+			});
+		});
+		return promise;
+	},
+
   /**
   * @function
   * @param userMail

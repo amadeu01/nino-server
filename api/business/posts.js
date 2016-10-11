@@ -271,7 +271,7 @@ posts.notifyTargetsOfPost = function(post_id) {
 			console.log("ERR>>",err);
 		};
 		for (var i in targets) {
-			credentialDAO.findNotificationIDForStudentsGuardians(targets[i])
+			credentialDAO.findNotificationIDForStudentsGuardians(targets[i].profile)
 			.then(findThen)
 			.catch(findCatch);
 		};

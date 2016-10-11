@@ -60,6 +60,104 @@ accountsDAO.createNewUser = function(account, profile) {
 		});
 	});
 };
+
+/** @method recoverAccount 
+* @description Sets lost hash for account, making it possible to reset password 
+* @param hash {string} hash to use when reseting password 
+* @param password {string} new password 
+* @param salt {string} salt of the password
+* @return Promise {Promise} if successful, returns responde wih account information.
+*/
+accountsDAO.recoverAccount = function(hash, password, salt)  {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Encaminha pro BO
+				return;
+			}
+			transaction.start(client)
+			.then(function() {
+				return new Promise(function(res, rej) {
+					client.query('UPDATE accounts SET (password, salt, passwordHash) = ($1, $2, $3) WHERE passwordHash = $4 RETURNING id, profile',[password, salt, undefined, hash], function(err, result) {
+						if (err) rej(err);
+						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
+							res(result.rows[0]);
+						} //Updated one row, user confirmed! - proceed
+					});
+				});
+			}).then(function(result) {
+				return transaction.commit(client)
+				.then(function() {
+					done();
+					resolve(result); //Ended transaction and resolved to BO
+				}).catch(function(err) {
+					done(err);
+					reject(err); //Error on transaction, reject to BO
+				});
+			}).catch(function(err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					reject(err); //Reject error to BO
+				}).catch(function(err2) {
+					done(err2);
+					reject(err2); //Reject other error to BO
+				});
+			});
+		});
+	});
+};
+
+/** @method setLostAccount 
+* @description Sets lost hash for account, making it possible to reset password 
+* @param hash {string} hash to use when reseting password 
+* @param email {string} email of the account to have the password reseted
+* @return Promise {Promise} if successful, returns responde wih account information.
+*/
+accountsDAO.setLostAccount = function(email, hash) {
+	return new Promise(function (resolve, reject) {
+		pool.connect(function(err, client, done) {
+			if (err) {
+				reject(err); //Encaminha pro BO
+				return;
+			}
+			transaction.start(client)
+			.then(function() {
+				return new Promise(function(res, rej) {
+					client.query('UPDATE accounts SET (passwordHash) = ($1) WHERE email = $2 RETURNING id, profile',[hash, email], function(err, result) {
+						if (err) rej(err);
+						else if (result.rowCount === 0) rej(result); //Reject here - will stop transaction
+						else if (result.name == "error") rej(result); //Some error occured : rejects
+						else {
+							res(result.rows[0]);
+						} //Updated one row, user confirmed! - proceed
+					});
+				});
+			}).then(function(result) {
+				return transaction.commit(client)
+				.then(function() {
+					done();
+					resolve(result); //Ended transaction and resolved to BO
+				}).catch(function(err) {
+					done(err);
+					reject(err); //Error on transaction, reject to BO
+				});
+			}).catch(function(err) {
+				return transaction.abort(client)
+				.then(function() {
+					done();
+					reject(err); //Reject error to BO
+				}).catch(function(err2) {
+					done(err2);
+					reject(err2); //Reject other error to BO
+				});
+			});
+		});
+	});
+};
+
 /** @method confirmAccount
 * @description find account with hash and applied true to <tt>account.confirmed</tt>.
 * @param confirmationHash {string} hash when the model is created on the data.
@@ -124,18 +222,6 @@ accountsDAO.getHash = function(email) {
 		});
 	});
 }
-
-/** @method recoverAccount
-* @param email {string}
-* @return Promise {Promise}
-*/
-accountsDAO.recoverAccount = function(email) {
- //return new Promise(function (resolve, reject) {
- //	 transaction.start();
- //	 transaction.commit();
- //	 resolve(new response(200)); //success
- //});
-};
 
 /** @method findWithHash
  * @param confirmationHash {string}
