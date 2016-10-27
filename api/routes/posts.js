@@ -121,7 +121,7 @@ router.get("/schools/:school_id/profiles/:profile_id", function(req, res, next) 
                                 offset: req.query.offset | 0,
                                 limit: req.query.limit | 10,
                                 type: req.query.type
-                        }
+                        };
 			postsBO.readForSchoolAndProfile(query, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);
@@ -153,7 +153,7 @@ router.get("/profiles/:profile_id", function(req, res, next) {
                                 offset: req.query.offset | 0,
                                 limit: req.query.limit | 10,
                                 type: req.query.type
-                        }
+                        };
 			postsBO.readForProfile(query, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);

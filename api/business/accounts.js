@@ -77,8 +77,8 @@ accounts.createNewUserTest = function(account, profile) {
  */
 accounts.recoverAccount = function(hash, device, password) {
 	return new Promise(function(resolve, reject) {
-		if (hash == null) reject(responses.missingParameters('hash'));
-		else if (password.length < 8) resolve(responses.invalidParameters("password_len"))
+		if (hash === null || hash === undefined) reject(responses.missingParameters('hash'));
+		else if (password.length < 8) resolve(responses.invalidParameters("password_len"));
 		else {
 			var splited = hash.split('-');
 			var timestamp = splited[splited.length - 1];
@@ -112,7 +112,7 @@ accounts.recoverAccount = function(hash, device, password) {
 			} else resolve(responses.invalidParameters("hash_timeout"));
 		}
 	});
-}
+};
 
 /** @method setLostAccount 
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
@@ -132,11 +132,15 @@ accounts.setLostAccount = function(email, device) {
 				mail.sendUserRecover(email, {hash: nHash});	
 				resolve(responses.success());
 			}).catch(function(err) {
-				resolve(responses.persistenceError(err));
+				if (err.rowCount === 0) {
+					resolve(responses.inexistentRegister());
+				} else {
+					resolve(responses.persistenceError(err));
+				}
 			});
 		}
 	});	
-}
+};
 
 
 /** @method confirmAccount
@@ -261,10 +265,10 @@ accounts.logIn = function(email, password, device) {
 						resolve(responses.persistenceError(err));
 					});
 				}).catch(function(err) {
-					resolve(responses.internalError(err));
+					resolve(responses.internalError());
 				});
 			}).catch(function(err){
-				resolve(responses.inexistentRegister(err));
+				resolve(responses.inexistentRegister());
 			});
 		}
 	});

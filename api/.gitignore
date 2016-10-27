@@ -1,6 +1,5 @@
 node_modules
 .tmp
-nino-doc
 *.key
 *.pem
 *.csr

@@ -106,7 +106,7 @@ var credentialServices = {
 					else resolve (result.rows[0]);
 					done();
 				});
-			})
+			});
 		});
 	},
 	
@@ -163,7 +163,7 @@ var credentialServices = {
 					else resolve (result.rows);
 					done();
 				});
-			})
+			});
 		});
 	},
 };

@@ -122,7 +122,7 @@ drafts.findWithProfileAndSchoolAndType = function(query) {
 			});
 		});
 	});
-}
+};
 
 drafts.updateDraft = function(draft_id, new_draft, school_id, author_id) {
 	return new Promise(function (resolve, reject) {
@@ -297,6 +297,6 @@ drafts.postDraft = function(draft_id, school_id) {
 			});
 		});
 	});	
-}
+};
 
 module.exports = drafts;

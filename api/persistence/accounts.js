@@ -221,7 +221,7 @@ accountsDAO.getHash = function(email) {
 			});
 		});
 	});
-}
+};
 
 /** @method findWithHash
  * @param confirmationHash {string}

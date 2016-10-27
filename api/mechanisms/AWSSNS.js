@@ -18,6 +18,18 @@ awsMec.notifyNewPostToDevices = function(device_listi, message) {
 	return new Promise(function(resolve, reject) {
 		var failure = 0;
 		var success = 0;
+		var snsHandler = function(err, data) {
+			if (err) {
+				failure++;
+				console.log(err, err.stack); // an error occurred
+			}  else {
+				success++;
+				console.log(data);           // successful response
+			}
+			if (success + failure == device_list.length) {
+				resolve({success: success, failure: failure});
+			} 
+		};
 		for (var i in device_list) {
 			var params = {
 				Message: {
@@ -41,19 +53,8 @@ awsMec.notifyNewPostToDevices = function(device_listi, message) {
 				TargetArn: device_list[i],
 				MessageStructure: "json"
 			};
-			sns.publish(params, function(err, data) {
-			  if (err) {
-					failure++;
-					console.log(err, err.stack); // an error occurred
-				}
-			  else {
-					success++;
-					console.log(data);           // successful response
-				}
-				if (success + failure == device_list.length) {
-					resolve({success: success, failure: failure});
-				} 
-			});
+			sns.publish(params, snsHandler); 
+			  
 		}
 	});
 };

@@ -274,11 +274,11 @@ posts.notifyTargetsOfPost = function(post_id) {
 			credentialDAO.findNotificationIDForStudentsGuardians(targets[i].profile)
 			.then(findThen)
 			.catch(findCatch);
-		};
+		}
 	}).catch(function(err) {
 		console.log("ERR>>",err);
-	}) 
-}
+	}); 
+};
 
 
 
