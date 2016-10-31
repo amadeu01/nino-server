@@ -42,7 +42,28 @@ suite('Reset Lost Password', function() {
 		});	
 	});
 
-	test('Reseting password', function() {
+	test('Reseting with invalid password', function() {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT passwordHash FROM accounts WHERE email = $1', ['danilobecke@gmail.com'], function(err, result) {
+					request(app)
+					.post('/accounts/authentication/password_reset/' + result.rows[0].passwordhash)
+					.send({password: 'inval'})
+					.expect(200)
+					.end(function(err, res) {
+						if (res.body.data !== 'password_len' || res.body.error !== 200) reject(res.body);
+						else resolve(res.body);
+					});
+				});
+			});	
+		});
+	});
+
+	test('Reseting with valid password', function() {
 		return new Promise(function(resolve, reject) {
 			var newPassword;
 			pool.connect(function(err, client, done) {
@@ -72,8 +93,7 @@ suite('Reset Lost Password', function() {
 		});
 	});
 
-//Falta tentar resetar com senha invalida
-//Criar metodo de mudar variaveis de tempo e nao mexer com servicos externos tipo mail e AWS
-//Tentar resetar fora do tempo, vide acima
+//TODO; Criar metodo de mudar variaveis de tempo e nao mexer com servicos externos tipo mail e AWS
+//TODO: Tentar resetar fora do tempo, vide acima
 
 });

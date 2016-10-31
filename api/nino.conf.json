@@ -4,6 +4,7 @@
     },
     "source": {
         "include": [
+            "routes/",
             "business/",
             "mechanisms/",
             "persistence/",

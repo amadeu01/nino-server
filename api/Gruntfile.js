@@ -47,6 +47,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('doc', 'Create documentations for Nino', [
 		'clean:nino',
 		'jsdoc:nino',
-		'shell:openDoc'
 	]);
 };

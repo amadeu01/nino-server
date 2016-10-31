@@ -72,6 +72,12 @@ router.post('/', function(req, res, next) {
 	});
 });
 
+/**
+ * @method  /accounts/authentication/password_reset
+ * @description Sends an email to the specified email address on the request with a link to reset the accounts's password
+ * @param	email {string}
+ * @return	If success, body.error is null. The link is valid for 24 hours from the request.
+ */
 router.post('/authentication/password_reset', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters=[];
@@ -95,8 +101,12 @@ router.post('/authentication/password_reset', function(req, res, next) {
 });
 
 /**
-* @description recover a password
-*/
+ * @method /authentication/password_reset/:hash
+ * @description Resets the pasword of the account related to the {hash} with the given {password}
+ * @param	hash {string}
+ * @param	password {string}
+ * @return	If success body.data.token id defined and is the token for that user
+ */
 router.post('/authentication/password_reset/:hash', function(req, res, next) {
 	return new Promise(function(resolve, reject) {
 		var missingParameters=[];

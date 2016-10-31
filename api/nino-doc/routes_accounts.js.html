@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>routes/accounts.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-mechanisms_response-Response.html">Response</a></li><li><a href="module-mechanisms-MailgunServices.html">MailgunServices</a><ul class='methods'><li data-type='method'><a href="module-mechanisms-MailgunServices.html#.sendUserConfirmation">sendUserConfirmation</a></li><li data-type='method'><a href="module-mechanisms-MailgunServices.html#.subscribeToFeed">subscribeToFeed</a></li></ul></li><li><a href="module-persistence_classes-classServices.html">classServices</a></li><li><a href="module-persistence_credentials-credentialServices.html">credentialServices</a></li><li><a href="module-persistence_post-postsDAO.html">postsDAO</a></li><li><a href="module-persistence_profiles-profileServices.html">profileServices</a></li><li><a href="module-persistence_schools-schoolServices.html">schoolServices</a></li></ul><h3>Modules</h3><ul><li><a href="module-business_accounts.html">business/accounts</a><ul class='methods'><li data-type='method'><a href="module-business_accounts.html#~confirmAccount">confirmAccount</a></li><li data-type='method'><a href="module-business_accounts.html#~confirmAccountTest">confirmAccountTest</a></li><li data-type='method'><a href="module-business_accounts.html#~createNewUser">createNewUser</a></li><li data-type='method'><a href="module-business_accounts.html#~createNewUserTest">createNewUserTest</a></li><li data-type='method'><a href="module-business_accounts.html#~findWithHash">findWithHash</a></li><li data-type='method'><a href="module-business_accounts.html#~logIn">logIn</a></li><li data-type='method'><a href="module-business_accounts.html#~logInTest">logInTest</a></li><li data-type='method'><a href="module-business_accounts.html#~logout">logout</a></li><li data-type='method'><a href="module-business_accounts.html#~recoverAccount">recoverAccount</a></li><li data-type='method'><a href="module-business_accounts.html#~setLostAccount">setLostAccount</a></li></ul></li><li><a href="module-business_activities.html">business/activities</a></li><li><a href="module-business_agendas.html">business/agendas</a><ul class='methods'><li data-type='method'><a href="module-business_agendas.html#~createNewUser">createNewUser</a></li></ul></li><li><a href="module-business_classes.html">business/classes</a><ul class='methods'><li data-type='method'><a href="module-business_classes.html#~createNewUser">createNewUser</a></li><li data-type='method'><a href="module-business_classes.html#~delete">delete</a></li><li data-type='method'><a href="module-business_classes.html#~getClassesForSchool">getClassesForSchool</a></li><li data-type='method'><a href="module-business_classes.html#~update">update</a></li></ul></li><li><a href="module-business_credentials.html">business/credentials</a></li><li><a href="module-business_drafts.html">business/drafts</a></li><li><a href="module-business_employees.html">business/employees</a><ul class='methods'><li data-type='method'><a href="module-business_employees.html#~addEducatorToSchool">addEducatorToSchool</a></li><li data-type='method'><a href="module-business_employees.html#~addEmployeeToSchool">addEmployeeToSchool</a></li><li data-type='method'><a href="module-business_employees.html#~createEducator">createEducator</a></li><li data-type='method'><a href="module-business_employees.html#~createEmployee">createEmployee</a></li><li data-type='method'><a href="module-business_employees.html#~getEducatorForRoom">getEducatorForRoom</a></li><li data-type='method'><a href="module-business_employees.html#~getEducatorForSchool">getEducatorForSchool</a></li><li data-type='method'><a href="module-business_employees.html#~getEmployeeForSchool">getEmployeeForSchool</a></li><li data-type='method'><a href="module-business_employees.html#~getEmployeeWithProfile">getEmployeeWithProfile</a></li><li data-type='method'><a href="module-business_employees.html#~removeEducatorFromSchool">removeEducatorFromSchool</a></li><li data-type='method'><a href="module-business_employees.html#~updateEducatorFromSchool">updateEducatorFromSchool</a></li></ul></li><li><a href="module-business_events.html">business/events</a></li><li><a href="module-business_guardians.html">business/guardians</a><ul class='methods'><li data-type='method'><a href="module-business_guardians.html#~create">create</a></li><li data-type='method'><a href="module-business_guardians.html#~delete">delete</a></li><li data-type='method'><a href="module-business_guardians.html#~findWithStudentId">findWithStudentId</a></li><li data-type='method'><a href="module-business_guardians.html#~read">read</a></li><li data-type='method'><a href="module-business_guardians.html#~readForStudents">readForStudents</a></li><li data-type='method'><a href="module-business_guardians.html#~readMe">readMe</a></li></ul></li><li><a href="module-business_menus.html">business/menus</a></li><li><a href="module-business_messages.html">business/messages</a></li><li><a href="module-business_posts.html">business/posts</a><ul class='methods'><li data-type='method'><a href="module-business_posts.html#~create">create</a></li><li data-type='method'><a href="module-business_posts.html#~delete">delete</a></li><li data-type='method'><a href="module-business_posts.html#~markWhoRead">markWhoRead</a></li><li data-type='method'><a href="module-business_posts.html#~readForAuthor">readForAuthor</a></li><li data-type='method'><a href="module-business_posts.html#~readForProfile">readForProfile</a></li><li data-type='method'><a href="module-business_posts.html#~update">update</a></li><li data-type='method'><a href="module-business_posts.html#~whoHasRead">whoHasRead</a></li></ul></li><li><a href="module-business_profiles.html">business/profiles</a><ul class='methods'><li data-type='method'><a href="module-business_profiles.html#~create">create</a></li><li data-type='method'><a href="module-business_profiles.html#~delete">delete</a></li><li data-type='method'><a href="module-business_profiles.html#~get">get</a></li><li data-type='method'><a href="module-business_profiles.html#~getMyProfile">getMyProfile</a></li><li data-type='method'><a href="module-business_profiles.html#~getProfilePicture">getProfilePicture</a></li><li data-type='method'><a href="module-business_profiles.html#~update">update</a></li><li data-type='method'><a href="module-business_profiles.html#~updatePicture">updatePicture</a></li></ul></li><li><a href="module-business_rooms.html">business/rooms</a><ul class='methods'><li data-type='method'><a href="module-business_rooms.html#~addEducatorToRoom">addEducatorToRoom</a></li><li data-type='method'><a href="module-business_rooms.html#~addStudentToRoom">addStudentToRoom</a></li><li data-type='method'><a href="module-business_rooms.html#~createToClass">createToClass</a></li><li data-type='method'><a href="module-business_rooms.html#~delete">delete</a></li><li data-type='method'><a href="module-business_rooms.html#~getRoomFromClass">getRoomFromClass</a></li><li data-type='method'><a href="module-business_rooms.html#~getRoomFromSchool">getRoomFromSchool</a></li><li data-type='method'><a href="module-business_rooms.html#~removeEducatorFromRoom">removeEducatorFromRoom</a></li><li data-type='method'><a href="module-business_rooms.html#~removeStudentFromRoom">removeStudentFromRoom</a></li><li data-type='method'><a href="module-business_rooms.html#~update">update</a></li></ul></li><li><a href="module-business_schools.html">business/schools</a><ul class='methods'><li data-type='method'><a href="module-business_schools.html#~create">create</a></li><li data-type='method'><a href="module-business_schools.html#~delete">delete</a></li><li data-type='method'><a href="module-business_schools.html#~read">read</a></li><li data-type='method'><a href="module-business_schools.html#~read_me">read_me</a></li><li data-type='method'><a href="module-business_schools.html#~setLogo">setLogo</a></li><li data-type='method'><a href="module-business_schools.html#~update">update</a></li></ul></li><li><a href="module-business_students.html">business/students</a><ul class='methods'><li data-type='method'><a href="module-business_students.html#~addForGuardian">addForGuardian</a></li><li data-type='method'><a href="module-business_students.html#~create">create</a></li><li data-type='method'><a href="module-business_students.html#~readForGuardian">readForGuardian</a></li><li data-type='method'><a href="module-business_students.html#~readForRoom">readForRoom</a></li><li data-type='method'><a href="module-business_students.html#~readWithProfileId">readWithProfileId</a></li><li data-type='method'><a href="module-business_students.html#~removeFromGuardian">removeFromGuardian</a></li></ul></li><li><a href="module-mechanisms.html">mechanisms</a></li><li><a href="module-mechanisms_AWSSNS.html">mechanisms/AWSSNS</a></li><li><a href="module-mechanisms_jwt.html">mechanisms/jwt</a><ul class='methods'><li data-type='method'><a href="module-mechanisms_jwt.html#.create">create</a></li><li data-type='method'><a href="module-mechanisms_jwt.html#.renew">renew</a></li><li data-type='method'><a href="module-mechanisms_jwt.html#.validate">validate</a></li></ul></li><li><a href="module-mechanisms_response.html">mechanisms/response</a><ul class='methods'><li data-type='method'><a href="module-mechanisms_response.html#.deletedRegister">deletedRegister</a></li><li data-type='method'><a href="module-mechanisms_response.html#.expiredCredential">expiredCredential</a></li><li data-type='method'><a href="module-mechanisms_response.html#.inexistentRegister">inexistentRegister</a></li><li data-type='method'><a href="module-mechanisms_response.html#.internalError">internalError</a></li><li data-type='method'><a href="module-mechanisms_response.html#.invalidCredential">invalidCredential</a></li><li data-type='method'><a href="module-mechanisms_response.html#.invalidParameters">invalidParameters</a></li><li data-type='method'><a href="module-mechanisms_response.html#.invalidPermissions">invalidPermissions</a></li><li data-type='method'><a href="module-mechanisms_response.html#.isBot">isBot</a></li><li data-type='method'><a href="module-mechanisms_response.html#.missingParameters">missingParameters</a></li><li data-type='method'><a href="module-mechanisms_response.html#.persistenceError">persistenceError</a></li><li data-type='method'><a href="module-mechanisms_response.html#.success">success</a></li></ul></li><li><a href="module-persistence.html">persistence</a></li><li><a href="module-persistence_accounts.html">persistence/accounts</a><ul class='methods'><li data-type='method'><a href="module-persistence_accounts.html#~confirmAccount">confirmAccount</a></li><li data-type='method'><a href="module-persistence_accounts.html#~createNewUser">createNewUser</a></li><li data-type='method'><a href="module-persistence_accounts.html#~findWithHash">findWithHash</a></li><li data-type='method'><a href="module-persistence_accounts.html#~logOut">logOut</a></li><li data-type='method'><a href="module-persistence_accounts.html#~logOut">logOut</a></li><li data-type='method'><a href="module-persistence_accounts.html#~recoverAccount">recoverAccount</a></li><li data-type='method'><a href="module-persistence_accounts.html#~setLostAccount">setLostAccount</a></li></ul></li><li><a href="module-persistence_activities.html">persistence/activities</a></li><li><a href="module-persistence_agendas.html">persistence/agendas</a></li><li><a href="module-persistence_classes.html">persistence/classes</a><ul class='methods'><li data-type='method'><a href="module-persistence_classes.html#~create">create</a></li><li data-type='method'><a href="module-persistence_classes.html#~findWithSchoolId">findWithSchoolId</a></li></ul></li><li><a href="module-persistence_credentials.html">persistence/credentials</a><ul class='methods'><li data-type='method'><a href="module-persistence_credentials.html#~logIn">logIn</a></li><li data-type='method'><a href="module-persistence_credentials.html#~logout">logout</a></li><li data-type='method'><a href="module-persistence_credentials.html#~read">read</a></li></ul></li><li><a href="module-persistence_employees.html">persistence/employees</a><ul class='methods'><li data-type='method'><a href="module-persistence_employees.html#~createEducator">createEducator</a></li><li data-type='method'><a href="module-persistence_employees.html#~findWithProfileId">findWithProfileId</a></li><li data-type='method'><a href="module-persistence_employees.html#~getEmployeesWithSchoolId">getEmployeesWithSchoolId</a></li></ul></li><li><a href="module-persistence_guardians.html">persistence/guardians</a><ul class='methods'><li data-type='method'><a href="module-persistence_guardians.html#~create">create</a></li><li data-type='method'><a href="module-persistence_guardians.html#~findWithProfileId">findWithProfileId</a></li><li data-type='method'><a href="module-persistence_guardians.html#~findWithSchoolAndStudentProfile">findWithSchoolAndStudentProfile</a></li><li data-type='method'><a href="module-persistence_guardians.html#~findWithStudentProfileId">findWithStudentProfileId</a></li></ul></li><li><a href="module-persistence_menus.html">persistence/menus</a></li><li><a href="module-persistence_post.html">persistence/post</a><ul class='methods'><li data-type='method'><a href="module-persistence_post.html#~create">create</a></li><li data-type='method'><a href="module-persistence_post.html#~createWithProfiles">createWithProfiles</a></li><li data-type='method'><a href="module-persistence_post.html#~findPostsWithAuthorId">findPostsWithAuthorId</a></li><li data-type='method'><a href="module-persistence_post.html#~findPostsWithSchoolId">findPostsWithSchoolId</a></li><li data-type='method'><a href="module-persistence_post.html#~findPostWithId">findPostWithId</a></li><li data-type='method'><a href="module-persistence_post.html#~getPostReadByInfo">getPostReadByInfo</a></li><li data-type='method'><a href="module-persistence_post.html#~markPostAsReadBy">markPostAsReadBy</a></li></ul></li><li><a href="module-persistence_profiles.html">persistence/profiles</a><ul class='methods'><li data-type='method'><a href="module-persistence_profiles.html#~findWithId">findWithId</a></li></ul></li><li><a href="module-persistence_rooms.html">persistence/rooms</a><ul class='methods'><li data-type='method'><a href="module-persistence_rooms.html#~create">create</a></li><li data-type='method'><a href="module-persistence_rooms.html#~findWithClassId">findWithClassId</a></li></ul></li><li><a href="module-persistence_schools.html">persistence/schools</a><ul class='methods'><li data-type='method'><a href="module-persistence_schools.html#~create">create</a></li><li data-type='method'><a href="module-persistence_schools.html#~findWithEmployeeProfileAndSchool">findWithEmployeeProfileAndSchool</a></li><li data-type='method'><a href="module-persistence_schools.html#~findWithId">findWithId</a></li><li data-type='method'><a href="module-persistence_schools.html#~findWithOwnerAndSchool">findWithOwnerAndSchool</a></li><li data-type='method'><a href="module-persistence_schools.html#~findWithProfileId">findWithProfileId</a></li></ul></li><li><a href="module-persistence_students.html">persistence/students</a><ul class='methods'><li data-type='method'><a href="module-persistence_students.html#~create">create</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithEmployeeProfileAndStudentProfile">findWithEmployeeProfileAndStudentProfile</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithGuardianId">findWithGuardianId</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithGuardianProfileAndStudentProfile">findWithGuardianProfileAndStudentProfile</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithProfileId">findWithProfileId</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithRoomId">findWithRoomId</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithSchoolAndGuardianProfile">findWithSchoolAndGuardianProfile</a></li><li data-type='method'><a href="module-persistence_students.html#~findWithSchoolAndStudentProfile">findWithSchoolAndStudentProfile</a></li></ul></li><li><a href="module-routes_accounts.html">routes/accounts</a><ul class='methods'><li data-type='method'><a href="module-routes_accounts.html#~/accounts/authentication/password_reset">/accounts/authentication/password_reset</a></li><li data-type='method'><a href="module-routes_accounts.html#~/authentication/password_reset/:hash">/authentication/password_reset/:hash</a></li></ul></li><li><a href="module-routes_agendas.html">routes/agendas</a></li><li><a href="module-routes_contents.html">routes/contents</a></li><li><a href="module-routes_profiles.html">routes/profiles</a></li><li><a href="module-routes_rooms.html">routes/rooms</a></li></ul><h3>Global</h3><ul><li><a href="global.html#express">express</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">routes/accounts.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module routes/accounts */
+
+var express = require('express');
+var router = express.Router();
+var responses = require('../mechanisms/responses.js');
+var accountsBO = require('../business/accounts.js');
+var app = express();
+
+var numberValidate = function(req, res, next, id) {
+	if (!isNaN(id)) {
+		next();
+	} else {
+		res.status(400).end(responses.invalidParameters("path_isNaN"));
+	}
+};
+
+
+//Always check all path parameters for NaN error
+
+//router.param('school_id', numberValidate);
+
+/**
+ * @param	name {string}
+ * @param	surname {string}
+ * @param	email {string}
+ * @param	birthDate {datetime}
+ * @param	gender {Gender}
+ * @param	school {School}
+ * @param	token {string}
+ * @param	cellphone {string}
+ * @description Create a new Profile and links it to a new Account
+ *
+ * 						Responses:
+ * 						200: profileID				- Executed
+ * 						400: wrong parameter 	- Parameter missing or invalid
+ * 						500 									- Internal error
+ * 						403 									- Cannot do that for that school
+ */
+router.post('/', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters = [];
+		if (req.body.email === undefined) missingParameters.push("email");
+		if (req.body.name === undefined) missingParameters.push("name");
+		if (req.body.surname === undefined) missingParameters.push("surname");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else {
+		//Provided that all the needed parameters are there, we call business to validate them
+			var account = {
+				email: req.body.email,
+				cellphone: req.body.cellphone
+			};
+
+			var profile = {
+				name: req.body.name,
+				surname: req.body.surname,
+				birthdate: req.body.birthdate,
+				gender: req.body.gender
+			};
+			accountsBO.createNewUser(account, profile)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+		}
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err){
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+ * @method  /accounts/authentication/password_reset
+ * @description Sends an email to the specified email address on the request with a link to reset the accounts's password
+ * @param	email {string}
+ * @return	If success, body.error is null. The link is valid for 24 hours from the request.
+ */
+router.post('/authentication/password_reset', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters=[];
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.email === undefined) missingParameters.push("password");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else accountsBO.setLostAccount(req.body.email, req.device)
+		.then(function(resp) {
+			resolve(resp);
+		}).catch(function(err){
+			reject(err);
+		});
+
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+ * @method /authentication/password_reset/:hash
+ * @description Resets the pasword of the account related to the {hash} with the given {password}
+ * @param	hash {string}
+ * @param	password {string}
+ * @return	If success body.data.token id defined and is the token for that user
+ */
+router.post('/authentication/password_reset/:hash', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters=[];
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.password === undefined) missingParameters.push("password");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else accountsBO.recoverAccount(req.params.hash, req.device, req.body.password)
+		.then(function(resp) {
+			resolve(resp);
+		}).catch(function(err){
+			reject(err);
+		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+* @description confirmAccount
+*/
+router.post('/authentication/:hash', function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		var missingParameters = [];
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.password === undefined) missingParameters.push("password");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else accountsBO.confirmAccount(req.params.hash, req.device, req.body.password)
+		.then(function(resp){
+			resolve(resp);
+		}).catch(function(err) {
+			reject(err);
+		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+* @description checkIfValidated
+* @return if it is authenticated already
+*/
+router.get('/authentication/:hash', function(req, res, next) {
+	return new Promise(function(resolve, reject){
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else accountsBO.findWithHash(req.params.hash)
+		.then(function(resp){
+			resolve(resp);
+		}).catch(function(err) {
+			reject(err);
+		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+* @description logIn. &lt;tt>email&lt;/tt> is used to identify the user.
+*/
+router.post('/authentication', function(req, res) {
+	return new Promise(function (resolve, reject) {
+		if (req.body.user === undefined) resolve(responses.missingParameters('email'));
+		else if (req.body.password === undefined) resolve(responses.missingParameters('password'));
+		else accountsBO.logIn(req.body.user, req.body.password, req.device)
+		.then(function(resp) {
+			resolve(resp);
+		}).catch(function(err) {
+			reject(err);
+		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err){
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+* @description logout
+*/
+router.delete('/authentication', function(req, res){
+	return new Promise (function (resolve, reject){
+		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
+		else if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else accountsBO.logout(req.device, req.rawToken, req.token)
+		.then(function(resp){
+			resolve(resp);
+		}).catch(function(err){
+			reject(err);
+		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+ * @description Set the status for notifications on a specific device
+ */
+router.put('/notifications/me', function(req, res) {
+	return new Promise (function(resolve, reject) {
+		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
+		else if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else accountsBO.updateNotifications(req.body.deviceToken, req.device, req.rawToken, req.token, req.useragent.isiPhone | req.useragent.isiPod | req.useragent.isiPad, req.useragent.isAndroid, req.headers.host)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+module.exports = router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
