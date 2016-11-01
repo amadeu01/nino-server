@@ -241,6 +241,6 @@ studentsDAO.findWithRoomId = function(roomID) {
 			 });
 		 });
 	 });
- }
+ };
 
 module.exports = studentsDAO;

@@ -331,7 +331,25 @@ var postsDAO = {
 				});
 			});
 		});
-	}
+	},
+	
+	getPostTargets: function(post_id) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT pp.profile FROM posts p, posts_profiles pp WHERE p.id = pp.post AND pp.post = $1', [post_id], function(err, result) {
+					if (err) reject(err);
+					else if (result.rowCount === 0) reject(result); //Nothing found, sends error
+					else if (result.name == "error") reject(result); //Some error occured : rejects
+					else resolve(result.rows); //Returns what was found
+					done();
+				});
+			});
+		});
+	},
 };
 
 module.exports = postsDAO;

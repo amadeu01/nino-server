@@ -34,7 +34,7 @@ router.get('/:room_id', function(req, res, next) {
 		var resp = responses.internalError(err);
 		res.status(resp.code).json(resp.json);
 	});
-})
+});
 
 /** @description Create a new room to class */
 router.post('/classes/:class_id', function(req, res, next) {

@@ -19,7 +19,7 @@ rooms.getRoom = function(room_id, device, rawToken, token) {
 				resolve(responses.success(room));
 			}).catch(function(err) {
 				resolve(responses.persistenceError(err));
-			})
+			});
     }).catch(function(err){
       resolve(responses.persistenceError(err));
     });

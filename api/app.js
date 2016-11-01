@@ -24,6 +24,7 @@ var rooms = require('./routes/rooms');
 var schools = require('./routes/schools');
 var students = require('./routes/students');
 var contents = require('./routes/contents');
+var messages = require('./routes/messages');
 
 var jwt = require('./mechanisms/jwt');
 
@@ -36,7 +37,7 @@ app.set('sha256Secret', 'beckedanilowhoftw');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -54,6 +55,10 @@ app.use(function(req, res, next) {
 
 // Gets user
 app.use(function(req, res, next) {
+	if (req.url === "/messages"){
+		next();
+		return;
+	}
 	var device = req.useragent.platform + " " + req.useragent.os;
 	if (device) {
 		req.device = device;
@@ -99,6 +104,7 @@ app.use('/rooms', rooms);
 app.use('/schools', schools);
 app.use('/students', students);
 // app.use('/contents', contents);
+// app.use('/messages', messages);
 
 
 // catch 404 and forward to error handler

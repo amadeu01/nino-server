@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var responses = require('../mechanisms/responses.js');
 var validator = require('validator');
-var draftsBO = require('../business/drafts.js')
+var draftsBO = require('../business/drafts.js');
 
 var numberValidate = function(req, res, next, id) {
 	if (!isNaN(id)) {
@@ -61,7 +61,7 @@ router.get('/schools/:school_id/profiles/:profile_id', function(req, res) {
 				offset: req.query.offset | 0,
 				limit: req.query.limit | 10, 
 				type: req.query.type
-			}
+			};
 			draftsBO.findWithProfileAndSchool(query, req.device, req.rawToken, req.token)
 			.then(function(resp) {
 				resolve(resp);

@@ -106,7 +106,64 @@ var credentialServices = {
 					else resolve (result.rows[0]);
 					done();
 				});
-			})
+			});
+		});
+	},
+	
+	updateNotification: function(active, awsID, device, rawToken) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				transaction.start(client)
+				.then(function() {
+					return new Promise(function(res, rej) {
+						client.query('UPDATE credentials SET (notifiable, notificationID) = (COALESCE($1, notifiable), COALESCE($2, notificationID)) WHERE token = $3 AND device = $4',[active, awsID, rawToken, device], function(err, result) {
+							if (err) rej(err);
+							else if (result.rowCount !== 1) rej(result); //Reject here - will stop transaction
+							else if (result.name == "error") rej(result); //Some error occured : rejects
+							else res(result.rows[0]);
+						});
+					});
+				}).then(function(result) {
+					return transaction.commit(client)
+					.then(function() {
+						done();
+						resolve(result); //Ended transaction and resolved to BO
+					}).catch(function(err) {
+						done(err);
+						reject(err); //Error on transaction, reject to BO
+					});
+				}).catch(function(err) {
+					return transaction.abort(client)
+					.then(function() {
+						done();
+						reject(err); //Reject error to BO
+					}).catch(function(err2) {
+						done(err2);
+						reject(err2); //Reject other error to BO
+					});
+				});
+			});
+		});
+	},
+	
+	findNotificationIDForStudentsGuardians: function(student_profile_id) {
+		return new Promise(function(resolve, reject) {
+			pool.connect(function(err, client, done) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				client.query('SELECT c.notificationID FROM credentials c, accounts a, profiles p, guardians_profile_students gps, students s WHERE s.id = gps.student AND gps.guardian_profile = p.id AND a.profile = p.id AND c.account = a.id AND s.profile = $1 AND c.notifiable = $2', [student_profile_id, true], function(err, result) {
+					if (err) reject (err);
+					else if (result.name == "error") reject (result); //Some error occured : rejects
+					else resolve (result.rows);
+					done();
+				});
+			});
 		});
 	},
 };

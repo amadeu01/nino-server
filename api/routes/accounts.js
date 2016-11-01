@@ -73,6 +73,62 @@ router.post('/', function(req, res, next) {
 });
 
 /**
+ * @method  /accounts/authentication/password_reset
+ * @description Sends an email to the specified email address on the request with a link to reset the accounts's password
+ * @param	email {string}
+ * @return	If success, body.error is null. The link is valid for 24 hours from the request.
+ */
+router.post('/authentication/password_reset', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters=[];
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.email === undefined) missingParameters.push("password");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else accountsBO.setLostAccount(req.body.email, req.device)
+		.then(function(resp) {
+			resolve(resp);
+		}).catch(function(err){
+			reject(err);
+		});
+
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+ * @method /authentication/password_reset/:hash
+ * @description Resets the pasword of the account related to the {hash} with the given {password}
+ * @param	hash {string}
+ * @param	password {string}
+ * @return	If success body.data.token id defined and is the token for that user
+ */
+router.post('/authentication/password_reset/:hash', function(req, res, next) {
+	return new Promise(function(resolve, reject) {
+		var missingParameters=[];
+		if (req.device === undefined) missingParameters.push("device");
+		if (req.body.password === undefined) missingParameters.push("password");
+		if (req.useragent.isBot === true ) resolve(responses.isBot());
+		else if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
+		else accountsBO.recoverAccount(req.params.hash, req.device, req.body.password)
+		.then(function(resp) {
+			resolve(resp);
+		}).catch(function(err){
+			reject(err);
+		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
 * @description confirmAccount
 */
 router.post('/authentication/:hash', function(req, res, next) {
@@ -144,13 +200,34 @@ router.post('/authentication', function(req, res) {
 router.delete('/authentication', function(req, res){
 	return new Promise (function (resolve, reject){
 		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
-		if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else if (req.token === undefined) resolve(responses.missingParameters('token'));
 		else accountsBO.logout(req.device, req.rawToken, req.token)
 		.then(function(resp){
 			resolve(resp);
 		}).catch(function(err){
 			reject(err);
 		});
+	}).then(function(resp) {
+		res.status(resp.code).json(resp.json);
+	}).catch(function(err) {
+		var resp = responses.internalError(err);
+		res.status(resp.code).json(resp.json);
+	});
+});
+
+/**
+ * @description Set the status for notifications on a specific device
+ */
+router.put('/notifications/me', function(req, res) {
+	return new Promise (function(resolve, reject) {
+		if (req.rawToken === undefined) resolve(responses.missingParameters('rawToken'));
+		else if (req.token === undefined) resolve(responses.missingParameters('token'));
+		else accountsBO.updateNotifications(req.body.deviceToken, req.device, req.rawToken, req.token, req.useragent.isiPhone | req.useragent.isiPod | req.useragent.isiPad, req.useragent.isAndroid, req.headers.host)
+			.then(function(resp) {
+				resolve(resp);
+			}).catch(function(err) {
+				reject(err);
+			});
 	}).then(function(resp) {
 		res.status(resp.code).json(resp.json);
 	}).catch(function(err) {

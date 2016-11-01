@@ -42,7 +42,7 @@ router.get('/guardians/me', function(req, res, next) {
 		var missingParameters = [];
 		if (req.token === undefined ) missingParameters.push("token");
 		if (req.rawToken === undefined) missingParameters.push("rawToken");
-		if (missingParameters.length > 0) resolve(errors.missingParameters(missingParameters));
+		if (missingParameters.length > 0) resolve(responses.missingParameters(missingParameters));
 		else {
 			studentsBO.readForGuardian(undefined, req.token.profile, req.device, req.rawToken, req.token)
 			.then(function(resp){

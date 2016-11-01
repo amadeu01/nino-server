@@ -942,7 +942,7 @@ var dropIfExistsAccounts = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsAccounts = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -959,7 +959,7 @@ var dropIfExistsAccounts = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsContents = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -976,7 +976,7 @@ var dropIfExistsContents = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsProfiles = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -993,7 +993,7 @@ var dropIfExistsProfiles = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsSchools = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1010,7 +1010,7 @@ var dropIfExistsSchools = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsClasses = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1027,7 +1027,7 @@ var dropIfExistsClasses = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsRooms = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1044,7 +1044,7 @@ var dropIfExistsRooms = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsMenus = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1061,7 +1061,7 @@ var dropIfExistsMenus = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsActivities = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1078,7 +1078,7 @@ var dropIfExistsActivities = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsEvents = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1095,7 +1095,7 @@ var dropIfExistsEvents = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsDrafts = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1112,7 +1112,7 @@ var dropIfExistsDrafts = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsPosts = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1129,7 +1129,7 @@ var dropIfExistsPosts = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsCredentials = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1146,7 +1146,7 @@ var dropIfExistsCredentials = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsStudents = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1163,7 +1163,7 @@ var dropIfExistsStudents = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var dropIfExistsEmployees = function(pool) {
 	return new Promise(function (resolve, reject) {
@@ -1180,7 +1180,7 @@ var dropIfExistsEmployees = function(pool) {
 			});
 		});
 	});
-}
+};
 
 var db = {
 	createTables: function() {

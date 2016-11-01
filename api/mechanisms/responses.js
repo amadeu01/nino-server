@@ -27,7 +27,7 @@ module.exports = {
 	//Register related errors
 	/**@method */
 	inexistentRegister: function(data) {
-		return new Response(200, data, 100);
+		return new Response(200, {data: undefined}, 100);
 	},
 	/**@method */
 	deletedRegister: function(data) {
@@ -86,7 +86,7 @@ module.exports = {
 					return new Response(500, "unknown", 201); //Default, unknown error
 			}
 		} else if (err.rowCount === 0){
-			return new Response(200, {data: []}, null);
+			return new Response(200, {data: [undefined]}, null);
 		} else {
 			console.log("ERROR>>" + data + "<<");
 			return new Response(500, "unknown", 201); //Default, unknown error

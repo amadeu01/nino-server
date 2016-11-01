@@ -1,0 +1,18 @@
+doctype html
+html(lang="pt-br")
+    head
+        title    Bem vindo à Nino!
+    body
+        -var baseLink = "https://www.ninoapp.com.br/recuperacao?hash="
+        -var link = baseLink + hash
+        p    Use este link para resetar sua senha!
+        p    Ignore este email caso nao o tenha solicitado.
+        a(href=link)    Recuperar senha
+        br
+        a(href="https://www.ninoapp.com.br")    ninoapp.com.br
+        p    ———
+        p    Use this link to reset your password!
+        p    Ignore this email if you have not requested it.
+        a(href=link)    Recover password
+        br
+        a(href="https://www.ninoapp.com.br")    ninoapp.com.br

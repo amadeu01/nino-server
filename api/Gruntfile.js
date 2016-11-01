@@ -1,8 +1,8 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
 		jshint: {
-   		all: ['Gruntfile.js','test/*.js', 'routes/**/*.js', 'bin/**/*.js', 'app.js', 'persistence/**/*.js', 'bin/www', 'mechanisms/**/*.js', 'business/**/*.js']
-  	},
+			all: ['Gruntfile.js','test/*.js', 'routes/**/*.js', 'bin/**/*.js', 'app.js', 'persistence/**/*.js', 'bin/www', 'mechanisms/**/*.js', 'business/**/*.js']
+		},
 		clean: {
 				nino: {
 						src: "nino-doc"
@@ -22,10 +22,7 @@ module.exports = function(grunt) {
 					}
 				},
 		shell: {
-			cleanDB: {
-				command: 'rm -rf .tmp/'
-			},
-			runMocha: {
+			mocha: {
 				command: 'mocha'
 			},
 			openDoc: {
@@ -50,6 +47,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('doc', 'Create documentations for Nino', [
 		'clean:nino',
 		'jsdoc:nino',
-		'shell:openDoc'
 	]);
 };

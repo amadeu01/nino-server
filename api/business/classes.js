@@ -84,12 +84,12 @@ classes.getClass = function(class_id, device, rawToken, token) {
 				resolve(responses.success(theClass));
 			}).catch(function(err) {
 				resolve(responses.persistenceError(err));
-			})
+			});
     }).catch(function(err){
       resolve(responses.persistenceError(err));
     });
 	});
-}
+};
 
 /** @method delete
 * @description delete

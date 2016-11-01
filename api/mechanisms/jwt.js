@@ -13,12 +13,12 @@ var publicKey = fs.readFileSync(__dirname + '/jwt.key.pub.pem');
 var signOptions = {
 	expiresIn: 3600, //1 hour
 	algorithm: 'RS256'
-}
+};
 
 var verifyOptions = {
 	clockTolerance: 300,
 	algorithms: ['RS256']
-}
+};
 
 module.exports = {
 	/**
