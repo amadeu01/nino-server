@@ -4,9 +4,9 @@
 */
 
 /** @constructor
-* @param code
-* @param data {JSON}
-* @param error {error}
+* @param code {int} Code representation
+* @param data {JSON} Information
+* @param error {error} Error when exists
 */
 function Response(code, data, error) {
 	this.code = code;
@@ -19,60 +19,75 @@ function Response(code, data, error) {
 module.exports = {
 
 	//Success!
-	/**@method */
+	/**@method success */
 	success: function(data) {
 		return new Response(200, data, null);
 	},
 
 	//Register related errors
-	/**@method */
+	/**@method inexistentRegister */
 	inexistentRegister: function(data) {
 		return new Response(200, undefined, 100);
 	},
-	/**@method */
+	/**@method deletedRegister */
 	deletedRegister: function(data) {
 		return new Response(200, data, 101);
 	},
 
 	//Server related errors
-	/**@method */
+	/**@method invalidParameters */
 	invalidParameters: function(data) {
 		return new Response(400, data, 200);
 	},
-	/**@method */
+	/** @method internalError
+	 * @param data
+	 */
 	internalError: function(data) {
 		console.log("ERROR>>" + data + "<<");
 		return new Response(500, data, 201);
 	},
-	/**@method */
+	/** @method missingParameters
+	 * @param data
+	 */
 	missingParameters: function(data) {
 		return new Response(400, data, 202);
 	},
+	/** @method badForm
+	 * @param data
+	 */
 	badForm: function(date) {
 		return new Response(400, data, 204);
 	},
 
 	//Token related errors
-	/**@method */
+	/** @method invalidPermissions
+	 * @param data {String}
+	 */
 	invalidPermissions: function(data) {
 		return new Response(403, data, 300);
 	},
-	/**@method */
+	/** @method invalidCredential
+	 * @param data {String}
+	 */
 	invalidCredential: function(data) {
 		return new Response(403, data, 301);
 	},
-	/**@method */
+	/** @method expiredCredential
+	 * @param data {String}
+	 */
 	expiredCredential: function(data) {
 		return new Response(403, data, 302);
 	},
-	/**@method
+	/**@method isBot
 	 * @description trigged when a Bot try to send a request
+	 * @param data {String}
 	 */
 	isBot: function(data) {
 		return new Response(403, data, 303);
 	},
 
-	/** @method
+	/** @method persistenceError
+	 * @param err {Error} DB error
 	*/
 	persistenceError: function(err) {
 		if (err.name === 'error') {
