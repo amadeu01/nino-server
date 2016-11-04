@@ -27,7 +27,7 @@ module.exports = {
 	//Register related errors
 	/**@method */
 	inexistentRegister: function(data) {
-		return new Response(200, {data: undefined}, 100);
+		return new Response(200, undefined, 100);
 	},
 	/**@method */
 	deletedRegister: function(data) {
@@ -75,18 +75,20 @@ module.exports = {
 	/** @method
 	*/
 	persistenceError: function(err) {
-		if (err.name == 'error') {
+		if (err.name === 'error') {
 			switch (err.code) {
-				case 23502:
+				case "23502":
 					return new Response(400, "missing_parameter", 202);
-				case 23505: //Some field already exists
+					break;
+				case "23505": //Some field already exists
 					return new Response(400, "duplicate", 203); //New code here
+					break;
 				default:
 					console.log("ERROR>>" + data + "<<");
 					return new Response(500, "unknown", 201); //Default, unknown error
 			}
 		} else if (err.rowCount === 0){
-			return new Response(200, {data: [undefined]}, null);
+			return new Response(200, undefined, null);
 		} else {
 			console.log("ERROR>>" + data + "<<");
 			return new Response(500, "unknown", 201); //Default, unknown error
