@@ -83,7 +83,7 @@ students.readForGuardian = function(school_id, guardian_profile_id, device, rawT
         .then(function(students){
           resolve(responses.success(students));
         }).catch(function(err){
-          resolve(errors.internalError(err));
+          resolve(responses.persistenceError(err));
         });
       } else { //owner can take information about students of a guardian
         return schoolsDAO.findWithOwnerAndSchool(token.profile, school_id)
@@ -92,7 +92,7 @@ students.readForGuardian = function(school_id, guardian_profile_id, device, rawT
           .then(function(students){
             resolve(responses.success(students));
           }).catch(function(err){
-            resolve(errors.internalError(err));
+            resolve(responses.persistenceError(err));
           });
         }).catch(function(err){
           resolve(responses.invalidPermissions(err));
