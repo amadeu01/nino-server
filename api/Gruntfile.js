@@ -1,7 +1,17 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
 		jshint: {
-			all: ['Gruntfile.js','test/*.js', 'routes/**/*.js', 'bin/**/*.js', 'app.js', 'persistence/**/*.js', 'bin/www', 'mechanisms/**/*.js', 'business/**/*.js']
+			all: [
+				'Gruntfile.js',
+				'test/*.js',
+				'routes/**/*.js',
+                'bin/**/*.js',
+                'app.js',
+                'persistence/**/*.js',
+                'bin/www',
+                'mechanisms/**/*.js',
+                'business/**/*.js'
+            ]
 		},
 		clean: {
 				nino: {
