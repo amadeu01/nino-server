@@ -29,31 +29,36 @@ Get Primary Services List | 53        | 53      | 53    | 53    |         |
 ## For mac users
 
 1. Make sure you has PostGres installed.
+
+```{r, engine='bash', count_lines}
+$ brew install postgres
 ```
-brew install postgres
-```
-1. Make sure you have the file and is authorized to modified it.
-```
+
+2. Make sure you have the file and is authorized to modified it.
+
+```zsh
 sudo mkdir /usr/local/var/postgres
 sudo chmod 775 /usr/local/var/postgres
 sudo chown YOURNAMEOFUSER /usr/local/var/postgres
 ```
-1. Init the database and run.
+
+3. Init the database and run.
 
 ```bash
-pg_ctl init -D /usr/local/var/postgres/
-pg_ctl -D /usr/local/var/postgres -l ONDEVCARMAZENALOG start
-```
-1. Create Database.
-
-```bash
-createdb
+$ pg_ctl init -D /usr/local/var/postgres/
+$ pg_ctl -D /usr/local/var/postgres -l ONDEVCARMAZENALOG start
 ```
 
-1. Create user !
+4. Create Database.
 
 ```bash
-createuser -P nino
+$ createdb
+```
+
+5. Create user !
+
+```bash
+$ createuser -P nino
 ```
 **Here:** you put the password `nino`
 
@@ -63,7 +68,7 @@ createuser -P nino
 $ psql
 ```
 
-1. Create the database table
+2. Create the database table
 
 ```sql
 CREATE DATABASE nino WITH TEMPLATE template0 OWNER nino;
@@ -85,13 +90,13 @@ $ pg_ctl -D /usr/local/var/postgres stop -s -m fast
 
 ## Usage (I might take it off)
 ---
-1. You can do this to generate Documentations.
+a. You can do this to generate Documentations.
 
 ```bash
 $ grunt doc
 ```
 
-1. Or, this.
+b. Or, this.
 
 ```bash
 $ grunt
