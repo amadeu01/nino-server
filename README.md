@@ -1,3 +1,9 @@
+
+<p align="center">
+  <img width="200" height="200" src="https://raw.githubusercontent.com/amadeu01/nino-server/master/assets/nino-logo.png">
+</p>
+
+
 # Implementation
 ---
 Feature                   | Route     | Tested  | Business | Tested | Persistence | Tested
