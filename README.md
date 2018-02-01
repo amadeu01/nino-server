@@ -1,4 +1,4 @@
-Implementation
+# Implementation
 ---
 Feature                   | Route     | Tested  | Business | Tested | Persistence | Tested
 ------------------------- | :-------: | :-----: | :---: | :---: | :-----: | :-:
@@ -17,69 +17,83 @@ Get Primary Services List | 53        | 53      | 53    | 53    |         |
 
  Associate = Create relatiomship, like add activity to class.
 
-PostGres Usage
+# PostGres Usage
 ---------------
+
+## For mac users
 
 1. Make sure you has PostGres installed.
 ```
 brew install postgres
 ```
-2. Make sure you have the file and is authorized to modified it.
+1. Make sure you have the file and is authorized to modified it.
 ```
 sudo mkdir /usr/local/var/postgres
 sudo chmod 775 /usr/local/var/postgres
 sudo chown YOURNAMEOFUSER /usr/local/var/postgres
 ```
-3. Init the database.
-```
+1. Init the database and run.
+
+```bash
 pg_ctl init -D /usr/local/var/postgres/
-INICIAR: pg_ctl -D /usr/local/var/postgres -l ONDEVCARMAZENALOG start
+pg_ctl -D /usr/local/var/postgres -l ONDEVCARMAZENALOG start
 ```
-```
+1. Create Database.
+
+```bash
 createdb
 ```
-4. Create user !
-```
+
+1. Create user !
+
+```bash
 createuser -P nino
-——AQUI VOCE DIGITA SENHA E CONFIRMA: a senha é *nino* sem os asteriscos
+```
+**Here:** you put the password `nino`
+
+1. Run postgres and access it.
+
+```bash
+$ psql
 ```
 
-5. Run
-```
-psql
-```
-6. Create the database table
-```
+1. Create the database table
+
+```sql
 CREATE DATABASE nino WITH TEMPLATE template0 OWNER nino;
 \q
 ```
 
+### To stop postgres
 
-PARA PARAR: pg_ctl -D /usr/local/var/postgres stop -s -m fast
+```bash
+$ pg_ctl -D /usr/local/var/postgres stop -s -m fast
+```
 
-
-Jaguar.js template for JSDoc 3
+## Jaguar.js template for JSDoc 3
 ---
 - [Jaguar.js](http://davidshimjs.github.io/jaguarjs)
 - [Jaguar.js Documentations](http://davidshimjs.github.io/jaguarjs/doc)
 - [JSDoc3](https://github.com/jsdoc3/jsdoc)
 - [JSDoc3 API Documentations](http://usejsdoc.org)
 
-Usage
+## Usage (I might take it off)
 ---
 1. You can do this to generate Documentations.
-```
+
+```bash
 $ grunt doc
 ```
 
-2. Or, this.
-```
+1. Or, this.
+
+```bash
 $ grunt
 ```
 
 ---
 
 
-License
+# License
 ---
-Nino ! The only owner !!!
+MIT
