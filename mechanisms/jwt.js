@@ -7,8 +7,8 @@ var fs = require('fs');
 var jwt = require('jsonwebtoken');
 var responses = require('./responses.js');
 
-var privateKey = fs.readFileSync(__dirname + '/jwt.key');
-var publicKey = fs.readFileSync(__dirname + '/jwt.key.pub.pem');
+var privateKey = 'secret';
+var publicKey = 'secret';
 
 var signOptions = {
 	expiresIn: 3600, //1 hour

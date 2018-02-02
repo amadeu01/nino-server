@@ -5,11 +5,12 @@
 
 var api_key = process.env.MAIL_GUN_API_KEY;
 var domain = 'ninoapp.com.br';
-var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+var mailgun = require('mailgun-js')
+// ({apiKey: api_key, domain: domain});
 var uid = require('uid-safe');
 var app = require('../app');
-var feedlist = mailgun.lists('noticias@ninoapp.com.br');
-var userslist = mailgun.lists('usuarios@ninoapp.com.br');
+//var feedlist = mailgun.lists('noticias@ninoapp.com.br');
+//var userslist = mailgun.lists('usuarios@ninoapp.com.br');
 
 var data = {
   from: 'Myself <naoresponda@ninoapp.com.br>',

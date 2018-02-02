@@ -12,9 +12,9 @@ var https = require('https');
 var fs = require('fs');
 
 var options = {
-	key: fs.readFileSync('domain.key'),
-	cert: fs.readFileSync('cd441587be7e460c.crt'),
-	ca: [fs.readFileSync('bundle1.crt'), fs.readFileSync('bundle2.crt'), fs.readFileSync('bundle3.crt')],
+	// key: fs.readFileSync('domain.key'),
+	// cert: fs.readFileSync('cd441587be7e460c.crt'),
+	// ca: [fs.readFileSync('bundle1.crt'), fs.readFileSync('bundle2.crt'), fs.readFileSync('bundle3.crt')],
 	ciphers: [
 		"ECDHE-RSA-AES256-SHA384",
 		"DHE-RSA-AES256-SHA384",
