@@ -11,7 +11,7 @@ var db = require('../mechanisms/database.js');
 var https = require('https');
 var fs = require('fs');
 
-// var HTTPserver = http.createServer(app);
+var HTTPserver = http.createServer(app);
 
 /**
  * Get port from environment and store in Express.
@@ -29,7 +29,7 @@ db.createTables()
 .then(function(success) {
 	console.log("Server Starting");
 	console.log(port);
-	// HTTPserver.listen(port);
+	HTTPserver.listen(port);
 }).catch(function(err) {
 	console.log(err);
 });
