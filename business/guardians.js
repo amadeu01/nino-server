@@ -9,7 +9,7 @@ var uid = require('uid-safe');
 var credentialDAO = require('../persistence/credentials.js');
 var profileDAO = require('../persistence/profiles.js');
 var guardians = {};
-var mail = require('../mechanisms/mail.js');
+// var mail = require('../mechanisms/mail.js');
 
 /** @method create
 * @param account
@@ -41,7 +41,7 @@ guardians.create = function(school_id, account, student_id, device, rawToken, to
 					account.hash = uid.sync(100);
 					guardiansDAO.create(account, student.id)
 					.then(function(guardian_id) {
-						mail.sendUserConfirmation(account.email, {hash: account.hash});
+						// mail.sendUserConfirmation(account.email, {hash: account.hash});
 						resolve(responses.success(guardian_id));
 					}).catch(function(err) {
 						resolve(responses.persistenceError(err));

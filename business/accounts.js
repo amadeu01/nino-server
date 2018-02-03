@@ -6,7 +6,7 @@ var accountsDAO = require('../persistence/accounts.js');
 var credentialDAO = require('../persistence/credentials.js');
 var jwt = require('../mechanisms/jwt.js');
 var uid = require('uid-safe');
-var mail = require('../mechanisms/mail.js');
+// var mail = require('../mechanisms/mail.js');
 var accounts = {};
 var ninoCrypto = require("../mechanisms/crypto.js");
 var sns = require("../mechanisms/AWSSNS.js");
@@ -28,7 +28,7 @@ accounts.createNewUser = function(account, profile) {
 			account.hash = uid.sync(100);
 			return accountsDAO.createNewUser(account, profile)
 			.then(function(newUser) {
-				mail.sendUserConfirmation(account.email, {hash: account.hash});
+				// mail.sendUserConfirmation(account.email, {hash: account.hash});
 				resolve(responses.success(newUser));
 			}).catch(function(err) {
 				resolve(responses.persistenceError(err));
@@ -69,11 +69,11 @@ accounts.createNewUserTest = function(account, profile) {
 	});
 };
 
-/** @method recoverAccount 
+/** @method recoverAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param hash {string}
  * @param device {string} it defines from which plataform and os the request come from
- * @param password {string} 
+ * @param password {string}
  */
 accounts.recoverAccount = function(hash, device, password) {
 	return new Promise(function(resolve, reject) {
@@ -114,11 +114,11 @@ accounts.recoverAccount = function(hash, device, password) {
 	});
 };
 
-/** @method setLostAccount 
+/** @method setLostAccount
  * @description Validates requires confirmationHash and Origin, cofirm User and clear hash.
  * @param hash {string}
  * @param device {string} it defines from which plataform and os the request come from
- * @param password {string} 
+ * @param password {string}
  */
 accounts.setLostAccount = function(email, device) {
 	return new Promise(function(resolve, reject) {
@@ -129,7 +129,7 @@ accounts.setLostAccount = function(email, device) {
 			var nHash = hash + '-' + now;
 			return accountsDAO.setLostAccount(email, nHash)
 			.then(function(account) {
-				mail.sendUserRecover(email, {hash: nHash});	
+				// mail.sendUserRecover(email, {hash: nHash});
 				resolve(responses.success());
 			}).catch(function(err) {
 				if (err.rowCount === 0) {
@@ -139,7 +139,7 @@ accounts.setLostAccount = function(email, device) {
 				}
 			});
 		}
-	});	
+	});
 };
 
 
