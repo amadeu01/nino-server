@@ -3,26 +3,6 @@
   <img width="200" height="200" src="https://raw.githubusercontent.com/amadeu01/nino-server/master/assets/nino-logo.png">
 </p>
 
-
-# Implementation
----
-Feature                   | Route     | Tested  | Business | Tested | Persistence | Tested
-------------------------- | :-------: | :-----: | :---: | :---: | :-----: | :-:
-Create New                 | ✓         | ✓       | ✓     | ✓     | ✓       | See notes
-Update Existing          | ✓         | ✓       | ✓     | ✓     | ✓       |
-Associate*                | ✓         | ✓       | ✓     | ✓     | ✓       |
-GATT Server Connect       | ✓         | ✓       | ✓     | ✓     |         |
-Read Characteristic       | ✓         | ✓       | 53    | ✓ |
-Write Characteristic      | ✓         | ✓       | 53    | ✓ |
-Characteristic Properties | ✓         | ✓       | 53    | ✓     |         |
-GATT Notifications        | ✓         | &nbsp;&nbsp;✓&nbsp;&nbsp;&nbsp;start <br/> :construction_worker: stop|  53 start  | ✓ |
-GATT Server Disconnect    | ✓         | ✓       | ✓     | ✓     |         |
-Get Characteristics List  | ✓         | ✓       | 53    | ✓     |         |
-Device Disconnected Event | 52        | 52      | 52    | 52    |         |
-Get Primary Services List | 53        | 53      | 53    | 53    |         |
-
- Associate = Create relatiomship, like add activity to class.
-
 # PostGres Usage
 ---------------
 
